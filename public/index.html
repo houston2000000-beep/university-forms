@@ -13,72 +13,52 @@
       --text-muted: #65676b;
       --border: #e0e0e0;
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
     body { background-color: var(--bg); color: var(--text); line-height: 1.5; }
-
-    /* Header Navbar */
     .navbar { background: #ffffff; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
     .nav-container { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; }
     .logo { font-size: 26px; font-weight: 800; color: var(--text); text-decoration: none; display: flex; align-items: center; gap: 4px; }
     .logo span { color: var(--primary); }
     .logo-badge { background: #fff3e0; color: var(--primary-dark); font-size: 11px; font-weight: bold; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; margin-left: 6px; }
-
     .nav-links { display: flex; gap: 20px; align-items: center; }
     .nav-links a { text-decoration: none; color: var(--text-muted); font-size: 15px; font-weight: 500; }
     .nav-links a:hover { color: var(--primary); }
-
     .auth-btns { display: flex; gap: 10px; }
     .btn { padding: 8px 18px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: 0.2s ease; }
     .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
     .btn-outline:hover { background: #f0f0f0; }
     .btn-primary { background: var(--primary); color: #fff; }
     .btn-primary:hover { background: var(--primary-dark); }
-
-    /* Hero Section */
     .hero { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: white; padding: 60px 20px 80px; text-align: center; }
     .hero h1 { font-size: 36px; font-weight: 800; margin-bottom: 12px; }
     .hero p { font-size: 18px; color: #94a3b8; margin-bottom: 30px; }
-
     .search-box { max-width: 800px; margin: 0 auto; background: white; padding: 8px; border-radius: 8px; display: flex; gap: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
     .search-box input, .search-box select { border: none; padding: 12px 16px; font-size: 15px; width: 100%; outline: none; background: transparent; }
     .search-divider { width: 1px; background: var(--border); margin: 8px 0; }
     .search-box button { background: var(--primary); color: white; border: none; padding: 0 28px; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 15px; white-space: nowrap; }
-
-    /* Main Content Container */
     .main-container { max-width: 1100px; margin: -40px auto 40px; padding: 0 20px; }
-
-    /* Quick Action Grid */
     .grid-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 30px; }
     .action-card { background: white; border-radius: 8px; padding: 20px; border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.04); text-align: left; }
     .action-card h3 { font-size: 16px; margin-bottom: 6px; color: var(--text); }
     .action-card p { font-size: 13px; color: var(--text-muted); }
-
-    /* Feed Layout */
     .feed-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
     @media (max-width: 768px) {
       .feed-layout { grid-template-columns: 1fr; }
       .search-box { flex-direction: column; }
       .search-divider { display: none; }
     }
-
     .feed-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
     .feed-header h2 { font-size: 20px; font-weight: 700; }
-
     .job-card { background: white; border-radius: 8px; padding: 20px; margin-bottom: 16px; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
     .job-card h3 { font-size: 18px; color: #0f172a; margin-bottom: 6px; }
     .job-badge { display: inline-block; background: #e0f2fe; color: #0369a1; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 4px; margin-bottom: 10px; }
     .job-meta { color: var(--text-muted); font-size: 14px; margin-bottom: 10px; display: flex; gap: 12px; flex-wrap: wrap; }
     .job-desc { font-size: 14px; color: #334155; margin-bottom: 12px; }
     .job-footer { font-size: 12px; color: #94a3b8; border-top: 1px solid #f1f5f9; padding-top: 10px; display: flex; justify-content: space-between; }
-
-    /* Sidebar Form */
     .sidebar-card { background: white; border-radius: 8px; padding: 20px; border: 1px solid var(--border); position: sticky; top: 80px; }
     .sidebar-card h3 { font-size: 18px; margin-bottom: 14px; }
     .sidebar-card input, .sidebar-card select, .sidebar-card textarea { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; outline: none; }
     .sidebar-card button { width: 100%; }
-
-    /* Auth Modal */
     .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; justify-content: center; align-items: center; padding: 20px; }
     .modal.active { display: flex; }
     .modal-content { background: white; width: 100%; max-width: 420px; border-radius: 8px; padding: 24px; position: relative; }
@@ -92,13 +72,9 @@
 </head>
 <body>
 
-  <!-- Top Navigation Bar -->
   <header class="navbar">
     <div class="nav-container">
-      <a href="#" class="logo">
-        beBee<span>.</span>
-        <span class="logo-badge">NG</span>
-      </a>
+      <a href="#" class="logo">beBee<span>.</span><span class="logo-badge">NG</span></a>
       <nav class="nav-links">
         <a href="#">Jobs</a>
         <a href="#">Services</a>
@@ -111,11 +87,9 @@
     </div>
   </header>
 
-  <!-- Hero Banner -->
   <section class="hero">
     <h1>Jobs and services in Nigeria</h1>
     <p>Find job opportunities, professional services, and connections across Nigeria.</p>
-    
     <div class="search-box">
       <input type="text" id="searchQuery" placeholder="Job title, skill, or company..." />
       <div class="search-divider"></div>
@@ -124,45 +98,21 @@
     </div>
   </section>
 
-  <!-- Main Content -->
   <main class="main-container">
-    
-    <!-- Action Cards -->
     <div class="grid-actions">
-      <div class="action-card">
-        <h3>Employment</h3>
-        <p>Find your next role across top industries.</p>
-      </div>
-      <div class="action-card">
-        <h3>Services</h3>
-        <p>Offer or find verified professional services.</p>
-      </div>
-      <div class="action-card">
-        <h3>People</h3>
-        <p>Connect directly with talent and recruiters.</p>
-      </div>
-      <div class="action-card">
-        <h3>Post a Need</h3>
-        <p>Get quotes and hire professionals fast.</p>
-      </div>
+      <div class="action-card"><h3>Employment</h3><p>Find your next role across top industries.</p></div>
+      <div class="action-card"><h3>Services</h3><p>Offer or find verified professional services.</p></div>
+      <div class="action-card"><h3>People</h3><p>Connect directly with talent and recruiters.</p></div>
+      <div class="action-card"><h3>Post a Need</h3><p>Get quotes and hire professionals fast.</p></div>
     </div>
 
     <div class="feed-layout">
-      <!-- Live Job Feed -->
       <div>
-        <div class="feed-header">
-          <h2>Latest Job Opportunities</h2>
-        </div>
-        <div id="jobFeed">
-          <p style="color: var(--text-muted);">Loading job postings...</p>
-        </div>
+        <div class="feed-header"><h2>Latest Job Opportunities</h2></div>
+        <div id="jobFeed"><p style="color: var(--text-muted);">Loading job postings...</p></div>
       </div>
-
-      <!-- Sidebar Job Submission -->
       <div>
         <div class="sidebar-card">
-          
-          <!-- Job Form (Hidden unless logged in) -->
           <div id="jobPostingContainer" class="hidden">
             <h3>Post a Job Immediately</h3>
             <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Reach candidates across Nigeria instantly.</p>
@@ -179,56 +129,52 @@
               <button type="submit" class="btn btn-primary">Publish Job Posting</button>
             </form>
           </div>
-
-          <!-- Login Prompt (Shown when logged out) -->
           <div id="loginPromptContainer" style="text-align: center; padding: 10px 0;">
             <h3>Post a Job</h3>
             <p style="font-size: 13px; color: var(--text-muted); margin: 10px 0 16px;">Please log in or sign up to publish job opportunities.</p>
             <button class="btn btn-primary" style="width: 100%;" onclick="openAuthModal('login')">Log In to Post</button>
           </div>
-
         </div>
       </div>
     </div>
-
   </main>
 
-  <!-- Authentication Modal -->
   <div class="modal" id="authModal">
     <div class="modal-content">
       <button class="close-modal" onclick="closeAuthModal()">✕</button>
       
-      <!-- MAIN AUTH FORM -->
       <div id="mainAuthFields">
         <h2 id="modalTitle">Welcome to beBee</h2>
         <p>Log in or register to publish jobs and manage account details.</p>
-        
         <input type="text" id="userName" placeholder="Full Name (for new accounts)" />
         <input type="email" id="userEmail" placeholder="Email Address" />
         <input type="password" id="userPassword" placeholder="Password" />
-        
         <button id="authPrimaryBtn" class="btn btn-primary" style="width:100%; margin-top:6px;" onclick="handleAuthSubmit()">Submit</button>
-        
         <div style="text-align: center; margin-top: 10px;">
           <button class="link-btn" onclick="showForgotPasswordUI()">Forgot Password?</button>
         </div>
       </div>
 
-      <!-- REGISTRATION OTP FORM -->
+      <!-- 6-Compartment OTP Verification Form -->
       <div id="verifyRegisterFields" class="hidden">
         <h2>Enter Verification Code</h2>
         <p>We sent a 6-digit confirmation code to your email.</p>
-        <input type="text" id="regOtpCode" placeholder="Enter 6-digit Code" maxlength="6" style="text-align:center; letter-spacing:3px; font-size:18px;" />
+        <div style="display: flex; gap: 8px; justify-content: center; margin-bottom: 16px;" id="otpBoxes">
+          <input type="text" maxlength="1" class="otp-box" style="width: 45px; height: 50px; text-align: center; font-size: 22px; font-weight: bold; border: 1px solid var(--border); border-radius: 6px;" oninput="handleOtpInput(this, 0)" onkeydown="handleOtpKeyDown(event, 0)" />
+          <input type="text" maxlength="1" class="otp-box" style="width: 45px; height: 50px; text-align: center; font-size: 22px; font-weight: bold; border: 1px solid var(--border); border-radius: 6px;" oninput="handleOtpInput(this, 1)" onkeydown="handleOtpKeyDown(event, 1)" />
+          <input type="text" maxlength="1" class="otp-box" style="width: 45px; height: 50px; text-align: center; font-size: 22px; font-weight: bold; border: 1px solid var(--border); border-radius: 6px;" oninput="handleOtpInput(this, 2)" onkeydown="handleOtpKeyDown(event, 2)" />
+          <input type="text" maxlength="1" class="otp-box" style="width: 45px; height: 50px; text-align: center; font-size: 22px; font-weight: bold; border: 1px solid var(--border); border-radius: 6px;" oninput="handleOtpInput(this, 3)" onkeydown="handleOtpKeyDown(event, 3)" />
+          <input type="text" maxlength="1" class="otp-box" style="width: 45px; height: 50px; text-align: center; font-size: 22px; font-weight: bold; border: 1px solid var(--border); border-radius: 6px;" oninput="handleOtpInput(this, 4)" onkeydown="handleOtpKeyDown(event, 4)" />
+          <input type="text" maxlength="1" class="otp-box" style="width: 45px; height: 50px; text-align: center; font-size: 22px; font-weight: bold; border: 1px solid var(--border); border-radius: 6px;" oninput="handleOtpInput(this, 5)" onkeydown="handleOtpKeyDown(event, 5)" />
+        </div>
         <button class="btn btn-primary" style="width:100%;" onclick="verifyRegistrationOTP()">Verify Email & Log In</button>
       </div>
 
-      <!-- FORGOT PASSWORD FORM -->
       <div id="forgotPasswordFields" class="hidden">
         <h2>Reset Password</h2>
         <p>Enter your registered email to receive a reset code.</p>
         <input type="email" id="resetEmail" placeholder="Your Email Address" />
         <button class="btn btn-primary" style="width:100%;" onclick="requestResetOTP()">Send Reset Code</button>
-
         <div id="resetOtpContainer" class="hidden" style="margin-top:12px;">
           <input type="text" id="resetOtpCode" placeholder="Enter 6-digit Reset Code" maxlength="6" />
           <input type="password" id="newPassword" placeholder="Enter New Password" />
@@ -244,12 +190,11 @@
   <script>
     let token = localStorage.getItem('jwt_token') || '';
     let currentAuthMode = 'login';
-    const API_BASE = '/api'; // Adjust if pointing to external backend URL
+    const API_BASE = '';
 
     function updateNavState() {
       const jobContainer = document.getElementById('jobPostingContainer');
       const loginPrompt = document.getElementById('loginPromptContainer');
-
       if (token) {
         document.getElementById('authNavButtons').innerHTML = `
           <span style="font-size: 14px; color: var(--text-muted); align-self: center;">Logged in</span>
@@ -279,7 +224,6 @@
       currentAuthMode = mode;
       document.getElementById('authModal').classList.add('active');
       showMainAuthUI();
-
       if (mode === 'login') {
         document.getElementById('modalTitle').innerText = 'Log in to beBee';
         document.getElementById('userName').style.display = 'none';
@@ -307,6 +251,22 @@
       document.getElementById('authStatus').innerText = '';
     }
 
+    function handleOtpInput(element, index) {
+      const value = element.value;
+      const boxes = document.querySelectorAll('.otp-box');
+      element.value = value.replace(/[^0-9]/g, '');
+      if (element.value && index < boxes.length - 1) {
+        boxes[index + 1].focus();
+      }
+    }
+
+    function handleOtpKeyDown(event, index) {
+      const boxes = document.querySelectorAll('.otp-box');
+      if (event.key === 'Backspace' && !boxes[index].value && index > 0) {
+        boxes[index - 1].focus();
+      }
+    }
+
     async function handleAuthSubmit() {
       if (currentAuthMode === 'register') {
         await requestRegistrationOTP();
@@ -325,7 +285,7 @@
         return;
       }
 
-      const res = await fetch(`${API_BASE}/register/request-otp`, {
+      const res = await fetch(`${API_BASE}/api/register/request-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password })
@@ -334,7 +294,7 @@
       if (res.ok) {
         document.getElementById('mainAuthFields').classList.add('hidden');
         document.getElementById('verifyRegisterFields').classList.remove('hidden');
-        document.getElementById('authStatus').innerText = data.message || 'Verification code sent to email!';
+        document.getElementById('authStatus').innerText = data.message || 'Verification code sent!';
         document.getElementById('authStatus').style.color = '#0284c7';
       } else {
         alert(data.error || 'Registration failed.');
@@ -343,14 +303,15 @@
 
     async function verifyRegistrationOTP() {
       const email = document.getElementById('userEmail').value;
-      const code = document.getElementById('regOtpCode').value;
+      const boxes = document.querySelectorAll('.otp-box');
+      const code = Array.from(boxes).map(b => b.value).join('');
 
-      if (!code) {
-        alert('Please enter the verification code.');
+      if (code.length < 6) {
+        alert('Please fill out all 6 digits of the verification code.');
         return;
       }
 
-      const res = await fetch(`${API_BASE}/register/verify-otp`, {
+      const res = await fetch(`${API_BASE}/api/register/verify-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, code })
@@ -371,7 +332,12 @@
       const email = document.getElementById('userEmail').value;
       const password = document.getElementById('userPassword').value;
 
-      const res = await fetch(`${API_BASE}/login`, {
+      if (!email || !password) {
+        alert('Please enter your email and password.');
+        return;
+      }
+
+      const res = await fetch(`${API_BASE}/api/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -382,6 +348,7 @@
         localStorage.setItem('jwt_token', token);
         closeAuthModal();
         updateNavState();
+        alert('Logged in successfully!');
       } else {
         alert(data.error || 'Login failed.');
       }
@@ -389,7 +356,7 @@
 
     async function requestResetOTP() {
       const email = document.getElementById('resetEmail').value;
-      const res = await fetch(`${API_BASE}/forgot-password/request-otp`, {
+      const res = await fetch(`${API_BASE}/api/forgot-password/request-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email })
@@ -398,7 +365,6 @@
       if (res.ok) {
         document.getElementById('resetOtpContainer').classList.remove('hidden');
         document.getElementById('authStatus').innerText = data.message;
-        document.getElementById('authStatus').style.color = '#0284c7';
       } else {
         alert(data.error);
       }
@@ -409,7 +375,7 @@
       const code = document.getElementById('resetOtpCode').value;
       const newPassword = document.getElementById('newPassword').value;
 
-      const res = await fetch(`${API_BASE}/forgot-password/verify-otp`, {
+      const res = await fetch(`${API_BASE}/api/forgot-password/verify-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, code, newPassword })
@@ -442,7 +408,7 @@
     }
 
     async function loadFeed(query = '', location = '') {
-      let url = `${API_BASE}/jobs?`;
+      let url = `${API_BASE}/api/jobs?`;
       if (query) url += `q=${encodeURIComponent(query)}&`;
       if (location) url += `location=${encodeURIComponent(location)}`;
 
@@ -481,7 +447,7 @@
           description: document.getElementById('description').value
         };
 
-        const res = await fetch(`${API_BASE}/jobs`, {
+        const res = await fetch(`${API_BASE}/api/jobs`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
