@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>beBee - Your next job or your next client is here</title>
+  <title>beBee - Create account</title>
   <style>
     :root {
       --primary: #ff9900;
@@ -14,357 +14,168 @@
       --border: #e4e6eb;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); line-height: 1.5; }
+    body { background-color: var(--bg); color: var(--text); line-height: 1.5; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 40px 15px; }
+    
+    .auth-container { width: 100%; max-width: 440px; background: #ffffff; padding: 20px 8px; }
+    .logo-area { text-align: center; margin-bottom: 24px; }
+    .logo-text { font-size: 26px; font-weight: 800; color: var(--text); text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
+    .logo-text span { color: var(--primary); }
+    
+    h1 { font-size: 24px; font-weight: 700; margin-bottom: 4px; color: var(--text); }
+    .subtext { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+    .subtext a { color: var(--primary); font-weight: 600; text-decoration: none; }
+    
+    label { display: block; font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    .form-group { margin-bottom: 16px; }
+    
+    .input-wrapper { position: relative; display: flex; align-items: center; }
+    .input-wrapper span.icon { position: absolute; left: 14px; color: var(--text-muted); font-size: 15px; }
+    .input-wrapper input { width: 100%; padding: 11px 12px 11px 38px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; transition: border-color 0.2s; background: #fff; }
+    .input-wrapper input:focus { border-color: var(--primary); }
+    
+    input.plain-input { width: 100%; padding: 11px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; background: #fff; }
+    input.plain-input:focus { border-color: var(--primary); }
 
-    /* Navbar */
-    .navbar { background: #ffffff; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
-    .nav-container { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 14px 24px; }
-    .logo { font-size: 24px; font-weight: 800; color: var(--text); text-decoration: none; display: flex; align-items: center; gap: 4px; }
-    .nav-links { display: flex; gap: 24px; align-items: center; }
-    .nav-links a { text-decoration: none; color: var(--text-muted); font-size: 14px; font-weight: 500; }
-    .nav-links a:hover { color: var(--primary); }
-    .auth-btns { display: flex; gap: 10px; }
-    .btn { padding: 8px 18px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: 0.2s ease; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
-    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
-    .btn-outline:hover { background: #f0f0f0; }
-    .btn-primary { background: var(--primary); color: #fff; }
+    .name-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    
+    .terms-row { display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: var(--text-muted); margin-bottom: 20px; }
+    .terms-row input { margin-top: 2px; accent-color: var(--primary); width: 16px; height: 16px; }
+    .terms-row a { color: #d97706; text-decoration: none; }
+
+    .social-btn { width: 100%; padding: 11px; border: 1px solid var(--border); border-radius: 8px; background: white; font-size: 14px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; transition: background 0.2s; }
+    .social-btn:hover { background: #f8f9fa; }
+    
+    .divider { display: flex; align-items: center; text-align: center; margin: 20px 0; color: #9ca3af; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
+    .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--border); }
+    .divider::before { margin-right: .8em; }
+    .divider::after { margin-left: .8em; }
+
+    .role-selector { display: flex; align-items: center; background: #fffbf5; border: 1px solid #fed7aa; border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; gap: 10px; }
+    .role-icon { background: var(--primary); color: white; width: 24px; height: 24px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+    .role-title { font-size: 14px; font-weight: 600; color: var(--text); }
+
+    .btn-primary { width: 100%; background: var(--primary); color: white; border: none; padding: 13px; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; transition: background 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 6px; }
     .btn-primary:hover { background: var(--primary-dark); }
 
-    /* Spinner Animation */
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    .spinner { width: 14px; height: 14px; border: 2px solid #ffffff; border-top: 2px solid transparent; border-radius: 50%; animation: spin 0.8s linear infinite; display: inline-block; }
+    .spinner { width: 16px; height: 16px; border: 2px solid #ffffff; border-top: 2px solid transparent; border-radius: 50%; animation: spin 0.8s linear infinite; display: inline-block; }
 
-    /* Hero Section */
-    .hero { background: radial-gradient(circle at top, #fff5e6 0%, #fcfcfc 70%); padding: 60px 20px 40px; text-align: center; }
-    .hero h1 { font-size: 42px; font-weight: 800; margin-bottom: 12px; color: #111; letter-spacing: -0.5px; }
-    .hero p { font-size: 16px; color: var(--text-muted); margin-bottom: 30px; }
-    
-    .hero-tabs { display: inline-flex; background: #f0f2f5; padding: 4px; border-radius: 8px; gap: 4px; margin-bottom: 40px; }
-    .tab-btn { background: transparent; border: none; padding: 8px 20px; font-size: 14px; font-weight: 600; border-radius: 6px; cursor: pointer; color: var(--text-muted); }
-    .tab-btn.active { background: var(--primary); color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-
-    /* Radar Box Container */
-    .radar-wrapper { max-width: 760px; margin: 0 auto; background: #18181b; color: white; border-radius: 16px; padding: 30px; text-align: left; box-shadow: 0 20px 40px rgba(0,0,0,0.15); position: relative; }
-    .radar-badge { background: #27272a; color: #fbbf24; font-size: 11px; font-weight: bold; padding: 4px 10px; border-radius: 20px; display: inline-block; margin-bottom: 12px; text-transform: uppercase; }
-    .radar-wrapper h3 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
-    .radar-wrapper p { font-size: 14px; color: #a1a1aa; margin-bottom: 20px; }
-    .radar-btn { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; }
-    
-    .radar-inner-card { background: white; color: var(--text); border-radius: 12px; padding: 20px; margin-top: 20px; }
-    .radar-inner-card h4 { font-size: 16px; margin-bottom: 6px; }
-    .radar-inner-card p { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; }
-    .alert-box { background: #fff7ed; border: 1px solid #ffedd5; border-radius: 8px; padding: 12px; font-size: 13px; color: #c2410c; font-weight: 500; display: flex; align-items: center; gap: 8px; }
-
-    /* Main Content Layout Sections */
-    .main-wrapper { max-width: 1000px; margin: 50px auto; padding: 0 20px; }
-    
-    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 50px; }
-    .card-item { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-    .card-item h4 { font-size: 15px; margin-bottom: 4px; }
-    .card-item p { font-size: 13px; color: var(--text-muted); margin-bottom: 10px; }
-    .card-link { font-size: 13px; color: var(--primary); font-weight: 600; text-decoration: none; }
-
-    .section-title { text-align: center; font-size: 22px; font-weight: 700; margin-bottom: 24px; }
-
-    /* Popular Professions Tags */
-    .professions-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 60px; }
-    .profession-tag { background: white; border: 1px solid var(--border); padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 500; cursor: pointer; color: var(--text); transition: 0.2s; }
-    .profession-tag:hover { border-color: var(--primary); color: var(--primary); }
-
-    /* CV Section Banner */
-    .cv-banner { background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border: 1px solid #fde68a; border-radius: 16px; padding: 30px; margin-bottom: 60px; }
-    .cv-banner h3 { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
-    .cv-banner p { font-size: 14px; color: #78350f; margin-bottom: 16px; }
-
-    /* Footer */
-    footer { background: #f8f9fa; border-top: 1px solid var(--border); padding: 50px 20px; font-size: 13px; color: var(--text-muted); }
-    .footer-grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 30px; margin-bottom: 40px; }
-    .footer-col h5 { color: var(--text); font-size: 14px; margin-bottom: 12px; font-weight: 600; }
-    .footer-col ul { list-style: none; }
-    .footer-col ul li { margin-bottom: 8px; }
-    .footer-col ul li a { text-decoration: none; color: var(--text-muted); }
-    .footer-col ul li a:hover { color: var(--primary); }
-
-    /* Modals */
-    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; justify-content: center; align-items: center; padding: 20px; }
-    .modal.active { display: flex; }
-    .modal-content { background: white; width: 100%; max-width: 420px; border-radius: 12px; padding: 24px; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-    .close-modal { position: absolute; right: 16px; top: 16px; border: none; background: none; font-size: 20px; cursor: pointer; color: var(--text-muted); }
     .hidden { display: none !important; }
-    
-    .modal input { width: 100%; padding: 10px 12px; margin-bottom: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; }
-    .modal input:focus { border-color: var(--primary); }
-    .link-btn { background: none; border: none; color: #0284c7; cursor: pointer; font-size: 13px; text-decoration: underline; margin-top: 8px; display: inline-block; }
-    #authStatus { font-size: 13px; font-weight: bold; margin-top: 12px; text-align: center; }
+    #authStatus { font-size: 13px; font-weight: bold; margin-top: 14px; text-align: center; }
 
-    /* OTP Inputs */
-    .otp-boxes { display: flex; gap: 8px; justify-content: center; margin: 16px 0; }
+    /* OTP Screen Styling */
+    .otp-container { text-align: center; padding-top: 20px; }
+    .otp-boxes { display: flex; gap: 8px; justify-content: center; margin: 20px 0; }
     .otp-box { width: 45px; height: 50px; text-align: center; font-size: 22px; font-weight: bold; border: 1px solid var(--border); border-radius: 6px; outline: none; }
     .otp-box:focus { border-color: var(--primary); }
   </style>
 </head>
 <body>
 
-  <!-- Navbar -->
-  <header class="navbar">
-    <div class="nav-container">
-      <a href="#" class="logo">🐝 beBee</a>
-      <nav class="nav-links">
-        <a href="#">Jobs</a>
-        <a href="#">Services</a>
-        <a href="#">People</a>
-      </nav>
-      <div class="auth-btns" id="authNavButtons">
-        <button class="btn btn-outline" onclick="openAuthModal('login')">Log in</button>
-        <button class="btn btn-primary" onclick="openAuthModal('register')">Sign up</button>
-      </div>
-    </div>
-  </header>
-
-  <!-- Hero Section matching screenshot -->
-  <section class="hero">
-    <h1>Your next job or your next client is here</h1>
-    <p>Find professionals, offer services, connect and grow business.</p>
-    
-    <div class="hero-tabs">
-      <button class="tab-btn active">Dashboard</button>
-      <button class="tab-btn">Search jobs</button>
-      <button class="tab-btn">Find talent</button>
+  <div class="auth-container">
+    <div class="logo-area">
+      <a href="#" class="logo-text">🐝 be<span>Bee</span></a>
     </div>
 
-    <!-- beBee Radar Box -->
-    <div class="radar-wrapper">
-      <span class="radar-badge">✨ beBee Radar</span>
-      <h3>It's a hiring signal: it's a job your team can win.</h3>
-      <p>Discover hot leads, find live buyer updates, and track your business pipeline in real-time.</p>
-      <button class="radar-btn" onclick="openAuthModal('register')">Find Live Leads</button>
+    <!-- REGISTER SCREEN -->
+    <div id="registerScreen">
+      <h1>Create account</h1>
+      <div class="subtext">Already have an account? <a href="#" onclick="alert('Switch to Login view')">Log in</a></div>
 
-      <div class="radar-inner-card">
-        <h4>First prospect worth investigating</h4>
-        <p>Enterprise software provider hiring 12+ developers for upcoming remote scaling project across Africa.</p>
-        <div class="alert-box">
-          <span>⚡</span> Active request for proposal (RFP) open now
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Secondary Sections -->
-  <main class="main-wrapper">
-    <div class="grid-4">
-      <div class="card-item">
-        <h4>Employment</h4>
-        <p>Find your next role across major hubs.</p>
-        <a href="#" class="card-link" onclick="openAuthModal('register')">Explore jobs →</a>
-      </div>
-      <div class="card-item">
-        <h4>Services</h4>
-        <p>Offer and discover professional services.</p>
-        <a href="#" class="card-link" onclick="openAuthModal('register')">Explore services →</a>
-      </div>
-      <div class="card-item">
-        <h4>People</h4>
-        <p>Connect directly with decision makers.</p>
-        <a href="#" class="card-link" onclick="openAuthModal('register')">Find people →</a>
-      </div>
-      <div class="card-item">
-        <h4>Post a Project</h4>
-        <p>Get fast quotes from vetted specialists.</p>
-        <a href="#" class="card-link" onclick="openAuthModal('register')">Post need →</a>
-      </div>
-    </div>
-
-    <h3 class="section-title">Popular professions</h3>
-    <div class="professions-container">
-      <div class="profession-tag">Technology</div>
-      <div class="profession-tag">Marketing</div>
-      <div class="profession-tag">Business</div>
-      <div class="profession-tag">Architect</div>
-      <div class="profession-tag">Design</div>
-      <div class="profession-tag">Engineer</div>
-      <div class="profession-tag">Finance</div>
-      <div class="profession-tag">Sales</div>
-      <div class="profession-tag">Writer</div>
-      <div class="profession-tag">Consultancy</div>
-      <div class="profession-tag">Printing</div>
-      <div class="profession-tag">Woodwork</div>
-    </div>
-
-    <!-- CV Banner -->
-    <div class="cv-banner">
-      <h3>Build a CV that lands interviews</h3>
-      <p>Stand out to recruiters with professional AI-tailored formats built for modern hiring standards.</p>
-      <button class="btn btn-primary" style="width: auto;" onclick="openAuthModal('register')">Build CV with AI</button>
-    </div>
-  </main>
-
-  <!-- Footer -->
-  <footer>
-    <div class="footer-grid">
-      <div class="footer-col">
-        <h5>beBee</h5>
-        <ul>
-          <li><a href="#">About us</a></li>
-          <li><a href="#">Careers</a></li>
-          <li><a href="#">Press</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h5>Explore</h5>
-        <ul>
-          <li><a href="#">Jobs</a></li>
-          <li><a href="#">Services</a></li>
-          <li><a href="#">Talent Directory</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h5>Resources</h5>
-        <ul>
-          <li><a href="#">Help Center</a></li>
-          <li><a href="#">Privacy Policy</a></li>
-          <li><a href="#">Terms of Use</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h5>Connect</h5>
-        <ul>
-          <li><a href="#">LinkedIn</a></li>
-          <li><a href="#">Twitter / X</a></li>
-          <li><a href="#">Contact Support</a></li>
-        </ul>
-      </div>
-    </div>
-    <div style="text-align: center; color: var(--text-muted); font-size: 12px;">
-      &copy; 2026 beBee Nigeria. All rights reserved.
-    </div>
-  </footer>
-
-  <!-- AUTHENTICATION MODAL -->
-  <div class="modal" id="authModal">
-    <div class="modal-content">
-      <button class="close-modal" onclick="closeAuthModal()">✕</button>
-
-      <!-- Main Login / Sign up Forms -->
-      <div id="mainAuthFields">
-        <h2 id="modalTitle" style="margin-bottom:6px; font-size:20px;">Log in to beBee</h2>
-        <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px;">Access your job feeds, alerts, and professional network.</p>
-        
-        <input type="text" id="userName" placeholder="Full Name" style="display:none;" />
-        <input type="email" id="userEmail" placeholder="Email Address" required />
-        <input type="password" id="userPassword" placeholder="Password" required />
-        
-        <button id="authPrimaryBtn" class="btn btn-primary" style="width:100%; justify-content:center;" onclick="handleAuthSubmit()">Log In</button>
-        
-        <div style="display:flex; justify-content:space-between; margin-top:12px;">
-          <button class="link-btn" id="toggleAuthModeBtn" onclick="switchModalMode()">Don't have an account? Sign up</button>
-          <button class="link-btn" onclick="showForgotPasswordUI()">Forgot password?</button>
+      <div class="form-group">
+        <label>Location</label>
+        <div class="input-wrapper">
+          <span class="icon">📍</span>
+          <input type="text" id="regLocation" placeholder="City..." />
         </div>
       </div>
 
-      <!-- OTP Verification Step -->
-      <div id="verifyRegisterFields" class="hidden">
-        <h2 style="font-size:20px; margin-bottom:6px;">Enter Verification Code</h2>
-        <p style="font-size:13px; color:var(--text-muted); margin-bottom:12px;">We sent a 6-digit code to your email.</p>
-        
-        <div class="otp-boxes" id="otpBoxes">
-          <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 0)" onkeydown="handleOtpKeyDown(event, 0)" />
-          <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 1)" onkeydown="handleOtpKeyDown(event, 1)" />
-          <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 2)" onkeydown="handleOtpKeyDown(event, 2)" />
-          <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 3)" onkeydown="handleOtpKeyDown(event, 3)" />
-          <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 4)" onkeydown="handleOtpKeyDown(event, 4)" />
-          <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 5)" onkeydown="handleOtpKeyDown(event, 5)" />
-        </div>
-        
-        <button id="verifyOtpBtn" class="btn btn-primary" style="width:100%; justify-content:center;" onclick="verifyRegistrationOTP()">Verify Email & Log In</button>
+      <div class="terms-row">
+        <input type="checkbox" id="termsCheck" checked />
+        <span>By creating your account, you agree to the <a href="#">Terms of Use</a> and <a href="#">Privacy Policy</a>.</span>
       </div>
 
-      <!-- Forgot Password Section -->
-      <div id="forgotPasswordFields" class="hidden">
-        <h2 style="font-size:20px; margin-bottom:6px;">Reset Password</h2>
-        <p style="font-size:13px; color:var(--text-muted); margin-bottom:12px;">Enter your email to receive recovery details.</p>
-        
-        <input type="email" id="resetEmail" placeholder="Your Registered Email" />
-        <button id="resetCodeBtn" class="btn btn-primary" style="width:100%; justify-content:center;" onclick="requestResetOTP()">Send Reset Code</button>
-        
-        <div id="resetOtpContainer" class="hidden" style="margin-top:12px;">
-          <input type="text" id="resetOtpCode" placeholder="Enter 6-digit Code" maxlength="6" />
-          <input type="password" id="newPassword" placeholder="New Password" />
-          <button id="confirmResetBtn" class="btn btn-primary" style="width:100%; justify-content:center; background:#22c55e;" onclick="verifyResetOTP()">Confirm New Password</button>
-        </div>
-        <button class="link-btn" onclick="showMainAuthUI()">Back to login</button>
+      <button class="social-btn" onclick="alert('Google Auth')">
+        <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.13 0-5.78-2.11-6.73-4.96H1.18v3.15C3.15 21.32 7.23 24 12 24z"/><path fill="#FBBC05" d="M5.27 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.6H1.18C.43 8.12 0 9.8 0 12s.43 3.88 1.18 5.4l4.09-3.16z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.23 0 3.15 2.68 1.18 6.6l4.09 3.15c.95-2.85 3.6-4.96 6.73-4.96z"/></svg>
+        Continue with Google
+      </button>
+
+      <button class="social-btn" onclick="alert('LinkedIn Auth')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="#0a66c2"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+        Continue with LinkedIn
+      </button>
+
+      <div class="divider">Or continue with</div>
+
+      <div class="role-selector">
+        <div class="role-icon">💼</div>
+        <div class="role-title">Talent</div>
       </div>
 
-      <p id="authStatus"></p>
+      <form id="createAccountForm" onsubmit="handleInitialRegister(event)">
+        <div class="name-row form-group">
+          <div>
+            <label>First name</label>
+            <div class="input-wrapper">
+              <span class="icon">👤</span>
+              <input type="text" id="firstName" placeholder="First name" required />
+            </div>
+          </div>
+          <div>
+            <label>Last name</label>
+            <input type="text" id="lastName" class="plain-input" placeholder="Last name" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Email</label>
+          <div class="input-wrapper">
+            <span class="icon">✉️</span>
+            <input type="email" id="userEmail" placeholder="email@example.com" required />
+          </div>
+        </div>
+
+        <div class="name-row form-group">
+          <div>
+            <label>Password</label>
+            <div class="input-wrapper">
+              <span class="icon">🔒</span>
+              <input type="password" id="userPassword" placeholder="Password" required />
+            </div>
+          </div>
+          <div>
+            <label>Confirm password</label>
+            <div class="input-wrapper">
+              <span class="icon">🔒</span>
+              <input type="password" id="confirmPassword" placeholder="Confirm password" required />
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" id="signupBtn" class="btn-primary">Sign up</button>
+      </form>
     </div>
+
+    <!-- OTP VERIFICATION SCREEN -->
+    <div id="verifyScreen" class="otp-container hidden">
+      <h1>Enter Verification Code</h1>
+      <p class="subtext">We sent a 6-digit confirmation code to your email.</p>
+      <div class="otp-boxes" id="otpBoxes">
+        <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 0)" onkeydown="handleOtpKeyDown(event, 0)" />
+        <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 1)" onkeydown="handleOtpKeyDown(event, 1)" />
+        <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 2)" onkeydown="handleOtpKeyDown(event, 2)" />
+        <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 3)" onkeydown="handleOtpKeyDown(event, 3)" />
+        <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 4)" onkeydown="handleOtpKeyDown(event, 4)" />
+        <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 5)" onkeydown="handleOtpKeyDown(event, 5)" />
+      </div>
+      <button id="verifyOtpBtn" class="btn-primary" onclick="verifyRegistrationOTP()">Verify Email & Log In</button>
+    </div>
+
+    <p id="authStatus"></p>
   </div>
 
   <script>
-    let token = localStorage.getItem('jwt_token') || '';
-    let currentAuthMode = 'login';
     const API_BASE = '';
-
-    function updateNavState() {
-      if (token) {
-        document.getElementById('authNavButtons').innerHTML = `
-          <span style="font-size: 13px; color: var(--text-muted); align-self: center;">Active Session</span>
-          <button class="btn btn-outline" onclick="logout()">Log out</button>
-        `;
-      } else {
-        document.getElementById('authNavButtons').innerHTML = `
-          <button class="btn btn-outline" onclick="openAuthModal('login')">Log in</button>
-          <button class="btn btn-primary" onclick="openAuthModal('register')">Sign up</button>
-        `;
-      }
-    }
-    updateNavState();
-
-    function logout() {
-      localStorage.removeItem('jwt_token');
-      token = '';
-      updateNavState();
-    }
-
-    function openAuthModal(mode) {
-      currentAuthMode = mode;
-      document.getElementById('authModal').classList.add('active');
-      showMainAuthUI();
-      const btn = document.getElementById('authPrimaryBtn');
-      const nameInput = document.getElementById('userName');
-      const toggleBtn = document.getElementById('toggleAuthModeBtn');
-
-      if (mode === 'login') {
-        document.getElementById('modalTitle').innerText = 'Log in to beBee';
-        nameInput.style.display = 'none';
-        btn.innerText = 'Log In';
-        toggleBtn.innerText = "Don't have an account? Sign up";
-      } else {
-        document.getElementById('modalTitle').innerText = 'Create your account';
-        nameInput.style.display = 'block';
-        btn.innerText = 'Sign Up';
-        toggleBtn.innerText = "Already have an account? Log in";
-      }
-    }
-
-    function closeAuthModal() {
-      document.getElementById('authModal').classList.remove('active');
-    }
-
-    function switchModalMode() {
-      openAuthModal(currentAuthMode === 'login' ? 'register' : 'login');
-    }
-
-    function showForgotPasswordUI() {
-      document.getElementById('mainAuthFields').classList.add('hidden');
-      document.getElementById('forgotPasswordFields').classList.remove('hidden');
-      document.getElementById('authStatus').innerText = '';
-    }
-
-    function showMainAuthUI() {
-      document.getElementById('mainAuthFields').classList.remove('hidden');
-      document.getElementById('forgotPasswordFields').classList.add('hidden');
-      document.getElementById('verifyRegisterFields').classList.add('hidden');
-      document.getElementById('authStatus').innerText = '';
-    }
 
     function handleOtpInput(element, index) {
       const value = element.value;
@@ -382,40 +193,35 @@
       }
     }
 
-    async function handleAuthSubmit() {
-      if (currentAuthMode === 'register') {
-        await requestRegistrationOTP();
-      } else {
-        await handleLogin();
-      }
-    }
-
-    // Sign Up Request with spinner
-    async function requestRegistrationOTP() {
-      const btn = document.getElementById('authPrimaryBtn');
-      const name = document.getElementById('userName').value;
+    async function handleInitialRegister(e) {
+      e.preventDefault();
+      const btn = document.getElementById('signupBtn');
+      const firstName = document.getElementById('firstName').value;
+      const lastName = document.getElementById('lastName').value;
       const email = document.getElementById('userEmail').value;
       const password = document.getElementById('userPassword').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
 
-      if (!name || !email || !password) {
-        setAuthStatus('Please fill out all fields.', true);
+      if (password !== confirmPassword) {
+        setAuthStatus('Passwords do not match.', true);
         return;
       }
 
       btn.disabled = true;
-      btn.innerHTML = `<span class="spinner"></span> Sign Up...`;
+      btn.innerHTML = `<span class="spinner"></span> Sign up...`;
 
       try {
         const res = await fetch(`${API_BASE}/api/register/request-otp`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, email, password })
+          body: JSON.stringify({ name: `${firstName} ${lastName}`, email, password })
         });
         const data = await res.json();
+        
         if (res.ok) {
-          document.getElementById('mainAuthFields').classList.add('hidden');
-          document.getElementById('verifyRegisterFields').classList.remove('hidden');
-          setAuthStatus(data.message || 'Verification code sent!', false);
+          document.getElementById('registerScreen').classList.add('hidden');
+          document.getElementById('verifyScreen').classList.remove('hidden');
+          setAuthStatus(data.message || 'Verification code sent to your email', false);
         } else {
           setAuthStatus(data.error || 'Registration failed.', true);
         }
@@ -423,11 +229,10 @@
         setAuthStatus('Network error. Please try again.', true);
       } finally {
         btn.disabled = false;
-        btn.innerHTML = 'Sign Up';
+        btn.innerHTML = 'Sign up';
       }
     }
 
-    // OTP Verify Action: Spins/rotates regardless of correct/wrong input outcome
     async function verifyRegistrationOTP() {
       const btn = document.getElementById('verifyOtpBtn');
       const email = document.getElementById('userEmail').value;
@@ -435,7 +240,7 @@
       const code = Array.from(boxes).map(b => b.value).join('');
 
       if (code.length < 6) {
-        setAuthStatus('Please fill out all 6 digits of the code.', true);
+        setAuthStatus('Please fill out all 6 digits of the verification code.', true);
         return;
       }
 
@@ -451,115 +256,17 @@
         const data = await res.json();
         
         if (res.ok) {
-          token = data.token;
-          localStorage.setItem('jwt_token', token);
-          closeAuthModal();
-          updateNavState();
+          localStorage.setItem('jwt_token', data.token);
           setAuthStatus('Account verified successfully!', false);
+          setTimeout(() => { alert('Welcome to beBee! Registration complete.'); }, 1000);
         } else {
-          setAuthStatus(data.error || 'Invalid code entered.', true);
+          setAuthStatus(data.error || 'Invalid verification code.', true);
         }
       } catch(err) {
         setAuthStatus('Network error. Please try again.', true);
       } finally {
         btn.disabled = false;
         btn.innerHTML = 'Verify Email & Log In';
-      }
-    }
-
-    // Login Action with spinner
-    async function handleLogin() {
-      const btn = document.getElementById('authPrimaryBtn');
-      const email = document.getElementById('userEmail').value;
-      const password = document.getElementById('userPassword').value;
-
-      if (!email || !password) {
-        setAuthStatus('Please enter email and password.', true);
-        return;
-      }
-
-      btn.disabled = true;
-      btn.innerHTML = `<span class="spinner"></span> Log in...`;
-
-      try {
-        const res = await fetch(`${API_BASE}/api/login`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password })
-        });
-        const data = await res.json();
-        if (res.ok) {
-          token = data.token;
-          localStorage.setItem('jwt_token', token);
-          closeAuthModal();
-          updateNavState();
-        } else {
-          setAuthStatus(data.error || 'Invalid credentials.', true);
-        }
-      } catch(err) {
-        setAuthStatus('Network error. Please try again.', true);
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = 'Log In';
-      }
-    }
-
-    async function requestResetOTP() {
-      const btn = document.getElementById('resetCodeBtn');
-      const email = document.getElementById('resetEmail').value;
-      if (!email) { setAuthStatus('Enter email address.', true); return; }
-
-      btn.disabled = true;
-      btn.innerHTML = `<span class="spinner"></span> Send Reset Code...`;
-
-      try {
-        const res = await fetch(`${API_BASE}/api/forgot-password/request-otp`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email })
-        });
-        const data = await res.json();
-        if (res.ok) {
-          document.getElementById('resetOtpContainer').classList.remove('hidden');
-          setAuthStatus(data.message || 'Reset code sent.', false);
-        } else {
-          setAuthStatus(data.error || 'Email not found', true);
-        }
-      } catch (err) {
-        setAuthStatus('Network error.', true);
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = 'Send Reset Code';
-      }
-    }
-
-    async function verifyResetOTP() {
-      const btn = document.getElementById('confirmResetBtn');
-      const email = document.getElementById('resetEmail').value;
-      const code = document.getElementById('resetOtpCode').value;
-      const newPassword = document.getElementById('newPassword').value;
-
-      btn.disabled = true;
-      btn.innerHTML = `<span class="spinner"></span> Updating...`;
-
-      try {
-        const res = await fetch(`${API_BASE}/api/forgot-password/verify-otp`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, code, newPassword })
-        });
-        const data = await res.json();
-        if (res.ok) {
-          setAuthStatus('Password updated successfully! Please log in.', false);
-          setTimeout(() => showMainAuthUI(), 1500);
-        } else {
-          setAuthStatus(data.error || 'Failed to update.', true);
-        }
-      } catch(err) {
-        setAuthStatus('Network error.', true);
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = 'Confirm New Password';
       }
     }
 
