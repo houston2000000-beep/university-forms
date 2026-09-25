@@ -1,9 +1,10 @@
-const http = require('http');
+Const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const { URL } = require('url');
-
+const { Resend } = require('resend');
+const resend = new Resend(process.env.RESEND_API_KEY);
 const PORT = process.env.PORT || 3000;
 const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
 const JWT_SECRET = process.env.JWT_SECRET || 'forge-secret-change-me';
@@ -180,6 +181,21 @@ const server = http.createServer(async (req, res) => {
       res.writeHead(200, { 'Content-Type': 'application/xml' });
       return res.end(xml);
     }
+    if (p === '/api/send-email' && req.method === 'POST') {
+      const body = await readBody(req);
+      try {
+        const response = await resend.emails.send({
+          from: 'onboarding@resend.dev',
+          to: body.recipientEmail,
+          subject: `New Form Submission: ${body.formType}`,
+          html: `<p><strong>Details:</strong></p><pre>${JSON.stringify(body.formData, null, 2)}</pre>`
+        });
+        return json(res, 200, { success: true, response });
+      } catch (err) {
+        return json(res, 500, { error: err.message });
+      }
+    }
+
     serveStatic(req, res, p);
   } catch (err) {
     console.error(err);
