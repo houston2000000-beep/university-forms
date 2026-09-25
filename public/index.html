@@ -292,7 +292,6 @@
       }
     }
 
-    // Spin loader for registration request
     async function requestRegistrationOTP() {
       const btn = document.getElementById('authPrimaryBtn');
       const name = document.getElementById('userName').value;
@@ -329,6 +328,7 @@
       }
     }
 
+    // Spinner will show during verification check whether code is correct or wrong[span_1](start_span)[span_1](end_span)
     async function verifyRegistrationOTP() {
       const btn = document.getElementById('verifyOtpBtn');
       const email = document.getElementById('userEmail').value;
@@ -340,6 +340,7 @@
         return;
       }
 
+      // Activate spinning loader animation on verify button
       btn.disabled = true;
       btn.innerHTML = `<span class="spinner"></span> Verifying...`;
 
@@ -350,6 +351,7 @@
           body: JSON.stringify({ email, code })
         });
         const data = await res.json();
+        
         if (res.ok) {
           token = data.token;
           localStorage.setItem('jwt_token', token);
@@ -362,12 +364,12 @@
       } catch(err) {
         setAuthStatus('Network error. Please try again.', true);
       } finally {
+        // Restore button state after outcome is delivered
         btn.disabled = false;
         btn.innerHTML = 'Verify Email & Log In';
       }
     }
 
-    // Spin loader for Login action
     async function handleLogin() {
       const btn = document.getElementById('authPrimaryBtn');
       const email = document.getElementById('userEmail').value;
@@ -404,7 +406,6 @@
       }
     }
 
-    // Spin loader for Reset Code action
     async function requestResetOTP() {
       const btn = document.getElementById('resetCodeBtn');
       const email = document.getElementById('resetEmail').value;
@@ -522,7 +523,6 @@
 
     const jobFormEl = document.getElementById('jobForm');
     if (jobFormEl) {
-      jobFormEl.button = jobFormEl.querySelector('button[type="submit"]');
       jobFormEl.addEventListener('submit', async (e) => {
         e.preventDefault();
         if (!token) {
