@@ -236,4 +236,4 @@ a:hover { color: var(--accent-hover); }
   background: var(--primary); color: #fff;
   padding: 0.75rem 1.2rem; border-radius: var(--radius-sm);
   font-size: 0.875rem; z-index: 200; box-shadow: var(--shadow-lg);
-}
+  }
