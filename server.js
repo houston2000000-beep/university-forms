@@ -1,6 +1,6 @@
 const http = require('http');
 const fs = require('fs');
-const path = path = require('path');
+const path = require('path');
 const crypto = require('crypto');
 const { URL } = require('url');
 const { Resend } = require('resend');
@@ -102,7 +102,6 @@ const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, BASE_URL);
   const p = url.pathname;
   try {
-    // --- 1. REGISTRATION STEP 1: Send Registration OTP ---
     if (p === '/api/register/request-otp' && req.method === 'POST') {
       const body = await readBody(req);
       const { email, password, name } = body;
@@ -133,7 +132,6 @@ const server = http.createServer(async (req, res) => {
       }
     }
 
-    // --- 2. REGISTRATION STEP 2: Verify OTP and Create Account ---
     if (p === '/api/register/verify-otp' && req.method === 'POST') {
       const body = await readBody(req);
       const { email, code } = body;
@@ -164,7 +162,6 @@ const server = http.createServer(async (req, res) => {
       return json(res, 201, { token, user: { id: user.id, email: user.email, name: user.name } });
     }
 
-    // --- 3. FORGOT PASSWORD STEP 1: Send Reset OTP ---
     if (p === '/api/forgot-password/request-otp' && req.method === 'POST') {
       const body = await readBody(req);
       const { email } = body;
@@ -194,7 +191,6 @@ const server = http.createServer(async (req, res) => {
       }
     }
 
-    // --- 4. FORGOT PASSWORD STEP 2: Verify OTP and Reset Password ---
     if (p === '/api/forgot-password/verify-otp' && req.method === 'POST') {
       const body = await readBody(req);
       const { email, code, newPassword } = body;
@@ -221,7 +217,6 @@ const server = http.createServer(async (req, res) => {
       return json(res, 200, { message: 'Password reset successfully. You can now log in.' });
     }
 
-    // --- 5. SMART LOGIN WITH GRANULAR CHECKS ---
     if (p === '/api/login' && req.method === 'POST') {
       const body = await readBody(req);
       const { email, password } = body;
