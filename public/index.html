@@ -3,25 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>beBee Nigeria - Jobs and Services</title>
+  <title>beBee - Your next job or your next client is here</title>
   <style>
     :root {
       --primary: #ff9900;
       --primary-dark: #e68a00;
-      --bg: #f4f6f8;
+      --bg: #fcfcfc;
       --text: #1c1e21;
       --text-muted: #65676b;
-      --border: #e0e0e0;
+      --border: #e4e6eb;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
     body { background-color: var(--bg); color: var(--text); line-height: 1.5; }
+
+    /* Navbar */
     .navbar { background: #ffffff; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
-    .nav-container { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; }
-    .logo { font-size: 26px; font-weight: 800; color: var(--text); text-decoration: none; display: flex; align-items: center; gap: 4px; }
-    .logo span { color: var(--primary); }
-    .logo-badge { background: #fff3e0; color: var(--primary-dark); font-size: 11px; font-weight: bold; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; margin-left: 6px; }
-    .nav-links { display: flex; gap: 20px; align-items: center; }
-    .nav-links a { text-decoration: none; color: var(--text-muted); font-size: 15px; font-weight: 500; }
+    .nav-container { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 14px 24px; }
+    .logo { font-size: 24px; font-weight: 800; color: var(--text); text-decoration: none; display: flex; align-items: center; gap: 4px; }
+    .nav-links { display: flex; gap: 24px; align-items: center; }
+    .nav-links a { text-decoration: none; color: var(--text-muted); font-size: 14px; font-weight: 500; }
     .nav-links a:hover { color: var(--primary); }
     .auth-btns { display: flex; gap: 10px; }
     .btn { padding: 8px 18px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: 0.2s ease; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
@@ -29,68 +29,86 @@
     .btn-outline:hover { background: #f0f0f0; }
     .btn-primary { background: var(--primary); color: #fff; }
     .btn-primary:hover { background: var(--primary-dark); }
-    
-    /* Spinner icon animation */
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    .spinner {
-      width: 14px;
-      height: 14px;
-      border: 2px solid #ffffff;
-      border-top: 2px solid transparent;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      display: inline-block;
-    }
 
-    .hero { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: white; padding: 60px 20px 80px; text-align: center; }
-    .hero h1 { font-size: 36px; font-weight: 800; margin-bottom: 12px; }
-    .hero p { font-size: 18px; color: #94a3b8; margin-bottom: 30px; }
-    .search-box { max-width: 800px; margin: 0 auto; background: white; padding: 8px; border-radius: 8px; display: flex; gap: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
-    .search-box input, .search-box select { border: none; padding: 12px 16px; font-size: 15px; width: 100%; outline: none; background: transparent; }
-    .search-divider { width: 1px; background: var(--border); margin: 8px 0; }
-    .search-box button { background: var(--primary); color: white; border: none; padding: 0 28px; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 15px; white-space: nowrap; }
-    .main-container { max-width: 1100px; margin: -40px auto 40px; padding: 0 20px; }
-    .grid-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 30px; }
-    .action-card { background: white; border-radius: 8px; padding: 20px; border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.04); text-align: left; }
-    .action-card h3 { font-size: 16px; margin-bottom: 6px; color: var(--text); }
-    .action-card p { font-size: 13px; color: var(--text-muted); }
-    .feed-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
-    @media (max-width: 768px) {
-      .feed-layout { grid-template-columns: 1fr; }
-      .search-box { flex-direction: column; }
-      .search-divider { display: none; }
-    }
-    .feed-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-    .feed-header h2 { font-size: 20px; font-weight: 700; }
-    .job-card { background: white; border-radius: 8px; padding: 20px; margin-bottom: 16px; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-    .job-card h3 { font-size: 18px; color: #0f172a; margin-bottom: 6px; }
-    .job-badge { display: inline-block; background: #e0f2fe; color: #0369a1; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 4px; margin-bottom: 10px; }
-    .job-meta { color: var(--text-muted); font-size: 14px; margin-bottom: 10px; display: flex; gap: 12px; flex-wrap: wrap; }
-    .job-desc { font-size: 14px; color: #334155; margin-bottom: 12px; }
-    .job-footer { font-size: 12px; color: #94a3b8; border-top: 1px solid #f1f5f9; padding-top: 10px; display: flex; justify-content: space-between; }
-    .sidebar-card { background: white; border-radius: 8px; padding: 20px; border: 1px solid var(--border); position: sticky; top: 80px; }
-    .sidebar-card h3 { font-size: 18px; margin-bottom: 14px; }
-    .sidebar-card input, .sidebar-card select, .sidebar-card textarea { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; outline: none; }
-    .sidebar-card button { width: 100%; }
+    /* Spinner Animation */
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .spinner { width: 14px; height: 14px; border: 2px solid #ffffff; border-top: 2px solid transparent; border-radius: 50%; animation: spin 0.8s linear infinite; display: inline-block; }
+
+    /* Hero Section */
+    .hero { background: radial-gradient(circle at top, #fff5e6 0%, #fcfcfc 70%); padding: 60px 20px 40px; text-align: center; }
+    .hero h1 { font-size: 42px; font-weight: 800; margin-bottom: 12px; color: #111; letter-spacing: -0.5px; }
+    .hero p { font-size: 16px; color: var(--text-muted); margin-bottom: 30px; }
+    
+    .hero-tabs { display: inline-flex; background: #f0f2f5; padding: 4px; border-radius: 8px; gap: 4px; margin-bottom: 40px; }
+    .tab-btn { background: transparent; border: none; padding: 8px 20px; font-size: 14px; font-weight: 600; border-radius: 6px; cursor: pointer; color: var(--text-muted); }
+    .tab-btn.active { background: var(--primary); color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+
+    /* Radar Box Container */
+    .radar-wrapper { max-width: 760px; margin: 0 auto; background: #18181b; color: white; border-radius: 16px; padding: 30px; text-align: left; box-shadow: 0 20px 40px rgba(0,0,0,0.15); position: relative; }
+    .radar-badge { background: #27272a; color: #fbbf24; font-size: 11px; font-weight: bold; padding: 4px 10px; border-radius: 20px; display: inline-block; margin-bottom: 12px; text-transform: uppercase; }
+    .radar-wrapper h3 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+    .radar-wrapper p { font-size: 14px; color: #a1a1aa; margin-bottom: 20px; }
+    .radar-btn { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; }
+    
+    .radar-inner-card { background: white; color: var(--text); border-radius: 12px; padding: 20px; margin-top: 20px; }
+    .radar-inner-card h4 { font-size: 16px; margin-bottom: 6px; }
+    .radar-inner-card p { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; }
+    .alert-box { background: #fff7ed; border: 1px solid #ffedd5; border-radius: 8px; padding: 12px; font-size: 13px; color: #c2410c; font-weight: 500; display: flex; align-items: center; gap: 8px; }
+
+    /* Main Content Layout Sections */
+    .main-wrapper { max-width: 1000px; margin: 50px auto; padding: 0 20px; }
+    
+    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 50px; }
+    .card-item { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+    .card-item h4 { font-size: 15px; margin-bottom: 4px; }
+    .card-item p { font-size: 13px; color: var(--text-muted); margin-bottom: 10px; }
+    .card-link { font-size: 13px; color: var(--primary); font-weight: 600; text-decoration: none; }
+
+    .section-title { text-align: center; font-size: 22px; font-weight: 700; margin-bottom: 24px; }
+
+    /* Popular Professions Tags */
+    .professions-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 60px; }
+    .profession-tag { background: white; border: 1px solid var(--border); padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 500; cursor: pointer; color: var(--text); transition: 0.2s; }
+    .profession-tag:hover { border-color: var(--primary); color: var(--primary); }
+
+    /* CV Section Banner */
+    .cv-banner { background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border: 1px solid #fde68a; border-radius: 16px; padding: 30px; margin-bottom: 60px; }
+    .cv-banner h3 { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+    .cv-banner p { font-size: 14px; color: #78350f; margin-bottom: 16px; }
+
+    /* Footer */
+    footer { background: #f8f9fa; border-top: 1px solid var(--border); padding: 50px 20px; font-size: 13px; color: var(--text-muted); }
+    .footer-grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 30px; margin-bottom: 40px; }
+    .footer-col h5 { color: var(--text); font-size: 14px; margin-bottom: 12px; font-weight: 600; }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 8px; }
+    .footer-col ul li a { text-decoration: none; color: var(--text-muted); }
+    .footer-col ul li a:hover { color: var(--primary); }
+
+    /* Modals */
     .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; justify-content: center; align-items: center; padding: 20px; }
     .modal.active { display: flex; }
-    .modal-content { background: white; width: 100%; max-width: 420px; border-radius: 8px; padding: 24px; position: relative; }
+    .modal-content { background: white; width: 100%; max-width: 420px; border-radius: 12px; padding: 24px; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
     .close-modal { position: absolute; right: 16px; top: 16px; border: none; background: none; font-size: 20px; cursor: pointer; color: var(--text-muted); }
-    .modal-content h2 { margin-bottom: 6px; }
-    .modal-content p { font-size: 14px; color: var(--text-muted); margin-bottom: 16px; }
-    .modal-content input { width: 100%; padding: 10px; margin-bottom: 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; }
-    .hidden { display: none; }
+    .hidden { display: none !important; }
+    
+    .modal input { width: 100%; padding: 10px 12px; margin-bottom: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; }
+    .modal input:focus { border-color: var(--primary); }
     .link-btn { background: none; border: none; color: #0284c7; cursor: pointer; font-size: 13px; text-decoration: underline; margin-top: 8px; display: inline-block; }
+    #authStatus { font-size: 13px; font-weight: bold; margin-top: 12px; text-align: center; }
+
+    /* OTP Inputs */
+    .otp-boxes { display: flex; gap: 8px; justify-content: center; margin: 16px 0; }
+    .otp-box { width: 45px; height: 50px; text-align: center; font-size: 22px; font-weight: bold; border: 1px solid var(--border); border-radius: 6px; outline: none; }
+    .otp-box:focus { border-color: var(--primary); }
   </style>
 </head>
 <body>
 
+  <!-- Navbar -->
   <header class="navbar">
     <div class="nav-container">
-      <a href="#" class="logo">beBee<span>.</span><span class="logo-badge">NG</span></a>
+      <a href="#" class="logo">🐝 beBee</a>
       <nav class="nav-links">
         <a href="#">Jobs</a>
         <a href="#">Services</a>
@@ -103,103 +121,180 @@
     </div>
   </header>
 
+  <!-- Hero Section matching screenshot -->
   <section class="hero">
-    <h1>Jobs and services in Nigeria</h1>
-    <p>Find job opportunities, professional services, and connections across Nigeria.</p>
-    <div class="search-box">
-      <input type="text" id="searchQuery" placeholder="Job title, skill, or company..." />
-      <div class="search-divider"></div>
-      <input type="text" id="searchLocation" placeholder="City or State (e.g. Lagos, Abuja)..." />
-      <button onclick="filterJobs()">Search</button>
+    <h1>Your next job or your next client is here</h1>
+    <p>Find professionals, offer services, connect and grow business.</p>
+    
+    <div class="hero-tabs">
+      <button class="tab-btn active">Dashboard</button>
+      <button class="tab-btn">Search jobs</button>
+      <button class="tab-btn">Find talent</button>
+    </div>
+
+    <!-- beBee Radar Box -->
+    <div class="radar-wrapper">
+      <span class="radar-badge">✨ beBee Radar</span>
+      <h3>It's a hiring signal: it's a job your team can win.</h3>
+      <p>Discover hot leads, find live buyer updates, and track your business pipeline in real-time.</p>
+      <button class="radar-btn" onclick="openAuthModal('register')">Find Live Leads</button>
+
+      <div class="radar-inner-card">
+        <h4>First prospect worth investigating</h4>
+        <p>Enterprise software provider hiring 12+ developers for upcoming remote scaling project across Africa.</p>
+        <div class="alert-box">
+          <span>⚡</span> Active request for proposal (RFP) open now
+        </div>
+      </div>
     </div>
   </section>
 
-  <main class="main-container">
-    <div class="grid-actions">
-      <div class="action-card"><h3>Employment</h3><p>Find your next role across top industries.</p></div>
-      <div class="action-card"><h3>Services</h3><p>Offer or find verified professional services.</p></div>
-      <div class="action-card"><h3>People</h3><p>Connect directly with talent and recruiters.</p></div>
-      <div class="action-card"><h3>Post a Need</h3><p>Get quotes and hire professionals fast.</p></div>
+  <!-- Secondary Sections -->
+  <main class="main-wrapper">
+    <div class="grid-4">
+      <div class="card-item">
+        <h4>Employment</h4>
+        <p>Find your next role across major hubs.</p>
+        <a href="#" class="card-link" onclick="openAuthModal('register')">Explore jobs →</a>
+      </div>
+      <div class="card-item">
+        <h4>Services</h4>
+        <p>Offer and discover professional services.</p>
+        <a href="#" class="card-link" onclick="openAuthModal('register')">Explore services →</a>
+      </div>
+      <div class="card-item">
+        <h4>People</h4>
+        <p>Connect directly with decision makers.</p>
+        <a href="#" class="card-link" onclick="openAuthModal('register')">Find people →</a>
+      </div>
+      <div class="card-item">
+        <h4>Post a Project</h4>
+        <p>Get fast quotes from vetted specialists.</p>
+        <a href="#" class="card-link" onclick="openAuthModal('register')">Post need →</a>
+      </div>
     </div>
 
-    <div class="feed-layout">
-      <div>
-        <div class="feed-header"><h2>Latest Job Opportunities</h2></div>
-        <div id="jobFeed"><p style="color: var(--text-muted);">Loading job postings...</p></div>
-      </div>
-      <div>
-        <div class="sidebar-card">
-          <div id="jobPostingContainer" class="hidden">
-            <h3>Post a Job Immediately</h3>
-            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Reach candidates across Nigeria instantly.</p>
-            <form id="jobForm">
-              <input type="text" id="title" placeholder="Job Title" required />
-              <input type="text" id="company" placeholder="Company Name" required />
-              <input type="text" id="location" placeholder="Location (e.g. Lekki, Lagos)" required />
-              <select id="type">
-                <option value="Full-time">Full-time</option>
-                <option value="Part-time">Part-time</option>
-                <option value="Contract">Contract</option>
-              </select>
-              <textarea id="description" placeholder="Job details & requirements..." rows="3" required></textarea>
-              <button type="submit" class="btn btn-primary">Publish Job Posting</button>
-            </form>
-          </div>
-          <div id="loginPromptContainer" style="text-align: center; padding: 10px 0;">
-            <h3>Post a Job</h3>
-            <p style="font-size: 13px; color: var(--text-muted); margin: 10px 0 16px;">Please log in or sign up to publish job opportunities.</p>
-            <button class="btn btn-primary" style="width: 100%;" onclick="openAuthModal('login')">Log In to Post</button>
-          </div>
-        </div>
-      </div>
+    <h3 class="section-title">Popular professions</h3>
+    <div class="professions-container">
+      <div class="profession-tag">Technology</div>
+      <div class="profession-tag">Marketing</div>
+      <div class="profession-tag">Business</div>
+      <div class="profession-tag">Architect</div>
+      <div class="profession-tag">Design</div>
+      <div class="profession-tag">Engineer</div>
+      <div class="profession-tag">Finance</div>
+      <div class="profession-tag">Sales</div>
+      <div class="profession-tag">Writer</div>
+      <div class="profession-tag">Consultancy</div>
+      <div class="profession-tag">Printing</div>
+      <div class="profession-tag">Woodwork</div>
+    </div>
+
+    <!-- CV Banner -->
+    <div class="cv-banner">
+      <h3>Build a CV that lands interviews</h3>
+      <p>Stand out to recruiters with professional AI-tailored formats built for modern hiring standards.</p>
+      <button class="btn btn-primary" style="width: auto;" onclick="openAuthModal('register')">Build CV with AI</button>
     </div>
   </main>
 
+  <!-- Footer -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-col">
+        <h5>beBee</h5>
+        <ul>
+          <li><a href="#">About us</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Press</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Explore</h5>
+        <ul>
+          <li><a href="#">Jobs</a></li>
+          <li><a href="#">Services</a></li>
+          <li><a href="#">Talent Directory</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Resources</h5>
+        <ul>
+          <li><a href="#">Help Center</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Use</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Connect</h5>
+        <ul>
+          <li><a href="#">LinkedIn</a></li>
+          <li><a href="#">Twitter / X</a></li>
+          <li><a href="#">Contact Support</a></li>
+        </ul>
+      </div>
+    </div>
+    <div style="text-align: center; color: var(--text-muted); font-size: 12px;">
+      &copy; 2026 beBee Nigeria. All rights reserved.
+    </div>
+  </footer>
+
+  <!-- AUTHENTICATION MODAL -->
   <div class="modal" id="authModal">
     <div class="modal-content">
       <button class="close-modal" onclick="closeAuthModal()">✕</button>
-      
+
+      <!-- Main Login / Sign up Forms -->
       <div id="mainAuthFields">
-        <h2 id="modalTitle">Welcome to beBee</h2>
-        <p>Log in or register to publish jobs and manage account details.</p>
-        <input type="text" id="userName" placeholder="Full Name (for new accounts)" />
-        <input type="email" id="userEmail" placeholder="Email Address" />
-        <input type="password" id="userPassword" placeholder="Password" />
-        <button id="authPrimaryBtn" class="btn btn-primary" style="width:100%; margin-top:6px;" onclick="handleAuthSubmit()">Log In</button>
-        <div style="text-align: center; margin-top: 10px;">
-          <button class="link-btn" onclick="showForgotPasswordUI()">Forgot Password?</button>
+        <h2 id="modalTitle" style="margin-bottom:6px; font-size:20px;">Log in to beBee</h2>
+        <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px;">Access your job feeds, alerts, and professional network.</p>
+        
+        <input type="text" id="userName" placeholder="Full Name" style="display:none;" />
+        <input type="email" id="userEmail" placeholder="Email Address" required />
+        <input type="password" id="userPassword" placeholder="Password" required />
+        
+        <button id="authPrimaryBtn" class="btn btn-primary" style="width:100%; justify-content:center;" onclick="handleAuthSubmit()">Log In</button>
+        
+        <div style="display:flex; justify-content:space-between; margin-top:12px;">
+          <button class="link-btn" id="toggleAuthModeBtn" onclick="switchModalMode()">Don't have an account? Sign up</button>
+          <button class="link-btn" onclick="showForgotPasswordUI()">Forgot password?</button>
         </div>
       </div>
 
-      <!-- 6-Compartment OTP Verification Form -->
+      <!-- OTP Verification Step -->
       <div id="verifyRegisterFields" class="hidden">
-        <h2>Enter Verification Code</h2>
-        <p>We sent a 6-digit confirmation code to your email.</p>
-        <div style="display: flex; gap: 8px; justify-content: center; margin-bottom: 16px;" id="otpBoxes">
-          <input type="text" maxlength="1" class="otp-box" style="width: 45px; height: 50px; text-align: center; font-size: 22px; font-weight: bold; border: 1px solid var(--border); border-radius: 6px;" oninput="handleOtpInput(this, 0)" onkeydown="handleOtpKeyDown(event, 0)" />
-          <input type="text" maxlength="1" class="otp-box" style="width: 45px; height: 50px; text-align: center; font-size: 22px; font-weight: bold; border: 1px solid var(--border); border-radius: 6px;" oninput="handleOtpInput(this, 1)" onkeydown="handleOtpKeyDown(event, 1)" />
-          <input type="text" maxlength="1" class="otp-box" style="width: 45px; height: 50px; text-align: center; font-size: 22px; font-weight: bold; border: 1px solid var(--border); border-radius: 6px;" oninput="handleOtpInput(this, 2)" onkeydown="handleOtpKeyDown(event, 2)" />
-          <input type="text" maxlength="1" class="otp-box" style="width: 45px; height: 50px; text-align: center; font-size: 22px; font-weight: bold; border: 1px solid var(--border); border-radius: 6px;" oninput="handleOtpInput(this, 3)" onkeydown="handleOtpKeyDown(event, 3)" />
-          <input type="text" maxlength="1" class="otp-box" style="width: 45px; height: 50px; text-align: center; font-size: 22px; font-weight: bold; border: 1px solid var(--border); border-radius: 6px;" oninput="handleOtpInput(this, 4)" onkeydown="handleOtpKeyDown(event, 4)" />
-          <input type="text" maxlength="1" class="otp-box" style="width: 45px; height: 50px; text-align: center; font-size: 22px; font-weight: bold; border: 1px solid var(--border); border-radius: 6px;" oninput="handleOtpInput(this, 5)" onkeydown="handleOtpKeyDown(event, 5)" />
+        <h2 style="font-size:20px; margin-bottom:6px;">Enter Verification Code</h2>
+        <p style="font-size:13px; color:var(--text-muted); margin-bottom:12px;">We sent a 6-digit code to your email.</p>
+        
+        <div class="otp-boxes" id="otpBoxes">
+          <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 0)" onkeydown="handleOtpKeyDown(event, 0)" />
+          <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 1)" onkeydown="handleOtpKeyDown(event, 1)" />
+          <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 2)" onkeydown="handleOtpKeyDown(event, 2)" />
+          <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 3)" onkeydown="handleOtpKeyDown(event, 3)" />
+          <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 4)" onkeydown="handleOtpKeyDown(event, 4)" />
+          <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 5)" onkeydown="handleOtpKeyDown(event, 5)" />
         </div>
-        <button id="verifyOtpBtn" class="btn btn-primary" style="width:100%;" onclick="verifyRegistrationOTP()">Verify Email & Log In</button>
+        
+        <button id="verifyOtpBtn" class="btn btn-primary" style="width:100%; justify-content:center;" onclick="verifyRegistrationOTP()">Verify Email & Log In</button>
       </div>
 
+      <!-- Forgot Password Section -->
       <div id="forgotPasswordFields" class="hidden">
-        <h2>Reset Password</h2>
-        <p>Enter your registered email to receive a reset code.</p>
-        <input type="email" id="resetEmail" placeholder="Your Email Address" />
-        <button id="resetCodeBtn" class="btn btn-primary" style="width:100%;" onclick="requestResetOTP()">Send Reset Code</button>
+        <h2 style="font-size:20px; margin-bottom:6px;">Reset Password</h2>
+        <p style="font-size:13px; color:var(--text-muted); margin-bottom:12px;">Enter your email to receive recovery details.</p>
+        
+        <input type="email" id="resetEmail" placeholder="Your Registered Email" />
+        <button id="resetCodeBtn" class="btn btn-primary" style="width:100%; justify-content:center;" onclick="requestResetOTP()">Send Reset Code</button>
+        
         <div id="resetOtpContainer" class="hidden" style="margin-top:12px;">
-          <input type="text" id="resetOtpCode" placeholder="Enter 6-digit Reset Code" maxlength="6" />
-          <input type="password" id="newPassword" placeholder="Enter New Password" />
-          <button id="confirmResetBtn" class="btn btn-primary" style="width:100%; background:#22c55e;" onclick="verifyResetOTP()">Confirm New Password</button>
+          <input type="text" id="resetOtpCode" placeholder="Enter 6-digit Code" maxlength="6" />
+          <input type="password" id="newPassword" placeholder="New Password" />
+          <button id="confirmResetBtn" class="btn btn-primary" style="width:100%; justify-content:center; background:#22c55e;" onclick="verifyResetOTP()">Confirm New Password</button>
         </div>
-        <button class="link-btn" onclick="showMainAuthUI()">Back to Login</button>
+        <button class="link-btn" onclick="showMainAuthUI()">Back to login</button>
       </div>
 
-      <p id="authStatus" style="font-size: 13px; font-weight: bold; margin-top: 12px; text-align: center;"></p>
+      <p id="authStatus"></p>
     </div>
   </div>
 
@@ -209,22 +304,16 @@
     const API_BASE = '';
 
     function updateNavState() {
-      const jobContainer = document.getElementById('jobPostingContainer');
-      const loginPrompt = document.getElementById('loginPromptContainer');
       if (token) {
         document.getElementById('authNavButtons').innerHTML = `
-          <span style="font-size: 14px; color: var(--text-muted); align-self: center;">Logged in</span>
+          <span style="font-size: 13px; color: var(--text-muted); align-self: center;">Active Session</span>
           <button class="btn btn-outline" onclick="logout()">Log out</button>
         `;
-        if (jobContainer) jobContainer.classList.remove('hidden');
-        if (loginPrompt) loginPrompt.style.display = 'none';
       } else {
         document.getElementById('authNavButtons').innerHTML = `
           <button class="btn btn-outline" onclick="openAuthModal('login')">Log in</button>
           <button class="btn btn-primary" onclick="openAuthModal('register')">Sign up</button>
         `;
-        if (jobContainer) jobContainer.classList.add('hidden');
-        if (loginPrompt) loginPrompt.style.display = 'block';
       }
     }
     updateNavState();
@@ -240,19 +329,28 @@
       document.getElementById('authModal').classList.add('active');
       showMainAuthUI();
       const btn = document.getElementById('authPrimaryBtn');
+      const nameInput = document.getElementById('userName');
+      const toggleBtn = document.getElementById('toggleAuthModeBtn');
+
       if (mode === 'login') {
         document.getElementById('modalTitle').innerText = 'Log in to beBee';
-        document.getElementById('userName').style.display = 'none';
+        nameInput.style.display = 'none';
         btn.innerText = 'Log In';
+        toggleBtn.innerText = "Don't have an account? Sign up";
       } else {
         document.getElementById('modalTitle').innerText = 'Create your account';
-        document.getElementById('userName').style.display = 'block';
+        nameInput.style.display = 'block';
         btn.innerText = 'Sign Up';
+        toggleBtn.innerText = "Already have an account? Log in";
       }
     }
 
     function closeAuthModal() {
       document.getElementById('authModal').classList.remove('active');
+    }
+
+    function switchModalMode() {
+      openAuthModal(currentAuthMode === 'login' ? 'register' : 'login');
     }
 
     function showForgotPasswordUI() {
@@ -292,6 +390,7 @@
       }
     }
 
+    // Sign Up Request with spinner
     async function requestRegistrationOTP() {
       const btn = document.getElementById('authPrimaryBtn');
       const name = document.getElementById('userName').value;
@@ -299,7 +398,7 @@
       const password = document.getElementById('userPassword').value;
 
       if (!name || !email || !password) {
-        setAuthStatus('Please fill in all fields.', true);
+        setAuthStatus('Please fill out all fields.', true);
         return;
       }
 
@@ -328,7 +427,7 @@
       }
     }
 
-    // Spinner will show during verification check whether code is correct or wrong[span_1](start_span)[span_1](end_span)
+    // OTP Verify Action: Spins/rotates regardless of correct/wrong input outcome
     async function verifyRegistrationOTP() {
       const btn = document.getElementById('verifyOtpBtn');
       const email = document.getElementById('userEmail').value;
@@ -336,11 +435,10 @@
       const code = Array.from(boxes).map(b => b.value).join('');
 
       if (code.length < 6) {
-        setAuthStatus('Please fill out all 6 digits of the verification code.', true);
+        setAuthStatus('Please fill out all 6 digits of the code.', true);
         return;
       }
 
-      // Activate spinning loader animation on verify button
       btn.disabled = true;
       btn.innerHTML = `<span class="spinner"></span> Verifying...`;
 
@@ -357,26 +455,26 @@
           localStorage.setItem('jwt_token', token);
           closeAuthModal();
           updateNavState();
-          setAuthStatus('Account verified and logged in successfully!', false);
+          setAuthStatus('Account verified successfully!', false);
         } else {
-          setAuthStatus(data.error || 'Invalid code.', true);
+          setAuthStatus(data.error || 'Invalid code entered.', true);
         }
       } catch(err) {
         setAuthStatus('Network error. Please try again.', true);
       } finally {
-        // Restore button state after outcome is delivered
         btn.disabled = false;
         btn.innerHTML = 'Verify Email & Log In';
       }
     }
 
+    // Login Action with spinner
     async function handleLogin() {
       const btn = document.getElementById('authPrimaryBtn');
       const email = document.getElementById('userEmail').value;
       const password = document.getElementById('userPassword').value;
 
       if (!email || !password) {
-        setAuthStatus('Please enter your email and password.', true);
+        setAuthStatus('Please enter email and password.', true);
         return;
       }
 
@@ -396,7 +494,7 @@
           closeAuthModal();
           updateNavState();
         } else {
-          setAuthStatus(data.error || 'Login failed.', true);
+          setAuthStatus(data.error || 'Invalid credentials.', true);
         }
       } catch(err) {
         setAuthStatus('Network error. Please try again.', true);
@@ -409,11 +507,7 @@
     async function requestResetOTP() {
       const btn = document.getElementById('resetCodeBtn');
       const email = document.getElementById('resetEmail').value;
-
-      if (!email) {
-        setAuthStatus('Please enter your registered email address.', true);
-        return;
-      }
+      if (!email) { setAuthStatus('Enter email address.', true); return; }
 
       btn.disabled = true;
       btn.innerHTML = `<span class="spinner"></span> Send Reset Code...`;
@@ -425,18 +519,17 @@
           body: JSON.stringify({ email })
         });
         const data = await res.json();
-        
         if (res.ok) {
           document.getElementById('resetOtpContainer').classList.remove('hidden');
-          setAuthStatus(data.message || 'Reset code sent to your email.', false);
+          setAuthStatus(data.message || 'Reset code sent.', false);
         } else {
-          setAuthStatus(data.error || 'No account found with this email', true);
+          setAuthStatus(data.error || 'Email not found', true);
         }
       } catch (err) {
-        setAuthStatus('Network error. Please try again.', true);
+        setAuthStatus('Network error.', true);
       } finally {
         btn.disabled = false;
-        btn.innerHTML = `Send Reset Code`;
+        btn.innerHTML = 'Send Reset Code';
       }
     }
 
@@ -445,11 +538,6 @@
       const email = document.getElementById('resetEmail').value;
       const code = document.getElementById('resetOtpCode').value;
       const newPassword = document.getElementById('newPassword').value;
-
-      if (!code || !newPassword) {
-        setAuthStatus('Please enter the reset code and new password.', true);
-        return;
-      }
 
       btn.disabled = true;
       btn.innerHTML = `<span class="spinner"></span> Updating...`;
@@ -462,13 +550,13 @@
         });
         const data = await res.json();
         if (res.ok) {
-          setAuthStatus('Password reset successfully! Please log in.', false);
+          setAuthStatus('Password updated successfully! Please log in.', false);
           setTimeout(() => showMainAuthUI(), 1500);
         } else {
-          setAuthStatus(data.error || 'Failed to reset password.', true);
+          setAuthStatus(data.error || 'Failed to update.', true);
         }
       } catch(err) {
-        setAuthStatus('Network error. Please try again.', true);
+        setAuthStatus('Network error.', true);
       } finally {
         btn.disabled = false;
         btn.innerHTML = 'Confirm New Password';
@@ -480,84 +568,6 @@
       statusEl.innerText = message;
       statusEl.style.color = isError ? '#dc2626' : '#16a34a';
     }
-
-    function renderJobCard(job) {
-      return `
-        <div class="job-card">
-          <span class="job-badge">${job.type}</span>
-          <h3>${job.title}</h3>
-          <div class="job-meta">
-            <span>🏢 <strong>${job.company}</strong></span>
-            <span>📍 ${job.location}</span>
-          </div>
-          <p class="job-desc">${job.description}</p>
-          <div class="job-footer">
-            <span>Posted by ${job.poster_name || 'User'}</span>
-            <span>${new Date(job.created_at).toLocaleDateString()}</span>
-          </div>
-        </div>
-      `;
-    }
-
-    async function loadFeed(query = '', location = '') {
-      let url = `${API_BASE}/api/jobs?`;
-      if (query) url += `q=${encodeURIComponent(query)}&`;
-      if (location) url += `location=${encodeURIComponent(location)}`;
-
-      const res = await fetch(url);
-      const jobs = await res.json();
-      const feedEl = document.getElementById('jobFeed');
-
-      if (!Array.isArray(jobs) || jobs.length === 0) {
-        feedEl.innerHTML = `<p style="color: var(--text-muted); background: white; padding: 20px; border-radius: 8px;">No matching job postings found.</p>`;
-      } else {
-        feedEl.innerHTML = jobs.map(renderJobCard).join('');
-      }
-    }
-
-    function filterJobs() {
-      const q = document.getElementById('searchQuery').value;
-      const loc = document.getElementById('searchLocation').value;
-      loadFeed(q, loc);
-    }
-
-    const jobFormEl = document.getElementById('jobForm');
-    if (jobFormEl) {
-      jobFormEl.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        if (!token) {
-          openAuthModal('login');
-          return;
-        }
-
-        const payload = {
-          title: document.getElementById('title').value,
-          company: document.getElementById('company').value,
-          location: document.getElementById('location').value,
-          type: document.getElementById('type').value,
-          description: document.getElementById('description').value
-        };
-
-        const res = await fetch(`${API_BASE}/api/jobs`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify(payload)
-        });
-
-        if (res.ok) {
-          document.getElementById('jobForm').reset();
-          loadFeed();
-        } else {
-          const err = await res.json();
-          alert('Error: ' + err.error);
-        }
-      });
-    }
-
-    loadFeed();
   </script>
 </body>
 </html>
