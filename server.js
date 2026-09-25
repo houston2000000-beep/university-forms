@@ -13,7 +13,6 @@ const DB_PATH = path.join(__dirname, 'data.json');
 const PUBLIC = path.join(__dirname, 'public');
 
 // Temporary in-memory store for OTP verification codes
-// Format: { 'email@example.com': { code: '123456', expires: timestamp, type: 'register'|'reset', payload: {} } }
 const otps = {};
 
 function load() {
@@ -119,7 +118,7 @@ const server = http.createServer(async (req, res) => {
         code,
         type: 'register',
         payload: { name: name.trim(), password },
-        expires: Date.now() + 10 * 60 * 1000 // 10 minutes
+        expires: Date.now() + 10 * 60 * 1000
       };
 
       try {
@@ -151,7 +150,6 @@ const server = http.createServer(async (req, res) => {
       }
       if (record.code !== code.trim()) return json(res, 400, { error: 'Invalid verification code' });
 
-      // Create user
       const user = {
         id: db.nextUserId++,
         email: emailNorm,
@@ -224,16 +222,29 @@ const server = http.createServer(async (req, res) => {
       return json(res, 200, { message: 'Password reset successfully. You can now log in.' });
     }
 
-    // --- standard routes ---
+    // --- 5. SMART LOGIN WITH GRANULAR ERROR MESSAGES ---
     if (p === '/api/login' && req.method === 'POST') {
       const body = await readBody(req);
       const { email, password } = body;
       if (!email || !password) return json(res, 400, { error: 'Email and password required' });
-      const user = db.users.find(u => u.email === email.toLowerCase().trim());
-      if (!user || !verifyPassword(password, user.password)) return json(res, 401, { error: 'Invalid email or password' });
+
+      const emailNorm = email.toLowerCase().trim();
+      const user = db.users.find(u => u.email === emailNorm);
+
+      // Check if account exists
+      if (!user) {
+        return json(res, 404, { error: "You don't have an account with this email. Please create one to sign up." });
+      }
+
+      // Check if password matches
+      if (!verifyPassword(password, user.password)) {
+        return json(res, 401, { error: "Incorrect password. Please check your password and try again." });
+      }
+
       const token = signToken({ id: user.id, email: user.email, name: user.name });
       return json(res, 200, { token, user: { id: user.id, email: user.email, name: user.name } });
     }
+
     if (p === '/api/me' && req.method === 'GET') {
       const auth = getAuth(req);
       if (!auth) return json(res, 401, { error: 'Authentication required' });
@@ -241,6 +252,7 @@ const server = http.createServer(async (req, res) => {
       if (!u) return json(res, 404, { error: 'User not found' });
       return json(res, 200, { id: u.id, email: u.email, name: u.name });
     }
+
     if (p === '/api/jobs' && req.method === 'GET') {
       let jobs = db.jobs.slice();
       const q = url.searchParams.get('q');
@@ -258,6 +270,7 @@ const server = http.createServer(async (req, res) => {
         return { ...j, poster_name: poster ? poster.name : 'Unknown' };
       }));
     }
+
     if (p === '/api/jobs' && req.method === 'POST') {
       const user = getAuth(req);
       if (!user) return json(res, 401, { error: 'Authentication required' });
