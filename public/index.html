@@ -24,11 +24,21 @@
     .nav-links a { text-decoration: none; color: var(--text-muted); font-size: 15px; font-weight: 500; }
     .nav-links a:hover { color: var(--primary); }
     .auth-btns { display: flex; gap: 10px; }
-    .btn { padding: 8px 18px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: 0.2s ease; }
+    .btn { padding: 8px 18px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: 0.2s ease; display: inline-block; }
     .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
     .btn-outline:hover { background: #f0f0f0; }
     .btn-primary { background: var(--primary); color: #fff; }
     .btn-primary:hover { background: var(--primary-dark); }
+    
+    /* Rotation animation class */
+    @keyframes spinButton {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .rotate-anim {
+      animation: spinButton 0.6s linear;
+    }
+
     .hero { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: white; padding: 60px 20px 80px; text-align: center; }
     .hero h1 { font-size: 36px; font-weight: 800; margin-bottom: 12px; }
     .hero p { font-size: 18px; color: #94a3b8; margin-bottom: 30px; }
@@ -174,7 +184,7 @@
         <h2>Reset Password</h2>
         <p>Enter your registered email to receive a reset code.</p>
         <input type="email" id="resetEmail" placeholder="Your Email Address" />
-        <button class="btn btn-primary" style="width:100%;" onclick="requestResetOTP()">Send Reset Code</button>
+        <button id="resetCodeBtn" class="btn btn-primary" style="width:100%;" onclick="requestResetOTP()">Send Reset Code</button>
         <div id="resetOtpContainer" class="hidden" style="margin-top:12px;">
           <input type="text" id="resetOtpCode" placeholder="Enter 6-digit Reset Code" maxlength="6" />
           <input type="password" id="newPassword" placeholder="Enter New Password" />
@@ -217,7 +227,7 @@
       localStorage.removeItem('jwt_token');
       token = '';
       updateNavState();
-      alert('Logged out successfully.');
+      // Replaced alert with inline text or silent completion
     }
 
     function openAuthModal(mode) {
@@ -242,6 +252,7 @@
     function showForgotPasswordUI() {
       document.getElementById('mainAuthFields').classList.add('hidden');
       document.getElementById('forgotPasswordFields').classList.remove('hidden');
+      document.getElementById('authStatus').innerText = '';
     }
 
     function showMainAuthUI() {
@@ -281,7 +292,7 @@
       const password = document.getElementById('userPassword').value;
 
       if (!name || !email || !password) {
-        alert('Please fill in all fields.');
+        setAuthStatus('Please fill in all fields.', true);
         return;
       }
 
@@ -294,10 +305,9 @@
       if (res.ok) {
         document.getElementById('mainAuthFields').classList.add('hidden');
         document.getElementById('verifyRegisterFields').classList.remove('hidden');
-        document.getElementById('authStatus').innerText = data.message || 'Verification code sent!';
-        document.getElementById('authStatus').style.color = '#0284c7';
+        setAuthStatus(data.message || 'Verification code sent!', false);
       } else {
-        alert(data.error || 'Registration failed.');
+        setAuthStatus(data.error || 'Registration failed.', true);
       }
     }
 
@@ -307,7 +317,7 @@
       const code = Array.from(boxes).map(b => b.value).join('');
 
       if (code.length < 6) {
-        alert('Please fill out all 6 digits of the verification code.');
+        setAuthStatus('Please fill out all 6 digits of the verification code.', true);
         return;
       }
 
@@ -322,9 +332,9 @@
         localStorage.setItem('jwt_token', token);
         closeAuthModal();
         updateNavState();
-        alert('Account verified and logged in successfully!');
+        setAuthStatus('Account verified and logged in successfully!', false);
       } else {
-        alert(data.error || 'Invalid code.');
+        setAuthStatus(data.error || 'Invalid code.', true);
       }
     }
 
@@ -333,7 +343,7 @@
       const password = document.getElementById('userPassword').value;
 
       if (!email || !password) {
-        alert('Please enter your email and password.');
+        setAuthStatus('Please enter your email and password.', true);
         return;
       }
 
@@ -348,25 +358,37 @@
         localStorage.setItem('jwt_token', token);
         closeAuthModal();
         updateNavState();
-        alert('Logged in successfully!');
       } else {
-        alert(data.error || 'Login failed.');
+        setAuthStatus(data.error || 'Login failed.', true);
       }
     }
 
+    // Trigger button rotation and show error/success message inline instead of alert popups
     async function requestResetOTP() {
+      const btn = document.getElementById('resetCodeBtn');
       const email = document.getElementById('resetEmail').value;
+
+      if (!email) {
+        setAuthStatus('Please enter your registered email address.', true);
+        return;
+      }
+
+      // Trigger spin rotation effect
+      btn.classList.add('rotate-anim');
+      setTimeout(() => btn.classList.remove('rotate-anim'), 600);
+
       const res = await fetch(`${API_BASE}/api/forgot-password/request-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email })
       });
       const data = await res.json();
+      
       if (res.ok) {
         document.getElementById('resetOtpContainer').classList.remove('hidden');
-        document.getElementById('authStatus').innerText = data.message;
+        setAuthStatus(data.message || 'Reset code sent to your email.', false);
       } else {
-        alert(data.error);
+        setAuthStatus(data.error || 'No account found with this email', true);
       }
     }
 
@@ -375,6 +397,11 @@
       const code = document.getElementById('resetOtpCode').value;
       const newPassword = document.getElementById('newPassword').value;
 
+      if (!code || !newPassword) {
+        setAuthStatus('Please enter the reset code and new password.', true);
+        return;
+      }
+
       const res = await fetch(`${API_BASE}/api/forgot-password/verify-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -382,11 +409,17 @@
       });
       const data = await res.json();
       if (res.ok) {
-        alert('Password reset successfully! Please log in.');
-        showMainAuthUI();
+        setAuthStatus('Password reset successfully! Please log in.', false);
+        setTimeout(() => showMainAuthUI(), 1500);
       } else {
-        alert(data.error);
+        setAuthStatus(data.error || 'Failed to reset password.', true);
       }
+    }
+
+    function setAuthStatus(message, isError) {
+      const statusEl = document.getElementById('authStatus');
+      statusEl.innerText = message;
+      statusEl.style.color = isError ? '#dc2626' : '#16a34a';
     }
 
     function renderJobCard(job) {
@@ -435,7 +468,6 @@
         e.preventDefault();
         if (!token) {
           openAuthModal('login');
-          alert('Please log in first to publish a job.');
           return;
         }
 
@@ -459,7 +491,6 @@
         if (res.ok) {
           document.getElementById('jobForm').reset();
           loadFeed();
-          alert('Job published successfully!');
         } else {
           const err = await res.json();
           alert('Error: ' + err.error);
