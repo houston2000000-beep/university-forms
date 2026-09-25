@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>beBee - Create account</title>
+  <title>beBee - Authentication</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -14,7 +14,6 @@
       --bg: #ffffff;
       --text: #222222;
       --text-muted: #717171;
-      --border: #b0b0b0;
       --border-light: #e0e0e0;
     }
 
@@ -76,6 +75,7 @@
       color: var(--primary); 
       font-weight: 600; 
       text-decoration: none; 
+      cursor: pointer;
     }
     .subtext a:hover { text-decoration: underline; }
     
@@ -274,6 +274,45 @@
     .hidden { display: none !important; }
     #authStatus { font-size: 13px; font-weight: 600; margin-top: 14px; text-align: center; }
 
+    /* Login Specific Extras */
+    .login-extras {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+    .login-extras a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .login-extras a:hover { text-decoration: underline; }
+
+    .magic-link-row {
+      text-align: center;
+      margin-top: 18px;
+      font-size: 13px;
+    }
+    .magic-link-row a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .magic-link-row a:hover { text-decoration: underline; }
+
+    .login-footer-terms {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 16px;
+      line-height: 1.4;
+    }
+    .login-footer-terms a {
+      color: var(--text-muted);
+      text-decoration: underline;
+    }
+
     /* OTP Verification Screen Styling */
     .otp-container { text-align: center; padding-top: 10px; }
     .otp-boxes { display: flex; gap: 10px; justify-content: center; margin: 24px 0; }
@@ -288,10 +327,59 @@
       <a href="#" class="logo-text">🐝 be<span>Bee</span></a>
     </div>
 
+    <!-- LOGIN SCREEN -->
+    <div id="loginScreen" class="hidden">
+      <h1>Log in</h1>
+      <div class="subtext">Don't have an account? <a onclick="switchView('register')">Create account</a></div>
+
+      <button type="button" class="social-btn" onclick="alert('Google Auth Integration')">
+        <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.13 0-5.78-2.11-6.73-4.96H1.18v3.15C3.15 21.32 7.23 24 12 24z"/><path fill="#FBBC05" d="M5.27 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.6H1.18C.43 8.12 0 9.8 0 12s.43 3.88 1.18 5.4l4.09-3.16z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.23 0 3.15 2.68 1.18 6.6l4.09 3.15c.95-2.85 3.6-4.96 6.73-4.96z"/></svg>
+        Continue with Google
+      </button>
+
+      <button type="button" class="social-btn" onclick="alert('LinkedIn Auth Integration')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="#0a66c2"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+        Continue with LinkedIn
+      </button>
+
+      <div class="divider">Or continue with</div>
+
+      <form onsubmit="handleLoginSubmit(event)">
+        <div class="form-group">
+          <label>Email</label>
+          <div class="input-wrapper">
+            <span class="icon">✉️</span>
+            <input type="email" id="loginEmail" placeholder="email@example.com" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="login-extras">
+            <label style="margin-bottom:0;">Password</label>
+            <a href="#" onclick="alert('Password reset link sent')">Forgot your password?</a>
+          </div>
+          <div class="input-wrapper" style="margin-top:6px;">
+            <span class="icon">🔒</span>
+            <input type="password" id="loginPassword" placeholder="" required />
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary">Log in</button>
+      </form>
+
+      <div class="magic-link-row">
+        <a href="#" onclick="alert('Magic link sent to email')">Or sign in with magic link</a>
+      </div>
+
+      <div class="login-footer-terms">
+        By logging in, you agree to the <a href="#">Terms of Use</a> and <a href="#">Privacy Policy</a>.
+      </div>
+    </div>
+
     <!-- MAIN REGISTRATION SCREEN -->
     <div id="registerScreen">
       <h1>Create account</h1>
-      <div class="subtext">Already have an account? <a href="#" onclick="alert('Switch to Login view')">Log in</a></div>
+      <div class="subtext">Already have an account? <a onclick="switchView('login')">Log in</a></div>
 
       <div class="form-group">
         <label>Location</label>
@@ -402,6 +490,19 @@
       "Yenagoa (NG)", "Yola, Yola North (NG)"
     ];
 
+    function switchView(view) {
+      document.getElementById('loginScreen').classList.add('hidden');
+      document.getElementById('registerScreen').classList.add('hidden');
+      document.getElementById('verifyScreen').classList.add('hidden');
+      document.getElementById('authStatus').innerText = '';
+
+      if (view === 'login') {
+        document.getElementById('loginScreen').classList.remove('hidden');
+      } else if (view === 'register') {
+        document.getElementById('registerScreen').classList.remove('hidden');
+      }
+    }
+
     function filterLocations(query) {
       const box = document.getElementById('suggestionsBox');
       box.innerHTML = '';
@@ -432,7 +533,8 @@
 
     document.addEventListener('click', function(e) {
       if (!e.target.closest('.form-group')) {
-        document.getElementById('suggestionsBox').style.display = 'none';
+        const box = document.getElementById('suggestionsBox');
+        if(box) box.style.display = 'none';
       }
     });
 
@@ -465,6 +567,14 @@
       document.getElementById('registerScreen').classList.add('hidden');
       document.getElementById('verifyScreen').classList.remove('hidden');
       setAuthStatus('Verification code sent to your email.', false);
+    }
+
+    function handleLoginSubmit(e) {
+      e.preventDefault();
+      setAuthStatus('Logged in successfully!', false);
+      setTimeout(() => {
+        alert('Welcome back to beBee!');
+      }, 500);
     }
 
     function verifyRegistrationOTP() {
