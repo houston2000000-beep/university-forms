@@ -14,7 +14,6 @@
       --bg: #ffffff;
       --text: #222222;
       --text-muted: #717171;
-      --border: #b0b0b0;
       --border-light: #e0e0e0;
     }
 
@@ -384,7 +383,6 @@
         return;
       }
 
-      // Hide the initial form safely and reveal the verification view
       document.getElementById('registerScreen').classList.add('hidden');
       document.getElementById('verifyScreen').classList.remove('hidden');
       setAuthStatus('Verification code sent to your email.', false);
