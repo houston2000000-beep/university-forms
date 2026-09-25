@@ -24,19 +24,25 @@
     .nav-links a { text-decoration: none; color: var(--text-muted); font-size: 15px; font-weight: 500; }
     .nav-links a:hover { color: var(--primary); }
     .auth-btns { display: flex; gap: 10px; }
-    .btn { padding: 8px 18px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: 0.2s ease; display: inline-block; }
+    .btn { padding: 8px 18px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: 0.2s ease; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
     .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
     .btn-outline:hover { background: #f0f0f0; }
     .btn-primary { background: var(--primary); color: #fff; }
     .btn-primary:hover { background: var(--primary-dark); }
     
-    /* Rotation animation class */
-    @keyframes spinButton {
+    /* Spinner icon animation */
+    @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-    .rotate-anim {
-      animation: spinButton 0.6s linear;
+    .spinner {
+      width: 14px;
+      height: 14px;
+      border: 2px solid #ffffff;
+      border-top: 2px solid transparent;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      display: inline-block;
     }
 
     .hero { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: white; padding: 60px 20px 80px; text-align: center; }
@@ -159,7 +165,7 @@
         <input type="text" id="userName" placeholder="Full Name (for new accounts)" />
         <input type="email" id="userEmail" placeholder="Email Address" />
         <input type="password" id="userPassword" placeholder="Password" />
-        <button id="authPrimaryBtn" class="btn btn-primary" style="width:100%; margin-top:6px;" onclick="handleAuthSubmit()">Submit</button>
+        <button id="authPrimaryBtn" class="btn btn-primary" style="width:100%; margin-top:6px;" onclick="handleAuthSubmit()">Log In</button>
         <div style="text-align: center; margin-top: 10px;">
           <button class="link-btn" onclick="showForgotPasswordUI()">Forgot Password?</button>
         </div>
@@ -177,7 +183,7 @@
           <input type="text" maxlength="1" class="otp-box" style="width: 45px; height: 50px; text-align: center; font-size: 22px; font-weight: bold; border: 1px solid var(--border); border-radius: 6px;" oninput="handleOtpInput(this, 4)" onkeydown="handleOtpKeyDown(event, 4)" />
           <input type="text" maxlength="1" class="otp-box" style="width: 45px; height: 50px; text-align: center; font-size: 22px; font-weight: bold; border: 1px solid var(--border); border-radius: 6px;" oninput="handleOtpInput(this, 5)" onkeydown="handleOtpKeyDown(event, 5)" />
         </div>
-        <button class="btn btn-primary" style="width:100%;" onclick="verifyRegistrationOTP()">Verify Email & Log In</button>
+        <button id="verifyOtpBtn" class="btn btn-primary" style="width:100%;" onclick="verifyRegistrationOTP()">Verify Email & Log In</button>
       </div>
 
       <div id="forgotPasswordFields" class="hidden">
@@ -188,7 +194,7 @@
         <div id="resetOtpContainer" class="hidden" style="margin-top:12px;">
           <input type="text" id="resetOtpCode" placeholder="Enter 6-digit Reset Code" maxlength="6" />
           <input type="password" id="newPassword" placeholder="Enter New Password" />
-          <button class="btn btn-primary" style="width:100%; background:#22c55e;" onclick="verifyResetOTP()">Confirm New Password</button>
+          <button id="confirmResetBtn" class="btn btn-primary" style="width:100%; background:#22c55e;" onclick="verifyResetOTP()">Confirm New Password</button>
         </div>
         <button class="link-btn" onclick="showMainAuthUI()">Back to Login</button>
       </div>
@@ -227,21 +233,21 @@
       localStorage.removeItem('jwt_token');
       token = '';
       updateNavState();
-      // Replaced alert with inline text or silent completion
     }
 
     function openAuthModal(mode) {
       currentAuthMode = mode;
       document.getElementById('authModal').classList.add('active');
       showMainAuthUI();
+      const btn = document.getElementById('authPrimaryBtn');
       if (mode === 'login') {
         document.getElementById('modalTitle').innerText = 'Log in to beBee';
         document.getElementById('userName').style.display = 'none';
-        document.getElementById('authPrimaryBtn').innerText = 'Log In';
+        btn.innerText = 'Log In';
       } else {
         document.getElementById('modalTitle').innerText = 'Create your account';
         document.getElementById('userName').style.display = 'block';
-        document.getElementById('authPrimaryBtn').innerText = 'Sign Up & Send Code';
+        btn.innerText = 'Sign Up';
       }
     }
 
@@ -286,7 +292,9 @@
       }
     }
 
+    // Spin loader for registration request
     async function requestRegistrationOTP() {
+      const btn = document.getElementById('authPrimaryBtn');
       const name = document.getElementById('userName').value;
       const email = document.getElementById('userEmail').value;
       const password = document.getElementById('userPassword').value;
@@ -296,22 +304,33 @@
         return;
       }
 
-      const res = await fetch(`${API_BASE}/api/register/request-otp`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password })
-      });
-      const data = await res.json();
-      if (res.ok) {
-        document.getElementById('mainAuthFields').classList.add('hidden');
-        document.getElementById('verifyRegisterFields').classList.remove('hidden');
-        setAuthStatus(data.message || 'Verification code sent!', false);
-      } else {
-        setAuthStatus(data.error || 'Registration failed.', true);
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner"></span> Sign Up...`;
+
+      try {
+        const res = await fetch(`${API_BASE}/api/register/request-otp`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, password })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          document.getElementById('mainAuthFields').classList.add('hidden');
+          document.getElementById('verifyRegisterFields').classList.remove('hidden');
+          setAuthStatus(data.message || 'Verification code sent!', false);
+        } else {
+          setAuthStatus(data.error || 'Registration failed.', true);
+        }
+      } catch (err) {
+        setAuthStatus('Network error. Please try again.', true);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'Sign Up';
       }
     }
 
     async function verifyRegistrationOTP() {
+      const btn = document.getElementById('verifyOtpBtn');
       const email = document.getElementById('userEmail').value;
       const boxes = document.querySelectorAll('.otp-box');
       const code = Array.from(boxes).map(b => b.value).join('');
@@ -321,24 +340,36 @@
         return;
       }
 
-      const res = await fetch(`${API_BASE}/api/register/verify-otp`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, code })
-      });
-      const data = await res.json();
-      if (res.ok) {
-        token = data.token;
-        localStorage.setItem('jwt_token', token);
-        closeAuthModal();
-        updateNavState();
-        setAuthStatus('Account verified and logged in successfully!', false);
-      } else {
-        setAuthStatus(data.error || 'Invalid code.', true);
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner"></span> Verifying...`;
+
+      try {
+        const res = await fetch(`${API_BASE}/api/register/verify-otp`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, code })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          token = data.token;
+          localStorage.setItem('jwt_token', token);
+          closeAuthModal();
+          updateNavState();
+          setAuthStatus('Account verified and logged in successfully!', false);
+        } else {
+          setAuthStatus(data.error || 'Invalid code.', true);
+        }
+      } catch(err) {
+        setAuthStatus('Network error. Please try again.', true);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'Verify Email & Log In';
       }
     }
 
+    // Spin loader for Login action
     async function handleLogin() {
+      const btn = document.getElementById('authPrimaryBtn');
       const email = document.getElementById('userEmail').value;
       const password = document.getElementById('userPassword').value;
 
@@ -347,23 +378,33 @@
         return;
       }
 
-      const res = await fetch(`${API_BASE}/api/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      });
-      const data = await res.json();
-      if (res.ok) {
-        token = data.token;
-        localStorage.setItem('jwt_token', token);
-        closeAuthModal();
-        updateNavState();
-      } else {
-        setAuthStatus(data.error || 'Login failed.', true);
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner"></span> Log in...`;
+
+      try {
+        const res = await fetch(`${API_BASE}/api/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          token = data.token;
+          localStorage.setItem('jwt_token', token);
+          closeAuthModal();
+          updateNavState();
+        } else {
+          setAuthStatus(data.error || 'Login failed.', true);
+        }
+      } catch(err) {
+        setAuthStatus('Network error. Please try again.', true);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'Log In';
       }
     }
 
-    // Trigger button rotation and show error/success message inline instead of alert popups
+    // Spin loader for Reset Code action
     async function requestResetOTP() {
       const btn = document.getElementById('resetCodeBtn');
       const email = document.getElementById('resetEmail').value;
@@ -373,26 +414,33 @@
         return;
       }
 
-      // Trigger spin rotation effect
-      btn.classList.add('rotate-anim');
-      setTimeout(() => btn.classList.remove('rotate-anim'), 600);
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner"></span> Send Reset Code...`;
 
-      const res = await fetch(`${API_BASE}/api/forgot-password/request-otp`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
-      });
-      const data = await res.json();
-      
-      if (res.ok) {
-        document.getElementById('resetOtpContainer').classList.remove('hidden');
-        setAuthStatus(data.message || 'Reset code sent to your email.', false);
-      } else {
-        setAuthStatus(data.error || 'No account found with this email', true);
+      try {
+        const res = await fetch(`${API_BASE}/api/forgot-password/request-otp`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+        const data = await res.json();
+        
+        if (res.ok) {
+          document.getElementById('resetOtpContainer').classList.remove('hidden');
+          setAuthStatus(data.message || 'Reset code sent to your email.', false);
+        } else {
+          setAuthStatus(data.error || 'No account found with this email', true);
+        }
+      } catch (err) {
+        setAuthStatus('Network error. Please try again.', true);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `Send Reset Code`;
       }
     }
 
     async function verifyResetOTP() {
+      const btn = document.getElementById('confirmResetBtn');
       const email = document.getElementById('resetEmail').value;
       const code = document.getElementById('resetOtpCode').value;
       const newPassword = document.getElementById('newPassword').value;
@@ -402,17 +450,27 @@
         return;
       }
 
-      const res = await fetch(`${API_BASE}/api/forgot-password/verify-otp`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, code, newPassword })
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setAuthStatus('Password reset successfully! Please log in.', false);
-        setTimeout(() => showMainAuthUI(), 1500);
-      } else {
-        setAuthStatus(data.error || 'Failed to reset password.', true);
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner"></span> Updating...`;
+
+      try {
+        const res = await fetch(`${API_BASE}/api/forgot-password/verify-otp`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, code, newPassword })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          setAuthStatus('Password reset successfully! Please log in.', false);
+          setTimeout(() => showMainAuthUI(), 1500);
+        } else {
+          setAuthStatus(data.error || 'Failed to reset password.', true);
+        }
+      } catch(err) {
+        setAuthStatus('Network error. Please try again.', true);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'Confirm New Password';
       }
     }
 
@@ -464,6 +522,7 @@
 
     const jobFormEl = document.getElementById('jobForm');
     if (jobFormEl) {
+      jobFormEl.button = jobFormEl.querySelector('button[type="submit"]');
       jobFormEl.addEventListener('submit', async (e) => {
         e.preventDefault();
         if (!token) {
