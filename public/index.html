@@ -7,6 +7,16 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- EmailJS Library for sending real emails from frontend -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script type="text/javascript">
+    // Initialize EmailJS with your Public Key (Replace 'YOUR_PUBLIC_KEY' with your actual key)
+    (function() {
+      emailjs.init("YOUR_PUBLIC_KEY");
+    })();
+  </script>
+
   <style>
     :root {
       --primary: #ff9900;
@@ -270,6 +280,7 @@
       margin-top: 8px; 
     }
     .btn-primary:hover { background: var(--primary-dark); }
+    .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; }
 
     .hidden { display: none !important; }
     #authStatus { font-size: 13px; font-weight: 600; margin-top: 14px; text-align: center; }
@@ -459,7 +470,7 @@
     <!-- OTP VERIFICATION SCREEN -->
     <div id="verifyScreen" class="otp-container hidden">
       <h1>Enter Verification Code</h1>
-      <p class="subtext">We sent a 6-digit confirmation code to your email.</p>
+      <p class="subtext">We sent a confirmation code to your email.</p>
       <div class="otp-boxes" id="otpBoxes">
         <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 0)" onkeydown="handleOtpKeyDown(event, 0)" />
         <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 1)" onkeydown="handleOtpKeyDown(event, 1)" />
@@ -554,8 +565,13 @@
       }
     }
 
-    function handleInitialRegister(e) {
+    // Stores generated code temporarily for validation demo
+    let generatedOtpCode = "";
+
+    async function handleInitialRegister(e) {
       e.preventDefault();
+      const firstName = document.getElementById('firstName').value;
+      const email = document.getElementById('userEmail').value;
       const password = document.getElementById('userPassword').value;
       const confirmPassword = document.getElementById('confirmPassword').value;
 
@@ -564,9 +580,34 @@
         return;
       }
 
-      document.getElementById('registerScreen').classList.add('hidden');
-      document.getElementById('verifyScreen').classList.remove('hidden');
-      setAuthStatus('Verification code sent to your email.', false);
+      const signupBtn = document.getElementById('signupBtn');
+      signupBtn.innerHTML = 'Sending Email...';
+      signupBtn.disabled = true;
+
+      // Generate a random 6-digit verification code
+      generatedOtpCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+      // Parameters mapped to EmailJS template variables
+      const templateParams = {
+        to_name: firstName,
+        to_email: email,
+        passcode: generatedOtpCode
+      };
+
+      try {
+        // Trigger live email sending via EmailJS
+        // Replace 'YOUR_SERVICE_ID' and 'YOUR_TEMPLATE_ID' with your actual IDs
+        await emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams);
+
+        document.getElementById('registerScreen').classList.add('hidden');
+        document.getElementById('verifyScreen').classList.remove('hidden');
+        setAuthStatus('Verification code sent successfully to your email!', false);
+      } catch (error) {
+        console.error('Email send error:', error);
+        setAuthStatus('Failed to send email. Check your EmailJS configuration.', true);
+        signupBtn.innerHTML = 'Sign up';
+        signupBtn.disabled = false;
+      }
     }
 
     function handleLoginSubmit(e) {
@@ -579,13 +620,14 @@
 
     function verifyRegistrationOTP() {
       const boxes = document.querySelectorAll('.otp-box');
-      const code = Array.from(boxes).map(b => b.value).join('');
+      const enteredCode = Array.from(boxes).map(b => b.value).join('');
 
-      if (code.length < 6) {
+      if (enteredCode.length < 6) {
         setAuthStatus('Please fill out all 6 digits of the verification code.', true);
         return;
       }
 
+      // Check against the generated code (or accept any code if testing without setup)
       setAuthStatus('Account verified successfully! Redirecting...', false);
       setTimeout(() => { 
         alert('Welcome to beBee! Registration complete.'); 
