@@ -1,0 +1,9 @@
+{
+  "name": "forge",
+  "version": "1.0.0",
+  "description": "Job board with auth",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
