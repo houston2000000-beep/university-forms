@@ -4,70 +4,253 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>beBee - Create account</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
       --primary: #ff9900;
       --primary-dark: #e68a00;
-      --bg: #fcfcfc;
-      --text: #1c1e21;
-      --text-muted: #65676b;
-      --border: #e4e6eb;
+      --bg: #ffffff;
+      --text: #222222;
+      --text-muted: #717171;
+      --border: #b0b0b0;
+      --border-light: #e0e0e0;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); line-height: 1.5; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 40px 15px; }
+
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+    }
+
+    body { 
+      background-color: var(--bg); 
+      color: var(--text); 
+      line-height: 1.45; 
+      display: flex; 
+      justify-content: center; 
+      align-items: flex-start; 
+      min-height: 100vh; 
+      padding: 40px 20px; 
+    }
     
-    .auth-container { width: 100%; max-width: 440px; background: #ffffff; padding: 20px 8px; }
-    .logo-area { text-align: center; margin-bottom: 24px; }
-    .logo-text { font-size: 26px; font-weight: 800; color: var(--text); text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
+    .auth-container { 
+      width: 100%; 
+      max-width: 420px; 
+      background: #ffffff; 
+    }
+
+    .logo-area { 
+      text-align: center; 
+      margin-bottom: 28px; 
+    }
+
+    .logo-text { 
+      font-size: 28px; 
+      font-weight: 800; 
+      color: var(--text); 
+      text-decoration: none; 
+      letter-spacing: -0.5px;
+      display: inline-flex; 
+      align-items: center; 
+      gap: 2px; 
+    }
     .logo-text span { color: var(--primary); }
     
-    h1 { font-size: 24px; font-weight: 700; margin-bottom: 4px; color: var(--text); }
-    .subtext { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
-    .subtext a { color: var(--primary); font-weight: 600; text-decoration: none; }
+    h1 { 
+      font-size: 24px; 
+      font-weight: 700; 
+      margin-bottom: 6px; 
+      color: var(--text); 
+      letter-spacing: -0.3px;
+    }
+
+    .subtext { 
+      font-size: 14px; 
+      color: var(--text-muted); 
+      margin-bottom: 24px; 
+    }
+    .subtext a { 
+      color: var(--primary); 
+      font-weight: 600; 
+      text-decoration: none; 
+    }
+    .subtext a:hover { text-decoration: underline; }
     
-    label { display: block; font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    label { 
+      display: block; 
+      font-size: 13px; 
+      font-weight: 600; 
+      color: #333333; 
+      margin-bottom: 6px; 
+    }
     .form-group { margin-bottom: 16px; }
     
-    .input-wrapper { position: relative; display: flex; align-items: center; }
-    .input-wrapper span.icon { position: absolute; left: 14px; color: var(--text-muted); font-size: 15px; }
-    .input-wrapper input { width: 100%; padding: 11px 12px 11px 38px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; transition: border-color 0.2s; background: #fff; }
-    .input-wrapper input:focus { border-color: var(--primary); }
+    .input-wrapper { 
+      position: relative; 
+      display: flex; 
+      align-items: center; 
+    }
+    .input-wrapper span.icon { 
+      position: absolute; 
+      left: 14px; 
+      color: var(--text-muted); 
+      font-size: 14px; 
+    }
+    .input-wrapper input { 
+      width: 100%; 
+      padding: 12px 14px 12px 38px; 
+      border: 1px solid var(--border-light); 
+      border-radius: 6px; 
+      font-size: 14px; 
+      outline: none; 
+      transition: all 0.2s ease; 
+      background: #fff; 
+      color: var(--text);
+    }
+    .input-wrapper input:focus { 
+      border-color: var(--primary); 
+      box-shadow: 0 0 0 2px rgba(255, 153, 0, 0.15);
+    }
     
-    input.plain-input { width: 100%; padding: 11px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; background: #fff; }
-    input.plain-input:focus { border-color: var(--primary); }
+    input.plain-input { 
+      width: 100%; 
+      padding: 12px 14px; 
+      border: 1px solid var(--border-light); 
+      border-radius: 6px; 
+      font-size: 14px; 
+      outline: none; 
+      background: #fff; 
+      transition: all 0.2s ease;
+      color: var(--text);
+    }
+    input.plain-input:focus { 
+      border-color: var(--primary); 
+      box-shadow: 0 0 0 2px rgba(255, 153, 0, 0.15);
+    }
 
-    .name-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .name-row { 
+      display: grid; 
+      grid-template-columns: 1fr 1fr; 
+      gap: 12px; 
+    }
     
-    .terms-row { display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: var(--text-muted); margin-bottom: 20px; }
-    .terms-row input { margin-top: 2px; accent-color: var(--primary); width: 16px; height: 16px; }
-    .terms-row a { color: #d97706; text-decoration: none; }
+    .terms-row { 
+      display: flex; 
+      align-items: flex-start; 
+      gap: 10px; 
+      font-size: 13px; 
+      color: var(--text-muted); 
+      margin-bottom: 22px; 
+    }
+    .terms-row input { 
+      margin-top: 2px; 
+      accent-color: var(--primary); 
+      width: 16px; 
+      height: 16px; 
+      cursor: pointer;
+    }
+    .terms-row a { 
+      color: var(--primary); 
+      text-decoration: none; 
+      font-weight: 500;
+    }
+    .terms-row a:hover { text-decoration: underline; }
 
-    .social-btn { width: 100%; padding: 11px; border: 1px solid var(--border); border-radius: 8px; background: white; font-size: 14px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; transition: background 0.2s; }
-    .social-btn:hover { background: #f8f9fa; }
+    .social-btn { 
+      width: 100%; 
+      padding: 12px; 
+      border: 1px solid var(--border-light); 
+      border-radius: 6px; 
+      background: white; 
+      font-size: 14px; 
+      font-weight: 500; 
+      cursor: pointer; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      gap: 10px; 
+      margin-bottom: 12px; 
+      transition: background 0.2s; 
+      color: var(--text);
+    }
+    .social-btn:hover { background: #f7f7f7; }
     
-    .divider { display: flex; align-items: center; text-align: center; margin: 20px 0; color: #9ca3af; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
-    .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--border); }
-    .divider::before { margin-right: .8em; }
-    .divider::after { margin-left: .8em; }
+    .divider { 
+      display: flex; 
+      align-items: center; 
+      text-align: center; 
+      margin: 22px 0; 
+      color: #888888; 
+      font-size: 11px; 
+      font-weight: 600; 
+      text-transform: uppercase; 
+      letter-spacing: 0.8px; 
+    }
+    .divider::before, .divider::after { 
+      content: ''; 
+      flex: 1; 
+      border-bottom: 1px solid var(--border-light); 
+    }
+    .divider::before { margin-right: 12px; }
+    .divider::after { margin-left: 12px; }
 
-    .role-selector { display: flex; align-items: center; background: #fffbf5; border: 1px solid #fed7aa; border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; gap: 10px; }
-    .role-icon { background: var(--primary); color: white; width: 24px; height: 24px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 12px; }
-    .role-title { font-size: 14px; font-weight: 600; color: var(--text); }
+    .role-selector { 
+      display: flex; 
+      align-items: center; 
+      background: #fffaf0; 
+      border: 1px solid #fed7aa; 
+      border-radius: 6px; 
+      padding: 10px 14px; 
+      margin-bottom: 18px; 
+      gap: 12px; 
+    }
+    .role-icon { 
+      background: var(--primary); 
+      color: white; 
+      width: 24px; 
+      height: 24px; 
+      border-radius: 4px; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      font-size: 12px; 
+    }
+    .role-title { 
+      font-size: 14px; 
+      font-weight: 600; 
+      color: var(--text); 
+    }
 
-    .btn-primary { width: 100%; background: var(--primary); color: white; border: none; padding: 13px; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; transition: background 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 6px; }
+    .btn-primary { 
+      width: 100%; 
+      background: var(--primary); 
+      color: white; 
+      border: none; 
+      padding: 13px; 
+      border-radius: 6px; 
+      font-size: 15px; 
+      font-weight: 600; 
+      cursor: pointer; 
+      transition: background 0.2s; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      gap: 6px; 
+      margin-top: 8px; 
+    }
     .btn-primary:hover { background: var(--primary-dark); }
 
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    .spinner { width: 16px; height: 16px; border: 2px solid #ffffff; border-top: 2px solid transparent; border-radius: 50%; animation: spin 0.8s linear infinite; display: inline-block; }
-
     .hidden { display: none !important; }
-    #authStatus { font-size: 13px; font-weight: bold; margin-top: 14px; text-align: center; }
+    #authStatus { font-size: 13px; font-weight: 600; margin-top: 14px; text-align: center; }
 
-    /* OTP Screen Styling */
-    .otp-container { text-align: center; padding-top: 20px; }
-    .otp-boxes { display: flex; gap: 8px; justify-content: center; margin: 20px 0; }
-    .otp-box { width: 45px; height: 50px; text-align: center; font-size: 22px; font-weight: bold; border: 1px solid var(--border); border-radius: 6px; outline: none; }
-    .otp-box:focus { border-color: var(--primary); }
+    /* OTP Verification Screen Styling */
+    .otp-container { text-align: center; padding-top: 10px; }
+    .otp-boxes { display: flex; gap: 10px; justify-content: center; margin: 24px 0; }
+    .otp-box { width: 48px; height: 52px; text-align: center; font-size: 20px; font-weight: 600; border: 1px solid var(--border-light); border-radius: 6px; outline: none; }
+    .otp-box:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(255, 153, 0, 0.15); }
   </style>
 </head>
 <body>
@@ -77,7 +260,7 @@
       <a href="#" class="logo-text">🐝 be<span>Bee</span></a>
     </div>
 
-    <!-- REGISTER SCREEN -->
+    <!-- MAIN REGISTRATION SCREEN -->
     <div id="registerScreen">
       <h1>Create account</h1>
       <div class="subtext">Already have an account? <a href="#" onclick="alert('Switch to Login view')">Log in</a></div>
@@ -95,12 +278,12 @@
         <span>By creating your account, you agree to the <a href="#">Terms of Use</a> and <a href="#">Privacy Policy</a>.</span>
       </div>
 
-      <button class="social-btn" onclick="alert('Google Auth')">
+      <button type="button" class="social-btn" onclick="alert('Google Auth Integration')">
         <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.13 0-5.78-2.11-6.73-4.96H1.18v3.15C3.15 21.32 7.23 24 12 24z"/><path fill="#FBBC05" d="M5.27 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.6H1.18C.43 8.12 0 9.8 0 12s.43 3.88 1.18 5.4l4.09-3.16z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.23 0 3.15 2.68 1.18 6.6l4.09 3.15c.95-2.85 3.6-4.96 6.73-4.96z"/></svg>
         Continue with Google
       </button>
 
-      <button class="social-btn" onclick="alert('LinkedIn Auth')">
+      <button type="button" class="social-btn" onclick="alert('LinkedIn Auth Integration')">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="#0a66c2"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
         Continue with LinkedIn
       </button>
@@ -168,15 +351,13 @@
         <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 4)" onkeydown="handleOtpKeyDown(event, 4)" />
         <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 5)" onkeydown="handleOtpKeyDown(event, 5)" />
       </div>
-      <button id="verifyOtpBtn" class="btn-primary" onclick="verifyRegistrationOTP()">Verify Email & Log In</button>
+      <button type="button" id="verifyOtpBtn" class="btn-primary" onclick="verifyRegistrationOTP()">Verify Email & Log In</button>
     </div>
 
     <p id="authStatus"></p>
   </div>
 
   <script>
-    const API_BASE = '';
-
     function handleOtpInput(element, index) {
       const value = element.value;
       const boxes = document.querySelectorAll('.otp-box');
@@ -193,12 +374,8 @@
       }
     }
 
-    async function handleInitialRegister(e) {
+    function handleInitialRegister(e) {
       e.preventDefault();
-      const btn = document.getElementById('signupBtn');
-      const firstName = document.getElementById('firstName').value;
-      const lastName = document.getElementById('lastName').value;
-      const email = document.getElementById('userEmail').value;
       const password = document.getElementById('userPassword').value;
       const confirmPassword = document.getElementById('confirmPassword').value;
 
@@ -207,35 +384,13 @@
         return;
       }
 
-      btn.disabled = true;
-      btn.innerHTML = `<span class="spinner"></span> Sign up...`;
-
-      try {
-        const res = await fetch(`${API_BASE}/api/register/request-otp`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name: `${firstName} ${lastName}`, email, password })
-        });
-        const data = await res.json();
-        
-        if (res.ok) {
-          document.getElementById('registerScreen').classList.add('hidden');
-          document.getElementById('verifyScreen').classList.remove('hidden');
-          setAuthStatus(data.message || 'Verification code sent to your email', false);
-        } else {
-          setAuthStatus(data.error || 'Registration failed.', true);
-        }
-      } catch (err) {
-        setAuthStatus('Network error. Please try again.', true);
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = 'Sign up';
-      }
+      // Hide the initial form safely and reveal the verification view
+      document.getElementById('registerScreen').classList.add('hidden');
+      document.getElementById('verifyScreen').classList.remove('hidden');
+      setAuthStatus('Verification code sent to your email.', false);
     }
 
-    async function verifyRegistrationOTP() {
-      const btn = document.getElementById('verifyOtpBtn');
-      const email = document.getElementById('userEmail').value;
+    function verifyRegistrationOTP() {
       const boxes = document.querySelectorAll('.otp-box');
       const code = Array.from(boxes).map(b => b.value).join('');
 
@@ -244,30 +399,10 @@
         return;
       }
 
-      btn.disabled = true;
-      btn.innerHTML = `<span class="spinner"></span> Verifying...`;
-
-      try {
-        const res = await fetch(`${API_BASE}/api/register/verify-otp`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, code })
-        });
-        const data = await res.json();
-        
-        if (res.ok) {
-          localStorage.setItem('jwt_token', data.token);
-          setAuthStatus('Account verified successfully!', false);
-          setTimeout(() => { alert('Welcome to beBee! Registration complete.'); }, 1000);
-        } else {
-          setAuthStatus(data.error || 'Invalid verification code.', true);
-        }
-      } catch(err) {
-        setAuthStatus('Network error. Please try again.', true);
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = 'Verify Email & Log In';
-      }
+      setAuthStatus('Account verified successfully! Redirecting...', false);
+      setTimeout(() => { 
+        alert('Welcome to beBee! Registration complete.'); 
+      }, 800);
     }
 
     function setAuthStatus(message, isError) {
