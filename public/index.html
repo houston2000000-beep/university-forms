@@ -161,20 +161,32 @@
       <!-- Sidebar Job Submission -->
       <div>
         <div class="sidebar-card">
-          <h3>Post a Job Immediately</h3>
-          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Reach candidates across Nigeria instantly.</p>
-          <form id="jobForm">
-            <input type="text" id="title" placeholder="Job Title" required />
-            <input type="text" id="company" placeholder="Company Name" required />
-            <input type="text" id="location" placeholder="Location (e.g. Lekki, Lagos)" required />
-            <select id="type">
-              <option value="Full-time">Full-time</option>
-              <option value="Part-time">Part-time</option>
-              <option value="Contract">Contract</option>
-            </select>
-            <textarea id="description" placeholder="Job details & requirements..." rows="3" required></textarea>
-            <button type="submit" class="btn btn-primary">Publish Job Posting</button>
-          </form>
+          
+          <!-- Job Form (Hidden unless logged in) -->
+          <div id="jobPostingContainer" class="hidden">
+            <h3>Post a Job Immediately</h3>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Reach candidates across Nigeria instantly.</p>
+            <form id="jobForm">
+              <input type="text" id="title" placeholder="Job Title" required />
+              <input type="text" id="company" placeholder="Company Name" required />
+              <input type="text" id="location" placeholder="Location (e.g. Lekki, Lagos)" required />
+              <select id="type">
+                <option value="Full-time">Full-time</option>
+                <option value="Part-time">Part-time</option>
+                <option value="Contract">Contract</option>
+              </select>
+              <textarea id="description" placeholder="Job details & requirements..." rows="3" required></textarea>
+              <button type="submit" class="btn btn-primary">Publish Job Posting</button>
+            </form>
+          </div>
+
+          <!-- Login Prompt (Shown when logged out) -->
+          <div id="loginPromptContainer" style="text-align: center; padding: 10px 0;">
+            <h3>Post a Job</h3>
+            <p style="font-size: 13px; color: var(--text-muted); margin: 10px 0 16px;">Please log in or sign up to publish job opportunities.</p>
+            <button class="btn btn-primary" style="width: 100%;" onclick="openAuthModal('login')">Log In to Post</button>
+          </div>
+
         </div>
       </div>
     </div>
@@ -234,11 +246,19 @@
     let currentAuthMode = 'login';
 
     function updateNavState() {
+      const jobContainer = document.getElementById('jobPostingContainer');
+      const loginPrompt = document.getElementById('loginPromptContainer');
+
       if (token) {
         document.getElementById('authNavButtons').innerHTML = `
           <span style="font-size: 14px; color: var(--text-muted); align-self: center;">Logged in</span>
           <button class="btn btn-outline" onclick="logout()">Log out</button>
         `;
+        if (jobContainer) jobContainer.classList.remove('hidden');
+        if (loginPrompt) loginPrompt.style.display = 'none';
+      } else {
+        if (jobContainer) jobContainer.classList.add('hidden');
+        if (loginPrompt) loginPrompt.style.display = 'block';
       }
     }
     updateNavState();
@@ -426,39 +446,42 @@
       loadFeed(q, loc);
     }
 
-    document.getElementById('jobForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      if (!token) {
-        openAuthModal('login');
-        alert('Please log in or sign up first to publish a job.');
-        return;
-      }
+    const jobFormEl = document.getElementById('jobForm');
+    if (jobFormEl) {
+      jobFormEl.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!token) {
+          openAuthModal('login');
+          alert('Please log in or sign up first to publish a job.');
+          return;
+        }
 
-      const payload = {
-        title: document.getElementById('title').value,
-        company: document.getElementById('company').value,
-        location: document.getElementById('location').value,
-        type: document.getElementById('type').value,
-        description: document.getElementById('description').value
-      };
+        const payload = {
+          title: document.getElementById('title').value,
+          company: document.getElementById('company').value,
+          location: document.getElementById('location').value,
+          type: document.getElementById('type').value,
+          description: document.getElementById('description').value
+        };
 
-      const res = await fetch('/api/jobs', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(payload)
+        const res = await fetch('/api/jobs', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          document.getElementById('jobForm').reset();
+          loadFeed();
+        } else {
+          const err = await res.json();
+          alert('Error: ' + err.error);
+        }
       });
-
-      if (res.ok) {
-        document.getElementById('jobForm').reset();
-        loadFeed();
-      } else {
-        const err = await res.json();
-        alert('Error: ' + err.error);
-      }
-    });
+    }
 
     loadFeed();
   </script>
