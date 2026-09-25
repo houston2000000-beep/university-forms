@@ -4,12 +4,17 @@ const path = require('path');
 const crypto = require('crypto');
 const { URL } = require('url');
 const { Resend } = require('resend');
+
 const resend = new Resend(process.env.RESEND_API_KEY);
 const PORT = process.env.PORT || 3000;
 const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
 const JWT_SECRET = process.env.JWT_SECRET || 'forge-secret-change-me';
 const DB_PATH = path.join(__dirname, 'data.json');
 const PUBLIC = path.join(__dirname, 'public');
+
+// Temporary in-memory store for OTP verification codes
+// Format: { 'email@example.com': { code: '123456', expires: timestamp, type: 'register'|'reset', payload: {} } }
+const otps = {};
 
 function load() {
   if (!fs.existsSync(DB_PATH)) return { users: [], jobs: [], nextUserId: 1, nextJobId: 1 };
@@ -44,6 +49,10 @@ function verifyToken(token) {
   const payload = JSON.parse(Buffer.from(body, 'base64url').toString());
   if (payload.exp < Math.floor(Date.now() / 1000)) throw new Error('expired');
   return payload;
+}
+
+function generateOTP() {
+  return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
 function json(res, status, data) {
@@ -95,18 +104,127 @@ const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, BASE_URL);
   const p = url.pathname;
   try {
-    if (p === '/api/register' && req.method === 'POST') {
+    // --- 1. REGISTRATION STEP 1: Send Registration OTP ---
+    if (p === '/api/register/request-otp' && req.method === 'POST') {
       const body = await readBody(req);
       const { email, password, name } = body;
       if (!email || !password || !name) return json(res, 400, { error: 'Email, password and name required' });
       if (password.length < 6) return json(res, 400, { error: 'Password must be at least 6 characters' });
+      
       const emailNorm = email.toLowerCase().trim();
       if (db.users.find(u => u.email === emailNorm)) return json(res, 409, { error: 'Email already registered' });
-      const user = { id: db.nextUserId++, email: emailNorm, password: hashPassword(password), name: name.trim(), created_at: new Date().toISOString() };
-      db.users.push(user); save(db);
+
+      const code = generateOTP();
+      otps[emailNorm] = {
+        code,
+        type: 'register',
+        payload: { name: name.trim(), password },
+        expires: Date.now() + 10 * 60 * 1000 // 10 minutes
+      };
+
+      try {
+        await resend.emails.send({
+          from: 'onboarding@resend.dev',
+          to: emailNorm,
+          subject: 'Your Verification Code',
+          html: `<p>Your email verification code is: <strong>${code}</strong>. It expires in 10 minutes.</p>`
+        });
+        return json(res, 200, { message: 'Verification code sent to your email' });
+      } catch (err) {
+        return json(res, 500, { error: 'Failed to send email: ' + err.message });
+      }
+    }
+
+    // --- 2. REGISTRATION STEP 2: Verify OTP and Create Account ---
+    if (p === '/api/register/verify-otp' && req.method === 'POST') {
+      const body = await readBody(req);
+      const { email, code } = body;
+      if (!email || !code) return json(res, 400, { error: 'Email and code required' });
+
+      const emailNorm = email.toLowerCase().trim();
+      const record = otps[emailNorm];
+
+      if (!record || record.type !== 'register') return json(res, 400, { error: 'No pending registration found for this email' });
+      if (Date.now() > record.expires) {
+        delete otps[emailNorm];
+        return json(res, 400, { error: 'Verification code expired' });
+      }
+      if (record.code !== code.trim()) return json(res, 400, { error: 'Invalid verification code' });
+
+      // Create user
+      const user = {
+        id: db.nextUserId++,
+        email: emailNorm,
+        password: hashPassword(record.payload.password),
+        name: record.payload.name,
+        created_at: new Date().toISOString()
+      };
+      db.users.push(user);
+      save(db);
+      delete otps[emailNorm];
+
       const token = signToken({ id: user.id, email: user.email, name: user.name });
       return json(res, 201, { token, user: { id: user.id, email: user.email, name: user.name } });
     }
+
+    // --- 3. FORGOT PASSWORD STEP 1: Send Reset OTP ---
+    if (p === '/api/forgot-password/request-otp' && req.method === 'POST') {
+      const body = await readBody(req);
+      const { email } = body;
+      if (!email) return json(res, 400, { error: 'Email required' });
+
+      const emailNorm = email.toLowerCase().trim();
+      const user = db.users.find(u => u.email === emailNorm);
+      if (!user) return json(res, 404, { error: 'No account found with this email' });
+
+      const code = generateOTP();
+      otps[emailNorm] = {
+        code,
+        type: 'reset',
+        expires: Date.now() + 10 * 60 * 1000
+      };
+
+      try {
+        await resend.emails.send({
+          from: 'onboarding@resend.dev',
+          to: emailNorm,
+          subject: 'Password Reset Code',
+          html: `<p>Your password reset code is: <strong>${code}</strong>. It expires in 10 minutes.</p>`
+        });
+        return json(res, 200, { message: 'Reset code sent to your email' });
+      } catch (err) {
+        return json(res, 500, { error: 'Failed to send email: ' + err.message });
+      }
+    }
+
+    // --- 4. FORGOT PASSWORD STEP 2: Verify OTP and Reset Password ---
+    if (p === '/api/forgot-password/verify-otp' && req.method === 'POST') {
+      const body = await readBody(req);
+      const { email, code, newPassword } = body;
+      if (!email || !code || !newPassword) return json(res, 400, { error: 'Email, code, and new password required' });
+      if (newPassword.length < 6) return json(res, 400, { error: 'New password must be at least 6 characters' });
+
+      const emailNorm = email.toLowerCase().trim();
+      const record = otps[emailNorm];
+
+      if (!record || record.type !== 'reset') return json(res, 400, { error: 'No pending password reset request found' });
+      if (Date.now() > record.expires) {
+        delete otps[emailNorm];
+        return json(res, 400, { error: 'Reset code expired' });
+      }
+      if (record.code !== code.trim()) return json(res, 400, { error: 'Invalid reset code' });
+
+      const user = db.users.find(u => u.email === emailNorm);
+      if (!user) return json(res, 404, { error: 'User not found' });
+
+      user.password = hashPassword(newPassword);
+      save(db);
+      delete otps[emailNorm];
+
+      return json(res, 200, { message: 'Password reset successfully. You can now log in.' });
+    }
+
+    // --- standard routes ---
     if (p === '/api/login' && req.method === 'POST') {
       const body = await readBody(req);
       const { email, password } = body;
@@ -140,13 +258,6 @@ const server = http.createServer(async (req, res) => {
         return { ...j, poster_name: poster ? poster.name : 'Unknown' };
       }));
     }
-    if (p.startsWith('/api/jobs/') && req.method === 'GET') {
-      const id = Number(p.split('/')[3]);
-      const job = db.jobs.find(j => j.id === id);
-      if (!job) return json(res, 404, { error: 'Job not found' });
-      const poster = db.users.find(u => u.id === job.user_id);
-      return json(res, 200, { ...job, poster_name: poster ? poster.name : 'Unknown', poster_email: poster ? poster.email : null });
-    }
     if (p === '/api/jobs' && req.method === 'POST') {
       const user = getAuth(req);
       if (!user) return json(res, 401, { error: 'Authentication required' });
@@ -156,44 +267,6 @@ const server = http.createServer(async (req, res) => {
       const job = { id: db.nextJobId++, user_id: user.id, title: title.trim(), company: company.trim(), location: location.trim(), type: type.trim(), salary: salary ? salary.trim() : null, description: description.trim(), apply_url: apply_url ? apply_url.trim() : null, created_at: new Date().toISOString() };
       db.jobs.push(job); save(db);
       return json(res, 201, job);
-    }
-    if (p.startsWith('/api/jobs/') && req.method === 'DELETE') {
-      const user = getAuth(req);
-      if (!user) return json(res, 401, { error: 'Authentication required' });
-      const id = Number(p.split('/')[3]);
-      const idx = db.jobs.findIndex(j => j.id === id);
-      if (idx === -1) return json(res, 404, { error: 'Job not found' });
-      if (db.jobs[idx].user_id !== user.id) return json(res, 403, { error: 'Not your job' });
-      db.jobs.splice(idx, 1); save(db);
-      return json(res, 200, { ok: true });
-    }
-    if (p === '/api/my-jobs' && req.method === 'GET') {
-      const user = getAuth(req);
-      if (!user) return json(res, 401, { error: 'Authentication required' });
-      return json(res, 200, db.jobs.filter(j => j.user_id === user.id).sort((a, b) => new Date(b.created_at) - new Date(a.created_at)));
-    }
-    if (p === '/sitemap.xml') {
-      const base = BASE_URL.replace(/\/$/, '');
-      let xml = '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
-      xml += '<url><loc>' + base + '/</loc><priority>1.0</priority></url>';
-      db.jobs.forEach(j => { xml += '<url><loc>' + base + '/job/' + j.id + '</loc><priority>0.8</priority></url>'; });
-      xml += '</urlset>';
-      res.writeHead(200, { 'Content-Type': 'application/xml' });
-      return res.end(xml);
-    }
-    if (p === '/api/send-email' && req.method === 'POST') {
-      const body = await readBody(req);
-      try {
-        const response = await resend.emails.send({
-          from: 'onboarding@resend.dev',
-          to: body.recipientEmail,
-          subject: `New Form Submission: ${body.formType}`,
-          html: `<p><strong>Details:</strong></p><pre>${JSON.stringify(body.formData, null, 2)}</pre>`
-        });
-        return json(res, 200, { success: true, response });
-      } catch (err) {
-        return json(res, 500, { error: err.message });
-      }
     }
 
     serveStatic(req, res, p);
