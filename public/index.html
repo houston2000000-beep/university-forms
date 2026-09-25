@@ -114,7 +114,7 @@
   <!-- Hero Banner -->
   <section class="hero">
     <h1>Jobs and services in Nigeria</h1>
-    <p>Find job opportunities, professional services, and connects across Nigeria.</p>
+    <p>Find job opportunities, professional services, and connections across Nigeria.</p>
     
     <div class="search-box">
       <input type="text" id="searchQuery" placeholder="Job title, skill, or company..." />
@@ -218,7 +218,7 @@
       <div id="verifyRegisterFields" class="hidden">
         <h2>Enter Verification Code</h2>
         <p>We sent a 6-digit confirmation code to your email.</p>
-        <input type="text" id="regOtpCode" placeholder="Enter 6-digit Code" />
+        <input type="text" id="regOtpCode" placeholder="Enter 6-digit Code" maxlength="6" style="text-align:center; letter-spacing:3px; font-size:18px;" />
         <button class="btn btn-primary" style="width:100%;" onclick="verifyRegistrationOTP()">Verify Email & Log In</button>
       </div>
 
@@ -230,7 +230,7 @@
         <button class="btn btn-primary" style="width:100%;" onclick="requestResetOTP()">Send Reset Code</button>
 
         <div id="resetOtpContainer" class="hidden" style="margin-top:12px;">
-          <input type="text" id="resetOtpCode" placeholder="Enter 6-digit Reset Code" />
+          <input type="text" id="resetOtpCode" placeholder="Enter 6-digit Reset Code" maxlength="6" />
           <input type="password" id="newPassword" placeholder="Enter New Password" />
           <button class="btn btn-primary" style="width:100%; background:#22c55e;" onclick="verifyResetOTP()">Confirm New Password</button>
         </div>
@@ -244,6 +244,7 @@
   <script>
     let token = localStorage.getItem('jwt_token') || '';
     let currentAuthMode = 'login';
+    const API_BASE = '/api'; // Adjust if pointing to external backend URL
 
     function updateNavState() {
       const jobContainer = document.getElementById('jobPostingContainer');
@@ -257,6 +258,10 @@
         if (jobContainer) jobContainer.classList.remove('hidden');
         if (loginPrompt) loginPrompt.style.display = 'none';
       } else {
+        document.getElementById('authNavButtons').innerHTML = `
+          <button class="btn btn-outline" onclick="openAuthModal('login')">Log in</button>
+          <button class="btn btn-primary" onclick="openAuthModal('register')">Sign up</button>
+        `;
         if (jobContainer) jobContainer.classList.add('hidden');
         if (loginPrompt) loginPrompt.style.display = 'block';
       }
@@ -266,7 +271,8 @@
     function logout() {
       localStorage.removeItem('jwt_token');
       token = '';
-      location.reload();
+      updateNavState();
+      alert('Logged out successfully.');
     }
 
     function openAuthModal(mode) {
@@ -281,7 +287,7 @@
       } else {
         document.getElementById('modalTitle').innerText = 'Create your account';
         document.getElementById('userName').style.display = 'block';
-        document.getElementById('authPrimaryBtn').innerText = 'Sign Up (Sends Email Code)';
+        document.getElementById('authPrimaryBtn').innerText = 'Sign Up & Send Code';
       }
     }
 
@@ -298,6 +304,7 @@
       document.getElementById('mainAuthFields').classList.remove('hidden');
       document.getElementById('forgotPasswordFields').classList.add('hidden');
       document.getElementById('verifyRegisterFields').classList.add('hidden');
+      document.getElementById('authStatus').innerText = '';
     }
 
     async function handleAuthSubmit() {
@@ -313,7 +320,12 @@
       const email = document.getElementById('userEmail').value;
       const password = document.getElementById('userPassword').value;
 
-      const res = await fetch('/api/register/request-otp', {
+      if (!name || !email || !password) {
+        alert('Please fill in all fields.');
+        return;
+      }
+
+      const res = await fetch(`${API_BASE}/register/request-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password })
@@ -322,10 +334,10 @@
       if (res.ok) {
         document.getElementById('mainAuthFields').classList.add('hidden');
         document.getElementById('verifyRegisterFields').classList.remove('hidden');
-        document.getElementById('authStatus').innerText = data.message;
+        document.getElementById('authStatus').innerText = data.message || 'Verification code sent to email!';
         document.getElementById('authStatus').style.color = '#0284c7';
       } else {
-        alert(data.error);
+        alert(data.error || 'Registration failed.');
       }
     }
 
@@ -333,7 +345,12 @@
       const email = document.getElementById('userEmail').value;
       const code = document.getElementById('regOtpCode').value;
 
-      const res = await fetch('/api/register/verify-otp', {
+      if (!code) {
+        alert('Please enter the verification code.');
+        return;
+      }
+
+      const res = await fetch(`${API_BASE}/register/verify-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, code })
@@ -344,9 +361,9 @@
         localStorage.setItem('jwt_token', token);
         closeAuthModal();
         updateNavState();
-        alert('Account verified and logged in!');
+        alert('Account verified and logged in successfully!');
       } else {
-        alert(data.error);
+        alert(data.error || 'Invalid code.');
       }
     }
 
@@ -354,7 +371,7 @@
       const email = document.getElementById('userEmail').value;
       const password = document.getElementById('userPassword').value;
 
-      const res = await fetch('/api/login', {
+      const res = await fetch(`${API_BASE}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -366,13 +383,13 @@
         closeAuthModal();
         updateNavState();
       } else {
-        alert(data.error);
+        alert(data.error || 'Login failed.');
       }
     }
 
     async function requestResetOTP() {
       const email = document.getElementById('resetEmail').value;
-      const res = await fetch('/api/forgot-password/request-otp', {
+      const res = await fetch(`${API_BASE}/forgot-password/request-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email })
@@ -392,14 +409,14 @@
       const code = document.getElementById('resetOtpCode').value;
       const newPassword = document.getElementById('newPassword').value;
 
-      const res = await fetch('/api/forgot-password/verify-otp', {
+      const res = await fetch(`${API_BASE}/forgot-password/verify-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, code, newPassword })
       });
       const data = await res.json();
       if (res.ok) {
-        alert('Password reset successfully!');
+        alert('Password reset successfully! Please log in.');
         showMainAuthUI();
       } else {
         alert(data.error);
@@ -425,7 +442,7 @@
     }
 
     async function loadFeed(query = '', location = '') {
-      let url = '/api/jobs?';
+      let url = `${API_BASE}/jobs?`;
       if (query) url += `q=${encodeURIComponent(query)}&`;
       if (location) url += `location=${encodeURIComponent(location)}`;
 
@@ -433,7 +450,7 @@
       const jobs = await res.json();
       const feedEl = document.getElementById('jobFeed');
 
-      if (jobs.length === 0) {
+      if (!Array.isArray(jobs) || jobs.length === 0) {
         feedEl.innerHTML = `<p style="color: var(--text-muted); background: white; padding: 20px; border-radius: 8px;">No matching job postings found.</p>`;
       } else {
         feedEl.innerHTML = jobs.map(renderJobCard).join('');
@@ -452,7 +469,7 @@
         e.preventDefault();
         if (!token) {
           openAuthModal('login');
-          alert('Please log in or sign up first to publish a job.');
+          alert('Please log in first to publish a job.');
           return;
         }
 
@@ -464,7 +481,7 @@
           description: document.getElementById('description').value
         };
 
-        const res = await fetch('/api/jobs', {
+        const res = await fetch(`${API_BASE}/jobs`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -476,6 +493,7 @@
         if (res.ok) {
           document.getElementById('jobForm').reset();
           loadFeed();
+          alert('Job published successfully!');
         } else {
           const err = await res.json();
           alert('Error: ' + err.error);
