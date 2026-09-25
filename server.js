@@ -1,6 +1,6 @@
 const http = require('http');
 const fs = require('fs');
-const path = require('path');
+const path = path = require('path');
 const crypto = require('crypto');
 const { URL } = require('url');
 const { Resend } = require('resend');
@@ -12,7 +12,6 @@ const JWT_SECRET = process.env.JWT_SECRET || 'forge-secret-change-me';
 const DB_PATH = path.join(__dirname, 'data.json');
 const PUBLIC = path.join(__dirname, 'public');
 
-// Temporary in-memory store for OTP verification codes
 const otps = {};
 
 function load() {
@@ -222,7 +221,7 @@ const server = http.createServer(async (req, res) => {
       return json(res, 200, { message: 'Password reset successfully. You can now log in.' });
     }
 
-    // --- 5. SMART LOGIN WITH GRANULAR ERROR MESSAGES ---
+    // --- 5. SMART LOGIN WITH GRANULAR CHECKS ---
     if (p === '/api/login' && req.method === 'POST') {
       const body = await readBody(req);
       const { email, password } = body;
@@ -231,12 +230,10 @@ const server = http.createServer(async (req, res) => {
       const emailNorm = email.toLowerCase().trim();
       const user = db.users.find(u => u.email === emailNorm);
 
-      // Check if account exists
       if (!user) {
         return json(res, 404, { error: "You don't have an account with this email. Please create one to sign up." });
       }
 
-      // Check if password matches
       if (!verifyPassword(password, user.password)) {
         return json(res, 401, { error: "Incorrect password. Please check your password and try again." });
       }
