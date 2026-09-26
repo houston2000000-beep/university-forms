@@ -64,7 +64,7 @@ function readBody(req) {
   });
 }
 
-// Complete Masterpiece Frontend Template
+// Complete Masterpiece Frontend Template with Persistent Timer
 const htmlTemplate = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -718,7 +718,6 @@ const htmlTemplate = `<!DOCTYPE html>
 
     let registeredEmail = localStorage.getItem('lastRegisteredEmail') || "";
     let countdownInterval;
-    let timeLeft = 30;
 
     window.addEventListener('DOMContentLoaded', () => {
       const savedView = localStorage.getItem('currentView') || 'login';
@@ -731,24 +730,34 @@ const htmlTemplate = `<!DOCTYPE html>
       switchView(savedView, false);
     });
 
+    // Persistent Timer Engine using localStorage
     function startResendTimer() {
       const resendBtn = document.getElementById('resendBtn');
       const countdownSpan = document.getElementById('countdown');
       if (!resendBtn || !countdownSpan) return;
-      
-      resendBtn.disabled = true;
-      timeLeft = 30;
-      countdownSpan.innerText = timeLeft;
 
-      clearInterval(countdownInterval);
+      let expiryTime = localStorage.getItem('otp_timer_expiry');
+      const now = Date.now();
+
+      if (!expiryTime || expiryTime < now) {
+        expiryTime = now + 30 * 1000;
+        localStorage.setItem('otp_timer_expiry', expiryTime);
+      }
+
+      if (countdownInterval) clearInterval(countdownInterval);
+
       countdownInterval = setInterval(() => {
-        timeLeft--;
-        countdownSpan.innerText = timeLeft;
+        const currentTime = Date.now();
+        const timeLeft = Math.ceil((expiryTime - currentTime) / 1000);
 
         if (timeLeft <= 0) {
           clearInterval(countdownInterval);
+          localStorage.removeItem('otp_timer_expiry');
           resendBtn.disabled = false;
           resendBtn.innerText = "Resend Code";
+        } else {
+          resendBtn.disabled = true;
+          resendBtn.innerHTML = `Resend Code (<span id="countdown">${timeLeft}</span>s)`;
         }
       }, 1000);
     }
@@ -772,6 +781,7 @@ const htmlTemplate = `<!DOCTYPE html>
         const data = await response.json();
         if (response.ok) {
           setStatus("A new confirmation code has been sent to your email.", false);
+          localStorage.removeItem('otp_timer_expiry');
           startResendTimer();
         } else {
           setStatus(data.error || "Failed to resend code.", true);
@@ -872,6 +882,7 @@ const htmlTemplate = `<!DOCTYPE html>
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Failed to request OTP');
 
+        localStorage.removeItem('otp_timer_expiry');
         switchView('verify');
         setStatus('Verification code sent to your email!', false);
       } catch (err) {
@@ -897,6 +908,7 @@ const htmlTemplate = `<!DOCTYPE html>
 
         localStorage.removeItem('tempRegPassword');
         localStorage.removeItem('tempRegName');
+        localStorage.removeItem('otp_timer_expiry');
 
         localStorage.setItem('token', data.token);
         switchView('onboard');
@@ -930,6 +942,7 @@ const htmlTemplate = `<!DOCTYPE html>
     function handleLogout() {
       localStorage.removeItem('token');
       localStorage.removeItem('currentView');
+      localStorage.removeItem('otp_timer_expiry');
       switchView('login');
     }
 
