@@ -64,7 +64,7 @@ function readBody(req) {
   });
 }
 
-// Pinnacle Masterpiece Frontend Template
+// Pinnacle Masterpiece Frontend Template with Resend Timer & Dynamic Email
 const htmlTemplate = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -571,6 +571,15 @@ const htmlTemplate = `<!DOCTYPE html>
               <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 5)" />
             </div>
             <button type="button" id="verifyOtpBtn" class="btn-primary" onclick="verifyRegistrationOTP()">Confirm & Continue</button>
+            
+            <div style="text-align: center; margin-top: 20px;">
+              <p style="color: var(--text-muted); font-size: 13px;">
+                Didn't receive the code? 
+                <button id="resendBtn" onclick="handleResendCode()" disabled style="background: none; border: none; color: var(--primary); cursor: pointer; font-weight: 700; font-size: 13px;">
+                  Resend Code (<span id="countdown">30</span>s)
+                </button>
+              </p>
+            </div>
           </div>
 
           <!-- ONBOARDING SCREEN -->
@@ -659,7 +668,6 @@ const htmlTemplate = `<!DOCTYPE html>
     function animateCanvas() {
       ctx.clearRect(0, 0, width, height);
       
-      // Draw subtle gradient background wash
       const bgGrad = ctx.createRadialGradient(width * 0.2, height * 0.2, 50, width * 0.8, height * 0.8, width);
       bgGrad.addColorStop(0, '#070b14');
       bgGrad.addColorStop(1, '#04060b');
@@ -679,7 +687,6 @@ const htmlTemplate = `<!DOCTYPE html>
         ctx.fillStyle = p.color + '0.4)';
         ctx.fill();
 
-        // Connect nearby particles for constellation mesh effect
         for (let j = i + 1; j < particles.length; j++) {
           let p2 = particles[j];
           let dx = p.x - p2.x;
@@ -718,6 +725,8 @@ const htmlTemplate = `<!DOCTYPE html>
     ];
 
     let registeredEmail = localStorage.getItem('lastRegisteredEmail') || "";
+    let countdownInterval;
+    let timeLeft = 30;
 
     window.addEventListener('DOMContentLoaded', () => {
       const savedView = localStorage.getItem('currentView') || 'login';
@@ -729,6 +738,57 @@ const htmlTemplate = `<!DOCTYPE html>
       document.getElementById('displayEmail').innerText = registeredEmail;
       switchView(savedView, false);
     });
+
+    function startResendTimer() {
+      const resendBtn = document.getElementById('resendBtn');
+      const countdownSpan = document.getElementById('countdown');
+      if (!resendBtn || !countdownSpan) return;
+      
+      resendBtn.disabled = true;
+      timeLeft = 30;
+      countdownSpan.innerText = timeLeft;
+
+      clearInterval(countdownInterval);
+      countdownInterval = setInterval(() => {
+        timeLeft--;
+        countdownSpan.innerText = timeLeft;
+
+        if (timeLeft <= 0) {
+          clearInterval(countdownInterval);
+          resendBtn.disabled = false;
+          resendBtn.innerText = "Resend Code";
+        }
+      }, 1000);
+    }
+
+    async function handleResendCode() {
+      const resendBtn = document.getElementById('resendBtn');
+      resendBtn.disabled = true;
+      resendBtn.innerText = "Sending...";
+
+      try {
+        const email = localStorage.getItem('lastRegisteredEmail');
+        const response = await fetch('/api/register/request-otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password: 'placeholderpassword', name: 'User' })
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          setStatus("A new confirmation code has been sent to your email.", false);
+          startResendTimer();
+        } else {
+          setStatus(data.error || "Failed to resend code.", true);
+          resendBtn.disabled = false;
+          resendBtn.innerText = "Resend Code";
+        }
+      } catch (err) {
+        setStatus("Network error. Check your connection.", true);
+        resendBtn.disabled = false;
+        resendBtn.innerText = "Resend Code";
+      }
+    }
 
     function switchView(view, saveState = true) {
       document.getElementById('loginScreen').classList.add('hidden');
@@ -743,6 +803,7 @@ const htmlTemplate = `<!DOCTYPE html>
       if (view === 'verify') {
         document.getElementById('verifyScreen').classList.remove('hidden');
         document.getElementById('displayEmail').innerText = registeredEmail;
+        startResendTimer();
       }
       if (view === 'onboard') document.getElementById('onboardScreen').classList.remove('hidden');
       if (view === 'dashboard') document.getElementById('dashboardScreen').classList.remove('hidden');
@@ -904,14 +965,26 @@ const server = http.createServer(async (req, res) => {
     if (p === '/api/register/request-otp' && req.method === 'POST') {
       const body = await readBody(req);
       const { email, password, name } = body;
-      if (!email || !password || !name) return json(res, 400, { error: 'Email, password and name required' });
-      if (password.length < 6) return json(res, 400, { error: 'Password must be at least 6 characters' });
+      if (!email) return json(res, 400, { error: 'Email required' });
       
       const emailNorm = email.toLowerCase().trim();
-      if (db.users.find(u => u.email === emailNorm)) return json(res, 409, { error: 'Email already registered' });
+      let userRecord = db.users.find(u => u.email === emailNorm);
+      
+      if (!userRecord && (!password || password === 'placeholderpassword')) {
+        return json(res, 400, { error: 'Registration details missing. Please sign up again.' });
+      }
+
+      if (!userRecord && db.users.find(u => u.email === emailNorm)) {
+        return json(res, 409, { error: 'Email already registered' });
+      }
 
       const code = generateOTP();
-      otps[emailNorm] = { code, type: 'register', payload: { name: name.trim(), password }, expires: Date.now() + 10 * 60 * 1000 };
+      otps[emailNorm] = { 
+        code, 
+        type: 'register', 
+        payload: { name: (name || 'User').trim(), password: password || userRecord?.password }, 
+        expires: Date.now() + 10 * 60 * 1000 
+      };
 
       try {
         await resend.emails.send({
@@ -938,15 +1011,18 @@ const server = http.createServer(async (req, res) => {
       if (Date.now() > record.expires) { delete otps[emailNorm]; return json(res, 400, { error: 'Verification code expired' }); }
       if (record.code !== code.trim()) return json(res, 400, { error: 'Invalid verification code' });
 
-      const user = {
-        id: db.nextUserId++,
-        email: emailNorm,
-        password: hashPassword(record.payload.password),
-        name: record.payload.name,
-        created_at: new Date().toISOString()
-      };
-      db.users.push(user);
-      save(db);
+      let user = db.users.find(u => u.email === emailNorm);
+      if (!user) {
+        user = {
+          id: db.nextUserId++,
+          email: emailNorm,
+          password: record.payload.password.includes(':') ? record.payload.password : hashPassword(record.payload.password),
+          name: record.payload.name,
+          created_at: new Date().toISOString()
+        };
+        db.users.push(user);
+        save(db);
+      }
       delete otps[emailNorm];
 
       const token = signToken({ id: user.id, email: user.email, name: user.name });
