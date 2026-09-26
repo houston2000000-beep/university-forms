@@ -64,7 +64,7 @@ function readBody(req) {
   });
 }
 
-// Professional HTML Frontend Template
+// World-Class UI Frontend Template
 const htmlTemplate = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -73,26 +73,28 @@ const htmlTemplate = `<!DOCTYPE html>
   <title>beBee - Professional Network</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #f58220;
-      --primary-hover: #d96d12;
-      --bg-page: #f8f9fa;
-      --card-bg: #ffffff;
-      --text-main: #1f2937;
-      --text-muted: #6b7280;
-      --border-color: #e5e7eb;
+      --primary: #f97316;
+      --primary-hover: #ea580c;
+      --primary-light: #ffedd5;
+      --bg-gradient: radial-gradient(circle at top right, #fff7ed, #fdf4f0, #f8fafc);
+      --card-bg: rgba(255, 255, 255, 0.85);
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
       --input-bg: #ffffff;
-      --focus-ring: rgba(245, 130, 32, 0.15);
+      --focus-ring: rgba(249, 115, 22, 0.2);
       --error-color: #ef4444;
       --success-color: #10b981;
+      --shadow-elevation: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
     
     body {
-      background-color: var(--bg-page);
+      background: var(--bg-gradient);
       color: var(--text-main);
       display: flex;
       flex-direction: column;
@@ -105,19 +107,25 @@ const htmlTemplate = `<!DOCTYPE html>
     .auth-wrapper {
       width: 100%;
       max-width: 440px;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .logo-area {
       text-align: center;
-      margin-bottom: 24px;
+      margin-bottom: 32px;
     }
 
     .logo-text {
-      font-size: 32px;
-      font-weight: 700;
+      font-size: 36px;
+      font-weight: 800;
       color: var(--text-main);
       text-decoration: none;
-      letter-spacing: -0.5px;
+      letter-spacing: -1px;
     }
 
     .logo-text span {
@@ -126,28 +134,31 @@ const htmlTemplate = `<!DOCTYPE html>
 
     .auth-card {
       background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 32px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      border-radius: 20px;
+      padding: 40px 36px;
+      box-shadow: var(--shadow-elevation);
     }
 
     h1 {
-      font-size: 22px;
-      font-weight: 600;
+      font-size: 24px;
+      font-weight: 700;
       color: var(--text-main);
-      margin-bottom: 8px;
+      margin-bottom: 6px;
+      letter-spacing: -0.5px;
     }
 
     .subtext {
       font-size: 14px;
       color: var(--text-muted);
-      margin-bottom: 24px;
+      margin-bottom: 28px;
     }
 
     .subtext a {
       color: var(--primary);
-      font-weight: 500;
+      font-weight: 600;
       text-decoration: none;
       cursor: pointer;
     }
@@ -159,13 +170,13 @@ const htmlTemplate = `<!DOCTYPE html>
     label {
       display: block;
       font-size: 13px;
-      font-weight: 500;
+      font-weight: 600;
       color: var(--text-main);
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
 
     .form-group {
-      margin-bottom: 18px;
+      margin-bottom: 20px;
       position: relative;
     }
 
@@ -177,83 +188,86 @@ const htmlTemplate = `<!DOCTYPE html>
 
     .input-wrapper span.icon {
       position: absolute;
-      left: 14px;
+      left: 16px;
       color: var(--text-muted);
-      font-size: 14px;
+      font-size: 15px;
     }
 
     .input-wrapper input {
       width: 100%;
-      padding: 11px 14px 11px 38px;
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
+      padding: 13px 16px 13px 44px;
+      border: 1.5px solid var(--border-color);
+      border-radius: 12px;
       font-size: 14px;
       outline: none;
-      transition: all 0.2s ease;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       background: var(--input-bg);
       color: var(--text-main);
+      font-weight: 500;
     }
 
     .input-wrapper input:focus {
       border-color: var(--primary);
-      box-shadow: 0 0 0 3px var(--focus-ring);
+      box-shadow: 0 0 0 4px var(--focus-ring);
+      background: #ffffff;
     }
 
     .suggestions-box {
       position: absolute;
-      top: calc(100% + 4px);
+      top: calc(100% + 6px);
       left: 0;
       right: 0;
-      background: var(--card-bg);
+      background: #ffffff;
       border: 1px solid var(--border-color);
-      border-radius: 8px;
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+      border-radius: 12px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
       z-index: 99;
-      max-height: 200px;
+      max-height: 220px;
       overflow-y: auto;
       display: none;
     }
 
     .suggestion-item {
-      padding: 10px 14px;
+      padding: 11px 16px;
       font-size: 13px;
       color: var(--text-main);
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 10px;
-      border-bottom: 1px solid #f9fafb;
+      gap: 12px;
+      border-bottom: 1px solid #f8fafc;
+      font-weight: 500;
     }
 
     .suggestion-item:last-child { border-bottom: none; }
-    .suggestion-item:hover { background-color: #fdf8f5; color: var(--primary); }
+    .suggestion-item:hover { background-color: #fff7ed; color: var(--primary); }
 
     .role-selector {
       display: flex;
       align-items: center;
-      background: #fdf8f5;
-      border: 1px solid #fde6d8;
-      border-radius: 8px;
-      padding: 12px 14px;
-      margin-bottom: 20px;
-      gap: 12px;
+      background: #fff7ed;
+      border: 1.5px solid #fed7aa;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 24px;
+      gap: 14px;
     }
 
     .role-icon {
       background: var(--primary);
       color: white;
-      width: 28px;
-      height: 28px;
-      border-radius: 6px;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 13px;
+      font-size: 15px;
     }
 
     .role-title {
       font-size: 14px;
-      font-weight: 600;
+      font-weight: 700;
       color: var(--text-main);
     }
 
@@ -262,65 +276,73 @@ const htmlTemplate = `<!DOCTYPE html>
       background: var(--primary);
       color: white;
       border: none;
-      padding: 12px;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 600;
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 700;
       cursor: pointer;
-      transition: background 0.2s;
+      transition: all 0.2s ease;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      margin-top: 6px;
+      gap: 8px;
+      margin-top: 8px;
+      box-shadow: 0 4px 12px rgba(249, 115, 22, 0.25);
     }
 
-    .btn-primary:hover { background: var(--primary-hover); }
-    .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; }
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(249, 115, 22, 0.35);
+    }
+
+    .btn-primary:active { transform: translateY(0); }
+    .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; transform: none; box-shadow: none; }
 
     .hidden { display: none !important; }
 
     #authStatus {
       font-size: 13px;
-      font-weight: 500;
-      margin-top: 16px;
+      font-weight: 600;
+      margin-top: 18px;
       text-align: center;
     }
 
     .otp-container { text-align: center; }
-    .otp-boxes { display: flex; gap: 8px; justify-content: center; margin: 24px 0; }
+    .otp-boxes { display: flex; gap: 10px; justify-content: center; margin: 28px 0; }
     .otp-box {
-      width: 44px;
-      height: 48px;
+      width: 46px;
+      height: 52px;
       text-align: center;
-      font-size: 18px;
-      font-weight: 600;
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
+      font-size: 20px;
+      font-weight: 700;
+      border: 1.5px solid var(--border-color);
+      border-radius: 12px;
       outline: none;
       transition: all 0.2s;
     }
-    .otp-box:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--focus-ring); }
+    .otp-box:focus { border-color: var(--primary); box-shadow: 0 0 0 4px var(--focus-ring); background: #ffffff; }
 
     .goal-option {
       display: flex;
       align-items: flex-start;
-      gap: 12px;
-      padding: 12px 14px;
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      margin-bottom: 10px;
+      gap: 14px;
+      padding: 14px 16px;
+      border: 1.5px solid var(--border-color);
+      border-radius: 12px;
+      margin-bottom: 12px;
       cursor: pointer;
       transition: all 0.2s;
+      background: #ffffff;
     }
-    .goal-option:hover { border-color: var(--primary); background: #fdf8f5; }
-    .goal-option input { accent-color: var(--primary); margin-top: 3px; }
+    .goal-option:hover { border-color: var(--primary); background: #fff7ed; }
+    .goal-option input { accent-color: var(--primary); margin-top: 4px; transform: scale(1.1); }
 
     .footer-actions {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-top: 16px;
+      margin-top: 20px;
     }
 
     .logout-btn {
@@ -328,6 +350,7 @@ const htmlTemplate = `<!DOCTYPE html>
       border: none;
       color: var(--text-muted);
       font-size: 13px;
+      font-weight: 600;
       cursor: pointer;
       text-decoration: underline;
     }
@@ -382,7 +405,7 @@ const htmlTemplate = `<!DOCTYPE html>
           <div class="role-icon">💼</div>
           <div>
             <div class="role-title">Talent Profile</div>
-            <div style="font-size: 12px; color: var(--text-muted);">Connect with top opportunities</div>
+            <div style="font-size: 12px; color: var(--text-muted); font-weight: 500;">Connect with elite opportunities</div>
           </div>
         </div>
         
@@ -431,37 +454,37 @@ const htmlTemplate = `<!DOCTYPE html>
       <div id="onboardScreen" class="hidden">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
           <h1>Your professional goal</h1>
-          <span style="font-size: 12px; color: var(--text-muted); font-weight: 600;">Step 1 of 3</span>
+          <span style="font-size: 12px; color: var(--text-muted); font-weight: 700;">Step 1 of 3</span>
         </div>
-        <div class="subtext">Let us tailor your experience based on what you want to achieve.</div>
+        <div class="subtext">Let us tailor your experience based on your core objective.</div>
         
         <div class="goal-option">
           <input type="radio" name="goal" id="goal1" checked />
           <label for="goal1" style="cursor: pointer; margin-bottom: 0;">
-            <div style="font-weight: 600; font-size: 13px; color: var(--text-main);">Looking for a job</div>
-            <div style="font-size: 11px; color: var(--text-muted);">Explore new career options and apply seamlessly</div>
+            <div style="font-weight: 700; font-size: 13px; color: var(--text-main);">Looking for a job</div>
+            <div style="font-size: 12px; color: var(--text-muted); font-weight: 500;">Explore new career paths and apply with ease</div>
           </label>
         </div>
 
         <div class="goal-option">
           <input type="radio" name="goal" id="goal2" />
           <label for="goal2" style="cursor: pointer; margin-bottom: 0;">
-            <div style="font-weight: 600; font-size: 13px; color: var(--text-main);">Offering professional services</div>
-            <div style="font-size: 11px; color: var(--text-muted);">Showcase your expertise to prospective clients</div>
+            <div style="font-weight: 700; font-size: 13px; color: var(--text-main);">Offering professional services</div>
+            <div style="font-size: 12px; color: var(--text-muted); font-weight: 500;">Showcase your specialized skills to clients</div>
           </label>
         </div>
 
         <div class="goal-option">
           <input type="radio" name="goal" id="goal3" />
           <label for="goal3" style="cursor: pointer; margin-bottom: 0;">
-            <div style="font-weight: 600; font-size: 13px; color: var(--text-main);">Recruiting talent or posting jobs</div>
-            <div style="font-size: 11px; color: var(--text-muted);">Find qualified candidates for your openings</div>
+            <div style="font-weight: 700; font-size: 13px; color: var(--text-main);">Recruiting talent or posting jobs</div>
+            <div style="font-size: 12px; color: var(--text-muted); font-weight: 500;">Find top-tier professionals for your openings</div>
           </label>
         </div>
 
         <button type="button" class="btn-primary" onclick="alert('Profile setup complete!')">Continue</button>
         <div class="footer-actions">
-          <a onclick="alert('Skipped setup')" style="font-size: 13px; color: var(--text-muted); text-decoration: underline; cursor: pointer;">Skip for now</a>
+          <a onclick="alert('Skipped setup')" style="font-size: 13px; color: var(--text-muted); text-decoration: underline; cursor: pointer; font-weight: 600;">Skip for now</a>
           <button class="logout-btn" onclick="handleLogout()">Sign out</button>
         </div>
       </div>
