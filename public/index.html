@@ -11,7 +11,6 @@
   <!-- EmailJS Library for sending real emails from frontend -->
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   <script type="text/javascript">
-    // Initialize EmailJS with your Public Key (Replace 'YOUR_PUBLIC_KEY' with your actual key)
     (function() {
       emailjs.init("YOUR_PUBLIC_KEY");
     })();
@@ -125,7 +124,6 @@
       box-shadow: 0 0 0 2px rgba(255, 153, 0, 0.15);
     }
 
-    /* Suggestions Dropdown styling */
     .suggestions-box {
       position: absolute;
       top: calc(100% + 4px);
@@ -285,7 +283,6 @@
     .hidden { display: none !important; }
     #authStatus { font-size: 13px; font-weight: 600; margin-top: 14px; text-align: center; }
 
-    /* Login Specific Extras */
     .login-extras {
       display: flex;
       justify-content: space-between;
@@ -324,7 +321,6 @@
       text-decoration: underline;
     }
 
-    /* OTP Verification Screen Styling */
     .otp-container { text-align: center; padding-top: 10px; }
     .otp-boxes { display: flex; gap: 10px; justify-content: center; margin: 24px 0; }
     .otp-box { width: 48px; height: 52px; text-align: center; font-size: 20px; font-weight: 600; border: 1px solid var(--border-light); border-radius: 6px; outline: none; }
@@ -501,6 +497,8 @@
       "Yenagoa (NG)", "Yola, Yola North (NG)"
     ];
 
+    let pendingEmail = "";
+
     function switchView(view) {
       document.getElementById('loginScreen').classList.add('hidden');
       document.getElementById('registerScreen').classList.add('hidden');
@@ -565,11 +563,10 @@
       }
     }
 
-    let generatedOtpCode = "";
-
     async function handleInitialRegister(e) {
       e.preventDefault();
       const firstName = document.getElementById('firstName').value;
+      const lastName = document.getElementById('lastName').value;
       const email = document.getElementById('userEmail').value;
       const password = document.getElementById('userPassword').value;
       const confirmPassword = document.getElementById('confirmPassword').value;
@@ -579,44 +576,38 @@
         return;
       }
 
+      pendingEmail = email;
       const signupBtn = document.getElementById('signupBtn');
       signupBtn.innerHTML = 'Sending Email...';
       signupBtn.disabled = true;
 
-      // Generate a random 6-digit verification code
-      generatedOtpCode = Math.floor(100000 + Math.random() * 900000).toString();
-
-      // Parameters mapped to EmailJS template variables
-      const templateParams = {
-        to_name: firstName,
-        to_email: email,
-        passcode: generatedOtpCode
-      };
-
       try {
-        // Trigger live email sending via EmailJS with your Service ID and Template ID
-        await emailjs.send('service_4wa9mhl', 'template_41g2uac', templateParams);
+        const response = await fetch('/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ firstName, lastName, email, password })
+        });
+        const data = await response.json();
 
-        document.getElementById('registerScreen').classList.add('hidden');
-        document.getElementById('verifyScreen').classList.remove('hidden');
-        setAuthStatus('Verification code sent successfully to your email!', false);
+        if (response.ok) {
+          // Optional: EmailJS live integration code can run here if template variables match
+          document.getElementById('registerScreen').classList.add('hidden');
+          document.getElementById('verifyScreen').classList.remove('hidden');
+          setAuthStatus('Verification code sent successfully to your email!', false);
+        } else {
+          setAuthStatus(data.error || 'Registration failed.', true);
+          signupBtn.innerHTML = 'Sign up';
+          signupBtn.disabled = false;
+        }
       } catch (error) {
-        console.error('Email send error:', error);
-        setAuthStatus('Failed to send email. Check your EmailJS configuration.', true);
+        console.error('Connection error:', error);
+        setAuthStatus('Failed to connect to server.', true);
         signupBtn.innerHTML = 'Sign up';
         signupBtn.disabled = false;
       }
     }
 
-    function handleLoginSubmit(e) {
-      e.preventDefault();
-      setAuthStatus('Logged in successfully!', false);
-      setTimeout(() => {
-        alert('Welcome back to beBee!');
-      }, 500);
-    }
-
-    function verifyRegistrationOTP() {
+    async function verifyRegistrationOTP() {
       const boxes = document.querySelectorAll('.otp-box');
       const enteredCode = Array.from(boxes).map(b => b.value).join('');
 
@@ -625,13 +616,50 @@
         return;
       }
 
-      if (enteredCode === generatedOtpCode) {
-        setAuthStatus('Account verified successfully! Redirecting...', false);
-        setTimeout(() => { 
-          alert('Welcome to beBee! Registration complete.'); 
-        }, 800);
-      } else {
-        setAuthStatus('Invalid verification code. Please try again.', true);
+      try {
+        const response = await fetch('/api/register/verify-otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: pendingEmail, code: enteredCode })
+        });
+        const data = await response.json();
+
+        if (response.ok) {
+          setAuthStatus('Account verified successfully! Redirecting...', false);
+          setTimeout(() => { 
+            switchView('login');
+          }, 1000);
+        } else {
+          setAuthStatus(data.error || 'Invalid verification code.', true);
+        }
+      } catch (error) {
+        setAuthStatus('Server connection error.', true);
+      }
+    }
+
+    async function handleLoginSubmit(e) {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+
+      try {
+        const response = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await response.json();
+
+        if (response.ok) {
+          setAuthStatus('Logged in successfully!', false);
+          setTimeout(() => {
+            alert('Welcome back to beBee!');
+          }, 300);
+        } else {
+          setAuthStatus(data.error || "You don't have an account with this email. Please create one.", true);
+        }
+      } catch (error) {
+        setAuthStatus('Server connection error.', true);
       }
     }
 
