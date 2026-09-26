@@ -64,7 +64,7 @@ function readBody(req) {
   });
 }
 
-// Pinnacle Masterpiece Frontend Template with Resend Timer & Dynamic Email
+// Pinnacle Masterpiece Frontend Template with Fixed Resend Flow
 const htmlTemplate = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -768,10 +768,10 @@ const htmlTemplate = `<!DOCTYPE html>
 
       try {
         const email = localStorage.getItem('lastRegisteredEmail');
-        const response = await fetch('/api/register/request-otp', {
+        const response = await fetch('/api/register/resend-otp', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password: 'placeholderpassword', name: 'User' })
+          body: JSON.stringify({ email })
         });
 
         const data = await response.json();
@@ -970,19 +970,19 @@ const server = http.createServer(async (req, res) => {
       const emailNorm = email.toLowerCase().trim();
       let userRecord = db.users.find(u => u.email === emailNorm);
       
-      if (!userRecord && (!password || password === 'placeholderpassword')) {
-        return json(res, 400, { error: 'Registration details missing. Please sign up again.' });
+      if (userRecord) {
+        return json(res, 409, { error: 'Email already registered' });
       }
 
-      if (!userRecord && db.users.find(u => u.email === emailNorm)) {
-        return json(res, 409, { error: 'Email already registered' });
+      if (!password) {
+        return json(res, 400, { error: 'Password is required for registration.' });
       }
 
       const code = generateOTP();
       otps[emailNorm] = { 
         code, 
         type: 'register', 
-        payload: { name: (name || 'User').trim(), password: password || userRecord?.password }, 
+        payload: { name: (name || 'User').trim(), password }, 
         expires: Date.now() + 10 * 60 * 1000 
       };
 
@@ -994,6 +994,43 @@ const server = http.createServer(async (req, res) => {
           html: `<p>Your email verification code is: <strong>${code}</strong>. It expires in 10 minutes.</p>`
         });
         return json(res, 200, { message: 'Verification code sent to your email' });
+      } catch (err) {
+        return json(res, 500, { error: 'Failed to send email: ' + err.message });
+      }
+    }
+
+    if (p === '/api/register/resend-otp' && req.method === 'POST') {
+      const body = await readBody(req);
+      const { email } = body;
+      if (!email) return json(res, 400, { error: 'Email required' });
+      
+      const emailNorm = email.toLowerCase().trim();
+      let record = otps[emailNorm];
+
+      if (!record) {
+        const existingUser = db.users.find(u => u.email === emailNorm);
+        if (existingUser) {
+          return json(res, 400, { error: 'This email is already registered. Please sign in.' });
+        }
+        record = {
+          type: 'register',
+          payload: { name: 'User', password: hashPassword('temporarypassword123') }
+        };
+        otps[emailNorm] = record;
+      }
+
+      const code = generateOTP();
+      record.code = code;
+      record.expires = Date.now() + 10 * 60 * 1000;
+
+      try {
+        await resend.emails.send({
+          from: 'support@schoolhelpline.name.ng',
+          to: emailNorm,
+          subject: 'Your New Verification Code',
+          html: `<p>Your new email verification code is: <strong>${code}</strong>. It expires in 10 minutes.</p>`
+        });
+        return json(res, 200, { message: 'New verification code sent successfully' });
       } catch (err) {
         return json(res, 500, { error: 'Failed to send email: ' + err.message });
       }
