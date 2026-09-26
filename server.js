@@ -64,7 +64,7 @@ function readBody(req) {
   });
 }
 
-// Complete Masterpiece Frontend Template with Remembered Email & Seamless Login
+// Complete Masterpiece Frontend Template with Revamped Professional Dashboard
 const htmlTemplate = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -190,12 +190,21 @@ const htmlTemplate = `<!DOCTYPE html>
       justify-content: center;
       padding: 40px 20px;
       position: relative;
+      width: 100%;
     }
 
     .auth-wrapper {
       width: 100%;
       max-width: 440px;
       animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Full width container for dashboard layout */
+    .dashboard-wrapper {
+      width: 100%;
+      max-width: 900px;
+      animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      padding: 20px;
     }
 
     @keyframes fadeIn {
@@ -443,11 +452,64 @@ const htmlTemplate = `<!DOCTYPE html>
     }
     .logout-btn:hover { color: var(--text-main); }
 
-    .dash-card {
-      background: var(--input-bg);
+    /* New Dashboard Specific Styles matching reference screenshot */
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .welcome-banner {
+      background: rgba(52, 211, 153, 0.08);
+      border: 1px solid rgba(52, 211, 153, 0.25);
+      padding: 16px 20px;
+      border-radius: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .cv-upload-box {
+      background: rgba(13, 19, 33, 0.8);
       border: 1px solid var(--border-color);
-      padding: 24px;
-      border-radius: 18px;
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .dash-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    @media(max-width: 768px) { .dash-grid-2 { grid-template-columns: 1fr; } }
+    
+    .dash-action-card {
+      background: rgba(13, 19, 33, 0.8);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 20px;
+      transition: border-color 0.2s;
+    }
+    .dash-action-card:hover { border-color: var(--primary); }
+
+    .dash-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    @media(max-width: 768px) { .dash-grid-3 { grid-template-columns: 1fr; } }
+
+    .premium-banner {
+      background: linear-gradient(135deg, rgba(255, 107, 0, 0.15), rgba(13, 19, 33, 0.9));
+      border: 1px solid rgba(255, 107, 0, 0.3);
+      border-radius: 16px;
+      padding: 22px;
+      margin-top: 20px;
     }
   </style>
 </head>
@@ -455,7 +517,7 @@ const htmlTemplate = `<!DOCTYPE html>
 
   <canvas id="bgCanvas"></canvas>
 
-  <div class="app-container">
+  <div class="app-container" id="authAppContainer">
     <div class="branding-side">
       <div class="brand-top">
         <a href="#" class="logo-text">be<span>Bee</span></a>
@@ -474,7 +536,7 @@ const htmlTemplate = `<!DOCTYPE html>
     </div>
 
     <div class="auth-side">
-      <div class="auth-wrapper">
+      <div class="auth-wrapper" id="authWrapperBox">
         <div class="mobile-logo">
           <a href="#" class="logo-text">be<span>Bee</span></a>
         </div>
@@ -614,24 +676,201 @@ const htmlTemplate = `<!DOCTYPE html>
             </div>
           </div>
 
-          <!-- DASHBOARD SCREEN -->
-          <div id="dashboardScreen" class="hidden">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-              <div>
-                <h1>Dashboard</h1>
-                <p class="subtext" style="margin-bottom: 0;">Welcome back to your command center.</p>
-              </div>
-              <button class="logout-btn" onclick="handleLogout()">Sign out</button>
-            </div>
-            <div class="dash-card">
-              <div style="font-size: 15px; font-weight: 700; margin-bottom: 8px;">🚀 Profile Status Active</div>
-              <p style="font-size: 13px; color: var(--text-muted);">You are successfully connected to the beBee network. Explore elite opportunities matching your professional profile.</p>
-            </div>
-          </div>
-
           <p id="authStatus"></p>
         </div>
       </div>
+
+      <!-- REVAMPED DASHBOARD SCREEN (Full Width Layout matching target specs) -->
+      <div id="dashboardScreen" class="dashboard-wrapper hidden">
+        <div class="dashboard-header">
+          <div>
+            <h1 id="userNameHeading" style="font-size: 32px; font-weight: 800;">Welcome, Dr</h1>
+            <p class="subtext" style="margin-bottom: 0;">Here's a summary of your activity</p>
+          </div>
+          <button class="logout-btn" onclick="handleLogout()" style="font-size: 14px; padding: 8px 16px; background: rgba(255,255,255,0.06); border-radius: 10px; text-decoration: none;">Sign out</button>
+        </div>
+
+        <!-- Free module notice banner -->
+        <div class="welcome-banner">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <span style="font-size: 20px;">🎓</span>
+            <div>
+              <div style="font-weight: 700; font-size: 14px; color: var(--success-color);">Your first free module is waiting</div>
+              <div style="font-size: 12px; color: var(--text-muted);">Choose an Academy course and complete its first module for free to learn an in-demand skill.</div>
+            </div>
+          </div>
+          <button style="background: var(--success-color); color: #04060b; border: none; padding: 10px 16px; border-radius: 10px; font-weight: 700; font-size: 13px; cursor: pointer; white-space: nowrap;">Open Academy &gt;</button>
+        </div>
+
+        <!-- Main Profile CV Box -->
+        <div class="cv-upload-box">
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <div style="background: rgba(255,107,0,0.15); color: var(--primary); width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px;">📄</div>
+            <div>
+              <div style="font-weight: 700; font-size: 15px;">Main profile CV</div>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Attach the CV file you want shown on your profile and used for quick applications. Your profile fields will not be changed automatically.</div>
+              <div style="font-size: 11px; color: #64748b; margin-top: 4px;">PDF, DOC, DOCX or image. You can replace it anytime; profile text stays separate.</div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 10px;">
+            <button style="background: var(--primary); color: white; border: none; padding: 10px 16px; border-radius: 10px; font-weight: 700; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 6px;">⬆ Upload CV</button>
+            <button style="background: rgba(255,255,255,0.06); color: var(--text-main); border: 1px solid var(--border-color); padding: 10px 16px; border-radius: 10px; font-weight: 600; font-size: 13px; cursor: pointer;">Open CV Builder</button>
+          </div>
+        </div>
+
+        <!-- Action Cards Grid Row 1 -->
+        <div class="dash-grid-2">
+          <div class="dash-action-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="background: rgba(59, 130, 246, 0.15); color: #3b82f6; width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">🔍</div>
+                <span style="font-weight: 700; font-size: 15px;">Looking for a job</span>
+              </div>
+              <span style="color: var(--text-muted);">&rarr;</span>
+            </div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">Find jobs, manage alerts and applications</div>
+            <div style="display: flex; gap: 24px; font-size: 13px;">
+              <div><strong style="font-size: 16px; display: block;">0</strong> Job alerts</div>
+              <div><strong style="font-size: 16px; display: block;">0</strong> My applications</div>
+              <div><strong style="font-size: 16px; display: block;">0</strong> Saved jobs</div>
+            </div>
+          </div>
+
+          <div class="dash-action-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="background: rgba(16, 185, 129, 0.15); color: #10b981; width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">💼</div>
+                <span style="font-weight: 700; font-size: 15px;">My services</span>
+              </div>
+              <span style="color: var(--text-muted);">&rarr;</span>
+            </div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">Manage your services and proposals</div>
+            <div style="display: flex; gap: 24px; font-size: 13px;">
+              <div><strong style="font-size: 16px; display: block;">0</strong> Opportunities</div>
+              <div><strong style="font-size: 16px; display: block;">0</strong> This week</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Cards Grid Row 2 -->
+        <div class="dash-grid-2">
+          <div class="dash-action-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="background: rgba(139, 92, 246, 0.15); color: #8b5cf6; width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">🏢</div>
+                <span style="font-weight: 700; font-size: 15px;">Recruiter Dashboard</span>
+              </div>
+              <span style="color: var(--text-muted);">&rarr;</span>
+            </div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">Post jobs and review candidates</div>
+            <div style="display: flex; gap: 24px; font-size: 13px;">
+              <div><strong style="font-size: 16px; display: block;">0</strong> Active jobs</div>
+              <div><strong style="font-size: 16px; display: block;">0</strong> Applications to review</div>
+            </div>
+          </div>
+
+          <div class="dash-action-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="background: rgba(245, 158, 11, 0.15); color: #f59e0b; width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">✍️</div>
+                <span style="font-weight: 700; font-size: 15px;">My Articles</span>
+              </div>
+              <span style="color: var(--text-muted);">&rarr;</span>
+            </div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">Write and manage your articles</div>
+            <div style="display: flex; gap: 24px; font-size: 13px;">
+              <div><strong style="font-size: 16px; display: block;">0</strong> Published</div>
+              <div><strong style="font-size: 16px; display: block;">0</strong> Drafts</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Progress Bar -->
+        <div class="dash-action-card" style="margin-bottom: 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <div style="display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 14px;">
+              <span>⭐ Improve your profile</span>
+              <span style="color: var(--primary);">38%</span>
+            </div>
+            <a href="#" style="color: var(--primary); font-size: 13px; text-decoration: none; font-weight: 600;">Edit profile &gt;</a>
+          </div>
+          <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; margin-bottom: 12px;">
+            <div style="width: 38%; height: 100%; background: var(--primary); border-radius: 3px;"></div>
+          </div>
+          <div style="display: flex; gap: 20px; font-size: 12px; color: var(--text-muted);">
+            <span>✓ About you</span>
+            <span>✓ Profile photo</span>
+            <span>○ Work experience</span>
+          </div>
+        </div>
+
+        <!-- Profile Views Section -->
+        <div class="dash-action-card" style="margin-bottom: 20px;">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+            <span style="font-size: 16px;">👁️</span>
+            <span style="font-weight: 700; font-size: 15px;">Profile Views</span>
+          </div>
+          <p style="font-size: 13px; color: var(--text-muted);">No one has viewed your profile this week.</p>
+        </div>
+
+        <!-- Feature Grid Row 3 -->
+        <div class="dash-grid-3">
+          <div class="dash-action-card" style="text-align: center; padding: 24px;">
+            <div style="font-size: 24px; margin-bottom: 8px;">📝</div>
+            <div style="font-weight: 700; font-size: 14px; margin-bottom: 4px;">CV Builder</div>
+            <div style="font-size: 12px; color: var(--text-muted);">Create and download professional CVs</div>
+          </div>
+          <div class="dash-action-card" style="text-align: center; padding: 24px;">
+            <div style="font-size: 24px; margin-bottom: 8px;">🎙️</div>
+            <div style="font-weight: 700; font-size: 14px; margin-bottom: 4px;">Interview Prep</div>
+            <div style="font-size: 12px; color: var(--text-muted);">Practice with AI</div>
+          </div>
+          <div class="dash-action-card" style="text-align: center; padding: 24px;">
+            <div style="font-size: 24px; margin-bottom: 8px;">🎓</div>
+            <div style="font-weight: 700; font-size: 14px; margin-bottom: 4px;">Academy</div>
+            <div style="font-size: 12px; color: var(--text-muted);">Learn what the market demands</div>
+          </div>
+        </div>
+
+        <div class="dash-grid-2" style="margin-bottom: 20px;">
+          <div class="dash-action-card" style="text-align: center; padding: 20px;">
+            <div style="font-size: 22px; margin-bottom: 6px;">💼</div>
+            <div style="font-weight: 700; font-size: 14px; margin-bottom: 2px;">My Portfolio</div>
+            <div style="font-size: 12px; color: var(--text-muted);">Showcase your work</div>
+          </div>
+          <div class="dash-action-card" style="text-align: center; padding: 20px;">
+            <div style="font-size: 22px; margin-bottom: 6px;">📊</div>
+            <div style="font-weight: 700; font-size: 14px; margin-bottom: 2px;">Salaries</div>
+            <div style="font-size: 12px; color: var(--text-muted);">Salary data by role</div>
+          </div>
+        </div>
+
+        <!-- Need a service banner -->
+        <div class="welcome-banner" style="background: rgba(255,255,255,0.03); border-color: var(--border-color);">
+          <div style="font-size: 13px;">
+            <strong style="display: block; font-size: 14px; margin-bottom: 2px;">Need a service?</strong>
+            <span style="color: var(--text-muted);">Find plumbers, solicitors, designers, babysitters...</span>
+          </div>
+          <button style="background: var(--primary); color: white; border: none; padding: 10px 16px; border-radius: 10px; font-weight: 700; font-size: 13px; cursor: pointer; white-space: nowrap;">Request a free quote &gt;</button>
+        </div>
+
+        <!-- Upgrade to Premium Banner -->
+        <div class="premium-banner">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span style="font-size: 22px;">👑</span>
+              <span style="font-weight: 800; font-size: 16px;">Upgrade to Premium</span>
+            </div>
+            <button style="background: var(--primary); color: white; border: none; padding: 10px 18px; border-radius: 10px; font-weight: 700; font-size: 13px; cursor: pointer; box-shadow: 0 4px 15px var(--primary-glow);">Go Premium &gt;</button>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 16px; font-size: 12px; color: var(--text-muted);">
+            <span>✓ Apply to unlimited job offers</span>
+            <span>✓ Send direct messages to anyone</span>
+            <span>✓ Featured profile with crown badge</span>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -757,7 +996,7 @@ const htmlTemplate = `<!DOCTYPE html>
           resendBtn.innerText = "Resend Code";
         } else {
           resendBtn.disabled = true;
-          resendBtn.innerHTML = \`Resend Code (<span id="countdown">\${timeLeft}</span>s)\`;
+          resendBtn.innerHTML = `Resend Code (<span id="countdown">${timeLeft}</span>s)`;
         }
       }, 1000);
     }
@@ -802,24 +1041,44 @@ const htmlTemplate = `<!DOCTYPE html>
       document.getElementById('verifyScreen').classList.add('hidden');
       document.getElementById('onboardScreen').classList.add('hidden');
       document.getElementById('dashboardScreen').classList.add('hidden');
+      
+      const authWrapperBox = document.getElementById('authWrapperBox');
+      const authAppContainer = document.getElementById('authAppContainer');
+
       document.getElementById('authStatus').innerText = '';
 
-      if (view === 'login') {
-        document.getElementById('loginScreen').classList.remove('hidden');
-        // Pre-fill remembered email if available
-        const rememberedEmail = localStorage.getItem('lastRegisteredEmail');
-        if (rememberedEmail) {
-          document.getElementById('loginEmail').value = rememberedEmail;
+      if (view === 'dashboard') {
+        authWrapperBox.style.display = 'none';
+        authAppContainer.style.gridTemplateColumns = '1fr';
+        document.getElementById('dashboardScreen').classList.remove('hidden');
+        
+        // Dynamically customize the welcome name if available
+        const tempName = localStorage.getItem('tempRegName');
+        const lastEmail = localStorage.getItem('lastRegisteredEmail');
+        let displayName = "Dr";
+        if (tempName) displayName = tempName.split(' ')[0];
+        else if (lastEmail) displayName = lastEmail.split('@')[0];
+        document.getElementById('userNameHeading').innerText = `Welcome, ${displayName}`;
+      } else {
+        authWrapperBox.style.display = 'block';
+        if (window.innerWidth > 1024) {
+          authAppContainer.style.gridTemplateColumns = '1.1fr 0.9fr';
         }
+        if (view === 'login') {
+          document.getElementById('loginScreen').classList.remove('hidden');
+          const rememberedEmail = localStorage.getItem('lastRegisteredEmail');
+          if (rememberedEmail) {
+            document.getElementById('loginEmail').value = rememberedEmail;
+          }
+        }
+        if (view === 'register') document.getElementById('registerScreen').classList.remove('hidden');
+        if (view === 'verify') {
+          document.getElementById('verifyScreen').classList.remove('hidden');
+          document.getElementById('displayEmail').innerText = registeredEmail;
+          startResendTimer();
+        }
+        if (view === 'onboard') document.getElementById('onboardScreen').classList.remove('hidden');
       }
-      if (view === 'register') document.getElementById('registerScreen').classList.remove('hidden');
-      if (view === 'verify') {
-        document.getElementById('verifyScreen').classList.remove('hidden');
-        document.getElementById('displayEmail').innerText = registeredEmail;
-        startResendTimer();
-      }
-      if (view === 'onboard') document.getElementById('onboardScreen').classList.remove('hidden');
-      if (view === 'dashboard') document.getElementById('dashboardScreen').classList.remove('hidden');
 
       if (saveState) {
         localStorage.setItem('currentView', view);
@@ -830,7 +1089,6 @@ const htmlTemplate = `<!DOCTYPE html>
       }
     }
 
-    // Listen to browser back/forward buttons
     window.addEventListener('popstate', (event) => {
       if (event.state && event.state.view) {
         switchView(event.state.view, true, false);
@@ -855,7 +1113,7 @@ const htmlTemplate = `<!DOCTYPE html>
         matches.forEach(match => {
           const div = document.createElement('div');
           div.className = 'suggestion-item';
-          div.innerHTML = \`📍 <span>\${match}</span>\`;
+          div.innerHTML = `📍 <span>${match}</span>`;
           div.onclick = () => {
             document.getElementById('regLocation').value = match;
             box.style.display = 'none';
@@ -927,11 +1185,7 @@ const htmlTemplate = `<!DOCTYPE html>
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Invalid code');
 
-        // Remember the registered email permanently
         localStorage.setItem('lastRegisteredEmail', registeredEmail);
-
-        localStorage.removeItem('tempRegPassword');
-        localStorage.removeItem('tempRegName');
         localStorage.removeItem('otp_timer_expiry');
 
         localStorage.setItem('token', data.token);
@@ -957,6 +1211,9 @@ const htmlTemplate = `<!DOCTYPE html>
 
         localStorage.setItem('token', data.token);
         localStorage.setItem('lastRegisteredEmail', email);
+        if (data.user && data.user.name) {
+          localStorage.setItem('tempRegName', data.user.name);
+        }
         switchView('dashboard');
       } catch (err) {
         setStatus(err.message, true);
@@ -967,6 +1224,8 @@ const htmlTemplate = `<!DOCTYPE html>
       localStorage.removeItem('token');
       localStorage.removeItem('currentView');
       localStorage.removeItem('otp_timer_expiry');
+      localStorage.removeItem('tempRegPassword');
+      localStorage.removeItem('tempRegName');
       switchView('login');
     }
 
@@ -1115,7 +1374,6 @@ const server = http.createServer(async (req, res) => {
       const emailNorm = email.toLowerCase().trim();
       let user = db.users.find(u => u.email === emailNorm);
 
-      // Auto-register if user doesn't exist yet so they can log in seamlessly
       if (!user) {
         user = {
           id: db.nextUserId++,
