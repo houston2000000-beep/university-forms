@@ -196,6 +196,7 @@ const htmlTemplate = `<!DOCTYPE html>
       color: var(--text-muted);
       margin-bottom: 30px;
       font-weight: 500;
+      line-height: 1.5;
     }
 
     .subtext a {
@@ -378,6 +379,7 @@ const htmlTemplate = `<!DOCTYPE html>
       cursor: pointer;
       transition: all 0.2s;
       background: var(--input-bg);
+      text-align: left;
     }
     .goal-option:hover { border-color: var(--primary); background: rgba(255, 107, 0, 0.05); }
     .goal-option input { accent-color: var(--primary); margin-top: 4px; transform: scale(1.2); }
@@ -405,22 +407,6 @@ const htmlTemplate = `<!DOCTYPE html>
       width: 100%;
       max-width: 900px;
       animation: fadeIn 0.5s ease-out;
-    }
-    .dash-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      backdrop-filter: blur(20px);
-      padding: 20px 30px;
-      border-radius: 20px;
-      margin-bottom: 24px;
-    }
-    .dash-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 20px;
     }
     .dash-card {
       background: var(--card-bg);
@@ -518,7 +504,7 @@ const htmlTemplate = `<!DOCTYPE html>
       <!-- OTP VERIFICATION SCREEN -->
       <div id="verifyScreen" class="otp-container hidden">
         <h1>Verify your email</h1>
-        <p class="subtext">Enter the 6-digit confirmation code sent to your email address.</p>
+        <p class="subtext">Enter the 6-digit confirmation code sent to <br><strong id="displayEmail" style="color: var(--text-main);"></strong></p>
         <div class="otp-boxes">
           <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 0)" />
           <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 1)" />
@@ -611,7 +597,9 @@ const htmlTemplate = `<!DOCTYPE html>
       const lastEmail = localStorage.getItem('lastRegisteredEmail');
       if (lastEmail) {
         document.getElementById('loginEmail').value = lastEmail;
+        registeredEmail = lastEmail;
       }
+      document.getElementById('displayEmail').innerText = registeredEmail;
       switchView(savedView, false);
     });
 
@@ -632,7 +620,10 @@ const htmlTemplate = `<!DOCTYPE html>
 
       if (view === 'login') document.getElementById('loginScreen').classList.remove('hidden');
       if (view === 'register') document.getElementById('registerScreen').classList.remove('hidden');
-      if (view === 'verify') document.getElementById('verifyScreen').classList.remove('hidden');
+      if (view === 'verify') {
+        document.getElementById('verifyScreen').classList.remove('hidden');
+        document.getElementById('displayEmail').innerText = registeredEmail;
+      }
       if (view === 'onboard') document.getElementById('onboardScreen').classList.remove('hidden');
       if (view === 'dashboard') document.getElementById('dashboardScreen').classList.remove('hidden');
 
