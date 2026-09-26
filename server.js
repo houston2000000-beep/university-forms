@@ -158,7 +158,7 @@ const htmlTemplate = `<!DOCTYPE html>
     </div>
 
     <!-- REGISTRATION SCREEN -->
-    <div id="registerScreen">
+    <div id="registerScreen" class="hidden">
       <h1>Create account</h1>
       <div class="subtext">Already have an account? <a onclick="switchView('login')">Log in</a></div>
       
@@ -283,18 +283,29 @@ const htmlTemplate = `<!DOCTYPE html>
       "Yenagoa (NG)", "Yola, Yola North (NG)"
     ];
 
-    let registeredEmail = "";
+    let registeredEmail = localStorage.getItem('registeredEmail') || "";
 
-    function switchView(view) {
+    // On page load, restore current view from localStorage (default to 'login')
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedView = localStorage.getItem('currentView') || 'login';
+      switchView(savedView, false);
+    });
+
+    function switchView(view, saveState = true) {
       document.getElementById('loginScreen').classList.add('hidden');
       document.getElementById('registerScreen').classList.add('hidden');
       document.getElementById('verifyScreen').classList.add('hidden');
       document.getElementById('onboardScreen').classList.add('hidden');
       document.getElementById('authStatus').innerText = '';
+
       if (view === 'login') document.getElementById('loginScreen').classList.remove('hidden');
       if (view === 'register') document.getElementById('registerScreen').classList.remove('hidden');
       if (view === 'verify') document.getElementById('verifyScreen').classList.remove('hidden');
       if (view === 'onboard') document.getElementById('onboardScreen').classList.remove('hidden');
+
+      if (saveState) {
+        localStorage.setItem('currentView', view);
+      }
     }
 
     function filterLocations(query) {
@@ -344,6 +355,7 @@ const htmlTemplate = `<!DOCTYPE html>
       const email = document.getElementById('userEmail').value;
       const password = document.getElementById('userPassword').value;
       registeredEmail = email;
+      localStorage.setItem('registeredEmail', email);
 
       const signupBtn = document.getElementById('signupBtn');
       signupBtn.innerHTML = 'Sending Code...';
@@ -382,7 +394,6 @@ const htmlTemplate = `<!DOCTYPE html>
         if (!res.ok) throw new Error(data.error || 'Invalid code');
 
         localStorage.setItem('token', data.token);
-        // Transition straight into the profile goal selection onboarding screen
         switchView('onboard');
       } catch (err) {
         setStatus(err.message, true);
@@ -486,7 +497,7 @@ const server = http.createServer(async (req, res) => {
         name: record.payload.name,
         created_at: new Date().toISOString()
       };
-      db.users.push(user);
+      db.users.users.push ? db.users.push(user) : db.users.push(user);
       save(db);
       delete otps[emailNorm];
 
