@@ -64,7 +64,7 @@ function readBody(req) {
   });
 }
 
-// World-Class Masterpiece Frontend Template
+// Pinnacle Masterpiece Frontend Template
 const htmlTemplate = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -77,19 +77,19 @@ const htmlTemplate = `<!DOCTYPE html>
   <style>
     :root {
       --primary: #ff6b00;
-      --primary-hover: #e05e00;
-      --primary-light: #fff2eb;
-      --bg-base: #090d16;
-      --card-bg: rgba(255, 255, 255, 0.03);
+      --primary-hover: #ff852b;
+      --primary-glow: rgba(255, 107, 0, 0.35);
+      --bg-base: #04060b;
+      --card-bg: rgba(13, 19, 33, 0.65);
       --card-border: rgba(255, 255, 255, 0.08);
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
-      --input-bg: rgba(15, 23, 42, 0.6);
-      --border-color: rgba(255, 255, 255, 0.1);
-      --focus-ring: rgba(255, 107, 0, 0.3);
+      --input-bg: rgba(8, 13, 24, 0.75);
+      --border-color: rgba(255, 255, 255, 0.12);
+      --focus-ring: rgba(255, 107, 0, 0.4);
       --error-color: #f87171;
       --success-color: #34d399;
-      --shadow-elevation: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+      --shadow-elevation: 0 30px 60px -12px rgba(0, 0, 0, 0.85);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -97,38 +97,103 @@ const htmlTemplate = `<!DOCTYPE html>
     body {
       background-color: var(--bg-base);
       color: var(--text-main);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
       min-height: 100vh;
-      padding: 24px;
       overflow-x: hidden;
       position: relative;
+      display: flex;
     }
 
-    /* Dynamic Aurora Mesh Background */
-    .aurora-bg {
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      overflow: hidden;
+    /* Interactive Canvas Background */
+    #bgCanvas {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
       z-index: -1;
       pointer-events: none;
     }
-    .aurora-blob {
-      position: absolute;
-      filter: blur(120px);
-      border-radius: 50%;
-      opacity: 0.25;
-      animation: floatOrb 12s ease-in-out infinite alternate;
-    }
-    .blob-1 { width: 450px; height: 450px; background: #ff6b00; top: -10%; left: -10%; }
-    .blob-2 { width: 500px; height: 500px; background: #7c3aed; bottom: -15%; right: -10%; animation-delay: -4s; }
-    .blob-3 { width: 350px; height: 350px; background: #0ea5e9; top: 40%; left: 30%; animation-delay: -8s; }
 
-    @keyframes floatOrb {
-      0% { transform: translate(0, 0) scale(1); }
-      100% { transform: translate(40px, 50px) scale(1.1); }
+    /* Split-Screen Master Layout */
+    .app-container {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      width: 100vw;
+      min-height: 100vh;
+    }
+
+    @media (max-width: 1024px) {
+      .app-container { grid-template-columns: 1fr; }
+      .branding-side { display: none !important; }
+    }
+
+    /* Left Branding Showcase Side */
+    .branding-side {
+      padding: 60px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      border-right: 1px solid rgba(255, 255, 255, 0.05);
+      background: radial-gradient(circle at top left, rgba(255,107,0,0.08), transparent 50%);
+    }
+
+    .brand-top .logo-text {
+      font-size: 36px;
+      font-weight: 800;
+      color: #fff;
+      text-decoration: none;
+      letter-spacing: -1.5px;
+    }
+    .brand-top .logo-text span { color: var(--primary); }
+
+    .brand-hero-content h2 {
+      font-size: 48px;
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -2px;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, #fff 30%, var(--text-muted) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-hero-content p {
+      font-size: 16px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      max-width: 440px;
+      font-weight: 500;
+    }
+
+    .live-stats-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--card-border);
+      padding: 10px 18px;
+      border-radius: 30px;
+      backdrop-filter: blur(10px);
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+    .pulse-dot {
+      width: 8px; height: 8px; background: var(--success-color); border-radius: 50%;
+      box-shadow: 0 0 10px var(--success-color);
+      animation: pulseAnim 2s infinite;
+    }
+    @keyframes pulseAnim {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(52, 211, 153, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
+    }
+
+    /* Right Interactive Form Side */
+    .auth-side {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      position: relative;
     }
 
     .auth-wrapper {
@@ -138,45 +203,38 @@ const htmlTemplate = `<!DOCTYPE html>
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(16px) scale(0.98); }
+      from { opacity: 0; transform: translateY(20px) scale(0.98); }
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    .logo-area {
+    .mobile-logo {
       text-align: center;
-      margin-bottom: 32px;
+      margin-bottom: 28px;
+      display: none;
     }
-
-    .logo-text {
-      font-size: 38px;
-      font-weight: 800;
-      color: #ffffff;
-      text-decoration: none;
-      letter-spacing: -1.5px;
-    }
-
-    .logo-text span {
-      color: var(--primary);
-    }
+    @media (max-width: 1024px) { .mobile-logo { display: block; } }
+    .mobile-logo a { font-size: 34px; font-weight: 800; color: #fff; text-decoration: none; letter-spacing: -1.5px; }
+    .mobile-logo span { color: var(--primary); }
 
     .auth-card {
       background: var(--card-bg);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
       border: 1px solid var(--card-border);
-      border-radius: 24px;
+      border-radius: 28px;
       padding: 44px 38px;
       box-shadow: var(--shadow-elevation);
       position: relative;
+      overflow: hidden;
     }
 
     .auth-card::before {
       content: '';
       position: absolute;
       inset: 0;
-      border-radius: 24px;
+      border-radius: 28px;
       padding: 1px;
-      background: linear-gradient(to bottom right, rgba(255,255,255,0.15), rgba(255,255,255,0));
+      background: linear-gradient(to bottom right, rgba(255,255,255,0.2), rgba(255,255,255,0.02));
       -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
       -webkit-mask-composite: xor;
       mask-composite: exclude;
@@ -194,7 +252,7 @@ const htmlTemplate = `<!DOCTYPE html>
     .subtext {
       font-size: 14px;
       color: var(--text-muted);
-      margin-bottom: 30px;
+      margin-bottom: 28px;
       font-weight: 500;
       line-height: 1.5;
     }
@@ -206,8 +264,7 @@ const htmlTemplate = `<!DOCTYPE html>
       cursor: pointer;
       transition: opacity 0.2s;
     }
-
-    .subtext a:hover { opacity: 0.8; text-decoration: underline; }
+    .subtext a:hover { opacity: 0.85; text-decoration: underline; }
 
     label {
       display: block;
@@ -234,11 +291,12 @@ const htmlTemplate = `<!DOCTYPE html>
       left: 16px;
       color: var(--text-muted);
       font-size: 15px;
+      transition: color 0.2s;
     }
 
     .input-wrapper input {
       width: 100%;
-      padding: 14px 16px 14px 44px;
+      padding: 15px 16px 15px 46px;
       border: 1.5px solid var(--border-color);
       border-radius: 14px;
       font-size: 14px;
@@ -252,18 +310,18 @@ const htmlTemplate = `<!DOCTYPE html>
     .input-wrapper input:focus {
       border-color: var(--primary);
       box-shadow: 0 0 0 4px var(--focus-ring);
-      background: rgba(15, 23, 42, 0.9);
+      background: rgba(10, 16, 28, 0.95);
     }
+    .input-wrapper input:focus ~ span.icon { color: var(--primary); }
 
     .suggestions-box {
       position: absolute;
       top: calc(100% + 6px);
-      left: 0;
-      right: 0;
-      background: #0f172a;
+      left: 0; right: 0;
+      background: #0b111e;
       border: 1px solid var(--border-color);
       border-radius: 14px;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 25px 30px -5px rgba(0, 0, 0, 0.7);
       z-index: 99;
       max-height: 220px;
       overflow-y: auto;
@@ -278,10 +336,10 @@ const htmlTemplate = `<!DOCTYPE html>
       display: flex;
       align-items: center;
       gap: 12px;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
+      border-bottom: 1px solid rgba(255,255,255,0.03);
       font-weight: 500;
+      transition: background 0.15s;
     }
-
     .suggestion-item:last-child { border-bottom: none; }
     .suggestion-item:hover { background-color: rgba(255, 107, 0, 0.15); color: var(--primary); }
 
@@ -289,56 +347,45 @@ const htmlTemplate = `<!DOCTYPE html>
       display: flex;
       align-items: center;
       background: rgba(255, 107, 0, 0.08);
-      border: 1.5px solid rgba(255, 107, 0, 0.2);
+      border: 1.5px solid rgba(255, 107, 0, 0.25);
       border-radius: 14px;
       padding: 14px 16px;
-      margin-bottom: 24px;
+      margin-bottom: 22px;
       gap: 14px;
     }
-
     .role-icon {
       background: var(--primary);
       color: white;
-      width: 32px;
-      height: 32px;
-      border-radius: 9px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      width: 34px; height: 34px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
       font-size: 15px;
+      box-shadow: 0 4px 12px var(--primary-glow);
     }
-
-    .role-title {
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--text-main);
-    }
+    .role-title { font-size: 14px; font-weight: 700; color: var(--text-main); }
 
     .btn-primary {
       width: 100%;
-      background: var(--primary);
+      background: linear-gradient(135deg, var(--primary) 0%, #e05e00 100%);
       color: white;
       border: none;
-      padding: 15px;
+      padding: 16px;
       border-radius: 14px;
       font-size: 15px;
       font-weight: 700;
       cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      margin-top: 8px;
-      box-shadow: 0 4px 20px rgba(255, 107, 0, 0.4);
+      margin-top: 6px;
+      box-shadow: 0 4px 20px var(--primary-glow);
     }
-
     .btn-primary:hover {
-      background: var(--primary-hover);
       transform: translateY(-2px);
-      box-shadow: 0 6px 25px rgba(255, 107, 0, 0.6);
+      box-shadow: 0 8px 25px rgba(255, 107, 0, 0.5);
     }
-
     .btn-primary:active { transform: translateY(0); }
     .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; transform: none; box-shadow: none; }
 
@@ -347,17 +394,16 @@ const htmlTemplate = `<!DOCTYPE html>
     #authStatus {
       font-size: 13px;
       font-weight: 600;
-      margin-top: 20px;
+      margin-top: 18px;
       text-align: center;
     }
 
     .otp-container { text-align: center; }
-    .otp-boxes { display: flex; gap: 10px; justify-content: center; margin: 28px 0; }
+    .otp-boxes { display: flex; gap: 10px; justify-content: center; margin: 26px 0; }
     .otp-box {
-      width: 48px;
-      height: 54px;
+      width: 50px; height: 58px;
       text-align: center;
-      font-size: 22px;
+      font-size: 24px;
       font-weight: 700;
       border: 1.5px solid var(--border-color);
       border-radius: 14px;
@@ -366,7 +412,7 @@ const htmlTemplate = `<!DOCTYPE html>
       outline: none;
       transition: all 0.2s;
     }
-    .otp-box:focus { border-color: var(--primary); box-shadow: 0 0 0 4px var(--focus-ring); background: rgba(15, 23, 42, 0.9); }
+    .otp-box:focus { border-color: var(--primary); box-shadow: 0 0 0 4px var(--focus-ring); background: rgba(10, 16, 28, 0.95); }
 
     .goal-option {
       display: flex;
@@ -390,7 +436,6 @@ const htmlTemplate = `<!DOCTYPE html>
       align-items: center;
       margin-top: 24px;
     }
-
     .logout-btn {
       background: none;
       border: none;
@@ -402,179 +447,261 @@ const htmlTemplate = `<!DOCTYPE html>
     }
     .logout-btn:hover { color: var(--text-main); }
 
-    /* Dashboard View */
-    .dashboard-container {
-      width: 100%;
-      max-width: 900px;
-      animation: fadeIn 0.5s ease-out;
-    }
     .dash-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      backdrop-filter: blur(20px);
+      background: var(--input-bg);
+      border: 1px solid var(--border-color);
       padding: 24px;
-      border-radius: 20px;
+      border-radius: 18px;
     }
   </style>
 </head>
 <body>
-  <div class="aurora-bg">
-    <div class="aurora-blob blob-1"></div>
-    <div class="aurora-blob blob-2"></div>
-    <div class="aurora-blob blob-3"></div>
-  </div>
 
-  <div class="auth-wrapper">
-    <div class="logo-area">
-      <a href="#" class="logo-text">be<span>Bee</span></a>
+  <!-- Interactive Background Canvas -->
+  <canvas id="bgCanvas"></canvas>
+
+  <div class="app-container">
+    <!-- LEFT SIDE: BRANDING SHOWCASE -->
+    <div class="branding-side">
+      <div class="brand-top">
+        <a href="#" class="logo-text">be<span>Bee</span></a>
+      </div>
+      <div class="brand-hero-content">
+        <div class="live-stats-badge">
+          <div class="pulse-dot"></div>
+          <span>Global Professional Network Active</span>
+        </div>
+        <h2>Connect with elite opportunities worldwide.</h2>
+        <p>Join millions of top-tier professionals, discover curated career paths, and scale your professional impact instantly.</p>
+      </div>
+      <div style="font-size: 12px; color: var(--text-muted); font-weight: 600;">
+        © 2026 beBee Inc. All rights reserved.
+      </div>
     </div>
 
-    <div class="auth-card">
-      <!-- LOGIN SCREEN -->
-      <div id="loginScreen" class="hidden">
-        <h1>Welcome back</h1>
-        <div class="subtext">New to beBee? <a onclick="switchView('register')">Create an account</a></div>
-        <form onsubmit="handleLoginSubmit(event)">
-          <div class="form-group">
-            <label>Email address</label>
-            <div class="input-wrapper">
-              <span class="icon">✉️</span>
-              <input type="email" id="loginEmail" placeholder="name@example.com" required />
+    <!-- RIGHT SIDE: AUTH CONTAINER -->
+    <div class="auth-side">
+      <div class="auth-wrapper">
+        <div class="mobile-logo">
+          <a href="#" class="logo-text">be<span>Bee</span></a>
+        </div>
+
+        <div class="auth-card">
+          <!-- LOGIN SCREEN -->
+          <div id="loginScreen" class="hidden">
+            <h1>Welcome back</h1>
+            <div class="subtext">New to beBee? <a onclick="switchView('register')">Create an account</a></div>
+            <form onsubmit="handleLoginSubmit(event)">
+              <div class="form-group">
+                <label>Email address</label>
+                <div class="input-wrapper">
+                  <span class="icon">✉️</span>
+                  <input type="email" id="loginEmail" placeholder="name@example.com" required />
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Password</label>
+                <div class="input-wrapper">
+                  <span class="icon">🔒</span>
+                  <input type="password" id="loginPassword" placeholder="••••••••" required />
+                </div>
+              </div>
+              <button type="submit" class="btn-primary">Sign in</button>
+            </form>
+          </div>
+
+          <!-- REGISTRATION SCREEN -->
+          <div id="registerScreen" class="hidden">
+            <h1>Create an account</h1>
+            <div class="subtext">Already have an account? <a onclick="switchView('login')">Sign in</a></div>
+            
+            <div class="form-group">
+              <label>Location</label>
+              <div class="input-wrapper">
+                <span class="icon">📍</span>
+                <input type="text" id="regLocation" placeholder="Select your city" oninput="filterLocations(this.value)" autocomplete="off" />
+              </div>
+              <div id="suggestionsBox" class="suggestions-box"></div>
+            </div>
+
+            <div class="role-selector">
+              <div class="role-icon">💼</div>
+              <div>
+                <div class="role-title">Talent Profile</div>
+                <div style="font-size: 12px; color: var(--text-muted); font-weight: 500;">Connect with elite opportunities</div>
+              </div>
+            </div>
+            
+            <form id="createAccountForm" onsubmit="handleInitialRegister(event)">
+              <div class="form-group">
+                <label>Full Name</label>
+                <div class="input-wrapper">
+                  <span class="icon">👤</span>
+                  <input type="text" id="fullName" placeholder="John Doe" required />
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Email address</label>
+                <div class="input-wrapper">
+                  <span class="icon">✉️</span>
+                  <input type="email" id="userEmail" placeholder="name@example.com" required />
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Password</label>
+                <div class="input-wrapper">
+                  <span class="icon">🔒</span>
+                  <input type="password" id="userPassword" placeholder="At least 6 characters" required />
+                </div>
+              </div>
+              <button type="submit" id="signupBtn" class="btn-primary">Agree & Join</button>
+            </form>
+          </div>
+
+          <!-- OTP VERIFICATION SCREEN -->
+          <div id="verifyScreen" class="otp-container hidden">
+            <h1>Verify your email</h1>
+            <p class="subtext">Enter the 6-digit confirmation code sent to <br><strong id="displayEmail" style="color: var(--text-main);"></strong></p>
+            <div class="otp-boxes">
+              <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 0)" />
+              <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 1)" />
+              <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 2)" />
+              <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 3)" />
+              <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 4)" />
+              <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 5)" />
+            </div>
+            <button type="button" id="verifyOtpBtn" class="btn-primary" onclick="verifyRegistrationOTP()">Confirm & Continue</button>
+          </div>
+
+          <!-- ONBOARDING SCREEN -->
+          <div id="onboardScreen" class="hidden">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <h1>Your professional goal</h1>
+              <span style="font-size: 12px; color: var(--text-muted); font-weight: 700;">Step 1 of 3</span>
+            </div>
+            <div class="subtext">Let us tailor your experience based on your core objective.</div>
+            
+            <div class="goal-option">
+              <input type="radio" name="goal" id="goal1" checked />
+              <label for="goal1" style="cursor: pointer; margin-bottom: 0;">
+                <div style="font-weight: 700; font-size: 13px; color: var(--text-main);">Looking for a job</div>
+                <div style="font-size: 12px; color: var(--text-muted); font-weight: 500;">Explore new career paths and apply with ease</div>
+              </label>
+            </div>
+
+            <div class="goal-option">
+              <input type="radio" name="goal" id="goal2" />
+              <label for="goal2" style="cursor: pointer; margin-bottom: 0;">
+                <div style="font-weight: 700; font-size: 13px; color: var(--text-main);">Offering professional services</div>
+                <div style="font-size: 12px; color: var(--text-muted); font-weight: 500;">Showcase your specialized skills to clients</div>
+              </label>
+            </div>
+
+            <div class="goal-option">
+              <input type="radio" name="goal" id="goal3" />
+              <label for="goal3" style="cursor: pointer; margin-bottom: 0;">
+                <div style="font-weight: 700; font-size: 13px; color: var(--text-main);">Recruiting talent or posting jobs</div>
+                <div style="font-size: 12px; color: var(--text-muted); font-weight: 500;">Find top-tier professionals for your openings</div>
+              </label>
+            </div>
+
+            <button type="button" class="btn-primary" onclick="switchView('dashboard')">Continue</button>
+            <div class="footer-actions">
+              <a onclick="switchView('dashboard')" style="font-size: 13px; color: var(--text-muted); text-decoration: underline; cursor: pointer; font-weight: 600;">Skip for now</a>
+              <button class="logout-btn" onclick="handleLogout()">Sign out</button>
             </div>
           </div>
-          <div class="form-group">
-            <label>Password</label>
-            <div class="input-wrapper">
-              <span class="icon">🔒</span>
-              <input type="password" id="loginPassword" placeholder="••••••••" required />
+
+          <!-- DASHBOARD SCREEN -->
+          <div id="dashboardScreen" class="hidden">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+              <div>
+                <h1>Dashboard</h1>
+                <p class="subtext" style="margin-bottom: 0;">Welcome back to your command center.</p>
+              </div>
+              <button class="logout-btn" onclick="handleLogout()">Sign out</button>
+            </div>
+            <div class="dash-card">
+              <div style="font-size: 15px; font-weight: 700; margin-bottom: 8px;">🚀 Profile Status Active</div>
+              <p style="font-size: 13px; color: var(--text-muted);">You are successfully connected to the beBee network. Explore elite opportunities matching your professional profile.</p>
             </div>
           </div>
-          <button type="submit" class="btn-primary">Sign in</button>
-        </form>
-      </div>
 
-      <!-- REGISTRATION SCREEN -->
-      <div id="registerScreen" class="hidden">
-        <h1>Create an account</h1>
-        <div class="subtext">Already have an account? <a onclick="switchView('login')">Sign in</a></div>
-        
-        <div class="form-group">
-          <label>Location</label>
-          <div class="input-wrapper">
-            <span class="icon">📍</span>
-            <input type="text" id="regLocation" placeholder="Select your city" oninput="filterLocations(this.value)" autocomplete="off" />
-          </div>
-          <div id="suggestionsBox" class="suggestions-box"></div>
-        </div>
-
-        <div class="role-selector">
-          <div class="role-icon">💼</div>
-          <div>
-            <div class="role-title">Talent Profile</div>
-            <div style="font-size: 12px; color: var(--text-muted); font-weight: 500;">Connect with elite opportunities</div>
-          </div>
-        </div>
-        
-        <form id="createAccountForm" onsubmit="handleInitialRegister(event)">
-          <div class="form-group">
-            <label>Full Name</label>
-            <div class="input-wrapper">
-              <span class="icon">👤</span>
-              <input type="text" id="fullName" placeholder="John Doe" required />
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Email address</label>
-            <div class="input-wrapper">
-              <span class="icon">✉️</span>
-              <input type="email" id="userEmail" placeholder="name@example.com" required />
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Password</label>
-            <div class="input-wrapper">
-              <span class="icon">🔒</span>
-              <input type="password" id="userPassword" placeholder="At least 6 characters" required />
-            </div>
-          </div>
-          <button type="submit" id="signupBtn" class="btn-primary">Agree & Join</button>
-        </form>
-      </div>
-
-      <!-- OTP VERIFICATION SCREEN -->
-      <div id="verifyScreen" class="otp-container hidden">
-        <h1>Verify your email</h1>
-        <p class="subtext">Enter the 6-digit confirmation code sent to <br><strong id="displayEmail" style="color: var(--text-main);"></strong></p>
-        <div class="otp-boxes">
-          <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 0)" />
-          <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 1)" />
-          <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 2)" />
-          <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 3)" />
-          <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 4)" />
-          <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 5)" />
-        </div>
-        <button type="button" id="verifyOtpBtn" class="btn-primary" onclick="verifyRegistrationOTP()">Confirm & Continue</button>
-      </div>
-
-      <!-- ONBOARDING SCREEN -->
-      <div id="onboardScreen" class="hidden">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-          <h1>Your professional goal</h1>
-          <span style="font-size: 12px; color: var(--text-muted); font-weight: 700;">Step 1 of 3</span>
-        </div>
-        <div class="subtext">Let us tailor your experience based on your core objective.</div>
-        
-        <div class="goal-option">
-          <input type="radio" name="goal" id="goal1" checked />
-          <label for="goal1" style="cursor: pointer; margin-bottom: 0;">
-            <div style="font-weight: 700; font-size: 13px; color: var(--text-main);">Looking for a job</div>
-            <div style="font-size: 12px; color: var(--text-muted); font-weight: 500;">Explore new career paths and apply with ease</div>
-          </label>
-        </div>
-
-        <div class="goal-option">
-          <input type="radio" name="goal" id="goal2" />
-          <label for="goal2" style="cursor: pointer; margin-bottom: 0;">
-            <div style="font-weight: 700; font-size: 13px; color: var(--text-main);">Offering professional services</div>
-            <div style="font-size: 12px; color: var(--text-muted); font-weight: 500;">Showcase your specialized skills to clients</div>
-          </label>
-        </div>
-
-        <div class="goal-option">
-          <input type="radio" name="goal" id="goal3" />
-          <label for="goal3" style="cursor: pointer; margin-bottom: 0;">
-            <div style="font-weight: 700; font-size: 13px; color: var(--text-main);">Recruiting talent or posting jobs</div>
-            <div style="font-size: 12px; color: var(--text-muted); font-weight: 500;">Find top-tier professionals for your openings</div>
-          </label>
-        </div>
-
-        <button type="button" class="btn-primary" onclick="switchView('dashboard')">Continue</button>
-        <div class="footer-actions">
-          <a onclick="switchView('dashboard')" style="font-size: 13px; color: var(--text-muted); text-decoration: underline; cursor: pointer; font-weight: 600;">Skip for now</a>
-          <button class="logout-btn" onclick="handleLogout()">Sign out</button>
+          <p id="authStatus"></p>
         </div>
       </div>
-
-      <!-- DASHBOARD SCREEN -->
-      <div id="dashboardScreen" class="hidden">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-          <div>
-            <h1>Dashboard</h1>
-            <p class="subtext" style="margin-bottom: 0;">Welcome back to your command center.</p>
-          </div>
-          <button class="logout-btn" onclick="handleLogout()">Sign out</button>
-        </div>
-        <div class="dash-card">
-          <div style="font-size: 15px; font-weight: 700; margin-bottom: 8px;">🚀 Profile Status Active</div>
-          <p style="font-size: 13px; color: var(--text-muted);">You are successfully connected to the beBee network. Explore elite opportunities matching your professional profile.</p>
-        </div>
-      </div>
-
-      <p id="authStatus"></p>
     </div>
   </div>
 
   <script>
+    // Interactive Canvas Background Animation Engine
+    const canvas = document.getElementById('bgCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, particles;
+
+    function initCanvas() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+      particles = [];
+      const count = Math.floor((width * height) / 18000);
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          vx: (Math.random() - 0.5) * 0.4,
+          vy: (Math.random() - 0.5) * 0.4,
+          radius: Math.random() * 1.5 + 0.5,
+          color: Math.random() > 0.3 ? 'rgba(255, 107, 0, ' : 'rgba(124, 58, 237, '
+        });
+      }
+    }
+
+    function animateCanvas() {
+      ctx.clearRect(0, 0, width, height);
+      
+      // Draw subtle gradient background wash
+      const bgGrad = ctx.createRadialGradient(width * 0.2, height * 0.2, 50, width * 0.8, height * 0.8, width);
+      bgGrad.addColorStop(0, '#070b14');
+      bgGrad.addColorStop(1, '#04060b');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, width, height);
+
+      for (let i = 0; i < particles.length; i++) {
+        let p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.x < 0 || p.x > width) p.vx *= -1;
+        if (p.y < 0 || p.y > height) p.vy *= -1;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = p.color + '0.4)';
+        ctx.fill();
+
+        // Connect nearby particles for constellation mesh effect
+        for (let j = i + 1; j < particles.length; j++) {
+          let p2 = particles[j];
+          let dx = p.x - p2.x;
+          let dy = p.y - p2.y;
+          let dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 110) {
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.strokeStyle = 'rgba(255, 107, 0, ' + (0.12 * (1 - dist / 110)) + ')';
+            ctx.lineWidth = 0.6;
+            ctx.stroke();
+          }
+        }
+      }
+      requestAnimationFrame(animateCanvas);
+    }
+
+    window.addEventListener('resize', initCanvas);
+    initCanvas();
+    animateCanvas();
+
     const nigerianLocations = [
       "Aba, Aba South (NG)", "Abakaliki, Ebonyi (NG)", "Abak (NG)", "Abeokuta, Abeokuta South (NG)", 
       "Abuja, Municipal Area Council (NG)", "Ado Ekiti, Ado-Ekiti (NG)", "Akure, Akure South (NG)", 
@@ -610,13 +737,6 @@ const htmlTemplate = `<!DOCTYPE html>
       document.getElementById('onboardScreen').classList.add('hidden');
       document.getElementById('dashboardScreen').classList.add('hidden');
       document.getElementById('authStatus').innerText = '';
-
-      const wrapper = document.querySelector('.auth-wrapper');
-      if (view === 'dashboard') {
-        wrapper.style.maxWidth = '700px';
-      } else {
-        wrapper.style.maxWidth = '440px';
-      }
 
       if (view === 'login') document.getElementById('loginScreen').classList.remove('hidden');
       if (view === 'register') document.getElementById('registerScreen').classList.remove('hidden');
