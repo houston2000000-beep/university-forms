@@ -12,7 +12,6 @@ const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
 const JWT_SECRET = process.env.JWT_SECRET || 'forge-secret-change-me';
 const DB_PATH = path.join(__dirname, 'data.json');
 
-// Ensure public directory exists if serving static files, or embed UI directly
 const otps = {};
 
 function load() {
@@ -75,12 +74,6 @@ function readBody(req) {
   });
 }
 
-function getAuth(req) {
-  const h = req.headers.authorization;
-  if (!h || !h.startsWith('Bearer ')) return null;
-  try { return verifyToken(h.slice(7)); } catch { return null; }
-}
-
 // HTML Frontend Template served directly from the server
 const htmlTemplate = `<!DOCTYPE html>
 <html lang="en">
@@ -116,20 +109,13 @@ const htmlTemplate = `<!DOCTYPE html>
     .input-wrapper span.icon { position: absolute; left: 14px; color: var(--text-muted); font-size: 14px; }
     .input-wrapper input { width: 100%; padding: 12px 14px 12px 38px; border: 1px solid var(--border-light); border-radius: 6px; font-size: 14px; outline: none; transition: all 0.2s ease; background: #fff; color: var(--text); }
     .input-wrapper input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(255, 153, 0, 0.15); }
+    
+    /* Suggestions Dropdown styling */
     .suggestions-box { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: #ffffff; border: 1px solid var(--border-light); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 99; max-height: 220px; overflow-y: auto; display: none; }
-    .suggestion-item { padding: 10px 14px; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #f5f5f5; }
+    .suggestion-item { padding: 10px 14px; font-size: 14px; color: var(--text); cursor: pointer; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #f5f5f5; }
+    .suggestion-item:last-child { border-bottom: none; }
     .suggestion-item:hover { background-color: #fcfcfc; color: var(--primary); }
-    input.plain-input { width: 100%; padding: 12px 14px; border: 1px solid var(--border-light); border-radius: 6px; font-size: 14px; outline: none; background: #fff; }
-    input.plain-input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(255, 153, 0, 0.15); }
-    .name-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .terms-row { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--text-muted); margin-bottom: 22px; }
-    .terms-row input { margin-top: 2px; accent-color: var(--primary); width: 16px; height: 16px; cursor: pointer; }
-    .terms-row a { color: var(--primary); text-decoration: none; font-weight: 500; }
-    .social-btn { width: 100%; padding: 12px; border: 1px solid var(--border-light); border-radius: 6px; background: white; font-size: 14px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; transition: background 0.2s; color: var(--text); }
-    .social-btn:hover { background: #f7f7f7; }
-    .divider { display: flex; align-items: center; text-align: center; margin: 22px 0; color: #888888; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; }
-    .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--border-light); }
-    .divider::before { margin-right: 12px; } .divider::after { margin-left: 12px; }
+
     .role-selector { display: flex; align-items: center; background: #fffaf0; border: 1px solid #fed7aa; border-radius: 6px; padding: 10px 14px; margin-bottom: 18px; gap: 12px; }
     .role-icon { background: var(--primary); color: white; width: 24px; height: 24px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 12px; }
     .role-title { font-size: 14px; font-weight: 600; }
@@ -140,8 +126,6 @@ const htmlTemplate = `<!DOCTYPE html>
     #authStatus { font-size: 13px; font-weight: 600; margin-top: 14px; text-align: center; }
     .login-extras { display: flex; justify-content: space-between; align-items: center; font-size: 13px; margin-bottom: 6px; }
     .login-extras a { color: var(--primary); text-decoration: none; font-weight: 500; }
-    .magic-link-row { text-align: center; margin-top: 18px; font-size: 13px; }
-    .magic-link-row a { color: var(--primary); text-decoration: none; font-weight: 600; }
     .otp-container { text-align: center; padding-top: 10px; }
     .otp-boxes { display: flex; gap: 10px; justify-content: center; margin: 24px 0; }
     .otp-box { width: 48px; height: 52px; text-align: center; font-size: 20px; font-weight: 600; border: 1px solid var(--border-light); border-radius: 6px; outline: none; }
@@ -173,15 +157,21 @@ const htmlTemplate = `<!DOCTYPE html>
     <div id="registerScreen">
       <h1>Create account</h1>
       <div class="subtext">Already have an account? <a onclick="switchView('login')">Log in</a></div>
+      
       <div class="form-group">
         <label>Location</label>
-        <div class="input-wrapper"><span class="icon">📍</span><input type="text" id="regLocation" oninput="filterLocations(this.value)" autocomplete="off" /></div>
+        <div class="input-wrapper">
+          <span class="icon">📍</span>
+          <input type="text" id="regLocation" placeholder="" oninput="filterLocations(this.value)" autocomplete="off" />
+        </div>
         <div id="suggestionsBox" class="suggestions-box"></div>
       </div>
+
       <div class="role-selector">
         <div class="role-icon">💼</div>
         <div class="role-title">Talent</div>
       </div>
+      
       <form id="createAccountForm" onsubmit="handleInitialRegister(event)">
         <div class="form-group">
           <label>Full Name</label>
@@ -217,6 +207,21 @@ const htmlTemplate = `<!DOCTYPE html>
   </div>
 
   <script>
+    const nigerianLocations = [
+      "Aba, Aba South (NG)", "Abakaliki, Ebonyi (NG)", "Abak (NG)", "Abeokuta, Abeokuta South (NG)", 
+      "Abuja, Municipal Area Council (NG)", "Ado Ekiti, Ado-Ekiti (NG)", "Akure, Akure South (NG)", 
+      "Asaba, Oshimili South (NG)", "Awka, Awka South (NG)", "Bauchi (NG)", "Benin City, Oredo (NG)", 
+      "Calabar, Calabar Municipal (NG)", "Damaturu (NG)", "Dutse (NG)", "Epe, Lagos (NG)", 
+      "Enugu, Enugu North (NG)", "Geidam (NG)", "Gembu, Sardauna (NG)", "Gombe (NG)", "Gusau (NG)", 
+      "Ibadan, Ibadan North (NG)", "Ikeja, Lagos (NG)", "Ikorodu, Lagos (NG)", "Ilorin, Ilorin West (NG)", 
+      "Jalingo (NG)", "Jos, Jos North (NG)", "Kaduna, Kaduna North (NG)", "Kano, Kano Municipal (NG)", 
+      "Katsina (NG)", "Lafia (NG)", "Lagos Island, Lagos (NG)", "Lokoja (NG)", "Maiduguri, Jere (NG)", 
+      "Makurdi (NG)", "Minna (NG)", "Nsukka (NG)", "Ogbomoso (NG)", "Onitsha, Onitsha North (NG)", 
+      "Oshogbo (NG)", "Owerri, Owerri Municipal (NG)", "Port Harcourt, Port Harcourt (NG)", 
+      "Sokoto, Sokoto South (NG)", "Umuahia, Umuahia North (NG)", "Uyo, Uyo (NG)", "Warri, Warri South (NG)", 
+      "Yenagoa (NG)", "Yola, Yola North (NG)"
+    ];
+
     let registeredEmail = "";
 
     function switchView(view) {
@@ -227,6 +232,41 @@ const htmlTemplate = `<!DOCTYPE html>
       if (view === 'login') document.getElementById('loginScreen').classList.remove('hidden');
       if (view === 'register') document.getElementById('registerScreen').classList.remove('hidden');
     }
+
+    function filterLocations(query) {
+      const box = document.getElementById('suggestionsBox');
+      box.innerHTML = '';
+      
+      if (!query || query.trim() === '') {
+        box.style.display = 'none';
+        return;
+      }
+
+      const matches = nigerianLocations.filter(loc => loc.toLowerCase().includes(query.toLowerCase()));
+
+      if (matches.length > 0) {
+        box.style.display = 'block';
+        matches.forEach(match => {
+          const div = document.createElement('div');
+          div.className = 'suggestion-item';
+          div.innerHTML = \`🐝 <span>\${match}</span>\`;
+          div.onclick = () => {
+            document.getElementById('regLocation').value = match;
+            box.style.display = 'none';
+          };
+          box.appendChild(div);
+        });
+      } else {
+        box.style.display = 'none';
+      }
+    }
+
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.form-group')) {
+        const box = document.getElementById('suggestionsBox');
+        if(box) box.style.display = 'none';
+      }
+    });
 
     function handleOtpInput(element, index) {
       element.value = element.value.replace(/[^0-9]/g, '');
