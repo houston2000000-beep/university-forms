@@ -1103,10 +1103,24 @@ const server = http.createServer(async (req, res) => {
       if (!email || !password) return json(res, 400, { error: 'Email and password required' });
 
       const emailNorm = email.toLowerCase().trim();
-      const user = db.users.find(u => u.email === emailNorm);
+      let user = db.users.find(u => u.email === emailNorm);
 
-      if (!user) return json(res, 404, { error: "You don't have an account with this email. Please create one." });
-      if (!verifyPassword(password, user.password)) return json(res, 401, { error: "Incorrect password. Please try again." });
+      // Auto-register if user doesn't exist yet so they can log in seamlessly
+      if (!user) {
+        user = {
+          id: db.nextUserId++,
+          email: emailNorm,
+          password: hashPassword(password),
+          name: emailNorm.split('@')[0],
+          created_at: new Date().toISOString()
+        };
+        db.users.push(user);
+        save(db);
+      } else {
+        if (!verifyPassword(password, user.password)) {
+          return json(res, 401, { error: "Incorrect password. Please try again." });
+        }
+      }
 
       const token = signToken({ id: user.id, email: user.email, name: user.name });
       return json(res, 200, { token, user: { id: user.id, email: user.email, name: user.name } });
