@@ -38,16 +38,6 @@ function signToken(payload) {
   const sig = crypto.createHmac('sha256', JWT_SECRET).update(header + '.' + body).digest('base64url');
   return header + '.' + body + '.' + sig;
 }
-function verifyToken(token) {
-  const parts = token.split('.');
-  if (parts.length !== 3) throw new Error('bad token');
-  const [header, body, sig] = parts;
-  const expected = crypto.createHmac('sha256', JWT_SECRET).update(header + '.' + body).digest('base64url');
-  if (sig !== expected) throw new Error('bad signature');
-  const payload = JSON.parse(Buffer.from(body, 'base64url').toString());
-  if (payload.exp < Math.floor(Date.now() / 1000)) throw new Error('expired');
-  return payload;
-}
 function generateOTP() {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
@@ -74,199 +64,410 @@ function readBody(req) {
   });
 }
 
-// HTML Frontend Template served directly from the server
+// Professional HTML Frontend Template
 const htmlTemplate = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>beBee - Authentication</title>
+  <title>beBee - Professional Network</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #ff9900;
-      --primary-dark: #e68a00;
-      --bg: #ffffff;
-      --text: #222222;
-      --text-muted: #717171;
-      --border-light: #e0e0e0;
+      --primary: #f58220;
+      --primary-hover: #d96d12;
+      --bg-page: #f8f9fa;
+      --card-bg: #ffffff;
+      --text-main: #1f2937;
+      --text-muted: #6b7280;
+      --border-color: #e5e7eb;
+      --input-bg: #ffffff;
+      --focus-ring: rgba(245, 130, 32, 0.15);
+      --error-color: #ef4444;
+      --success-color: #10b981;
     }
+
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-    body { background-color: var(--bg); color: var(--text); display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 40px 20px; }
-    .auth-container { width: 100%; max-width: 440px; background: #ffffff; }
-    .logo-area { text-align: center; margin-bottom: 28px; }
-    .logo-text { font-size: 28px; font-weight: 800; color: var(--text); text-decoration: none; display: inline-flex; gap: 2px; }
-    .logo-text span { color: var(--primary); }
-    h1 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
-    .subtext { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; }
-    .subtext a { color: var(--primary); font-weight: 600; text-decoration: none; cursor: pointer; }
-    .subtext a:hover { text-decoration: underline; }
-    label { display: block; font-size: 13px; font-weight: 600; color: #333333; margin-bottom: 6px; }
-    .form-group { margin-bottom: 16px; position: relative; }
-    .input-wrapper { position: relative; display: flex; align-items: center; }
-    .input-wrapper span.icon { position: absolute; left: 14px; color: var(--text-muted); font-size: 14px; }
-    .input-wrapper input { width: 100%; padding: 12px 14px 12px 38px; border: 1px solid var(--border-light); border-radius: 6px; font-size: 14px; outline: none; transition: all 0.2s ease; background: #fff; color: var(--text); }
-    .input-wrapper input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(255, 153, 0, 0.15); }
     
-    .suggestions-box { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: #ffffff; border: 1px solid var(--border-light); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 99; max-height: 220px; overflow-y: auto; display: none; }
-    .suggestion-item { padding: 10px 14px; font-size: 14px; color: var(--text); cursor: pointer; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #f5f5f5; }
+    body {
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    .auth-wrapper {
+      width: 100%;
+      max-width: 440px;
+    }
+
+    .logo-area {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .logo-text {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--text-main);
+      text-decoration: none;
+      letter-spacing: -0.5px;
+    }
+
+    .logo-text span {
+      color: var(--primary);
+    }
+
+    .auth-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 32px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+
+    .subtext {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    .subtext a {
+      color: var(--primary);
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .subtext a:hover {
+      text-decoration: underline;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+      position: relative;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-wrapper span.icon {
+      position: absolute;
+      left: 14px;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .input-wrapper input {
+      width: 100%;
+      padding: 11px 14px 11px 38px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+      transition: all 0.2s ease;
+      background: var(--input-bg);
+      color: var(--text-main);
+    }
+
+    .input-wrapper input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--focus-ring);
+    }
+
+    .suggestions-box {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      right: 0;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+      z-index: 99;
+      max-height: 200px;
+      overflow-y: auto;
+      display: none;
+    }
+
+    .suggestion-item {
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--text-main);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid #f9fafb;
+    }
+
     .suggestion-item:last-child { border-bottom: none; }
-    .suggestion-item:hover { background-color: #fcfcfc; color: var(--primary); }
+    .suggestion-item:hover { background-color: #fdf8f5; color: var(--primary); }
 
-    .role-selector { display: flex; align-items: center; background: #fffaf0; border: 1px solid #fed7aa; border-radius: 6px; padding: 10px 14px; margin-bottom: 18px; gap: 12px; }
-    .role-icon { background: var(--primary); color: white; width: 24px; height: 24px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 12px; }
-    .role-title { font-size: 14px; font-weight: 600; }
-    .btn-primary { width: 100%; background: var(--primary); color: white; border: none; padding: 13px; border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer; transition: background 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 8px; }
-    .btn-primary:hover { background: var(--primary-dark); }
+    .role-selector {
+      display: flex;
+      align-items: center;
+      background: #fdf8f5;
+      border: 1px solid #fde6d8;
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin-bottom: 20px;
+      gap: 12px;
+    }
+
+    .role-icon {
+      background: var(--primary);
+      color: white;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+    }
+
+    .role-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .btn-primary {
+      width: 100%;
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .btn-primary:hover { background: var(--primary-hover); }
     .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; }
-    .hidden { display: none !important; }
-    #authStatus { font-size: 13px; font-weight: 600; margin-top: 14px; text-align: center; }
-    .login-extras { display: flex; justify-content: space-between; align-items: center; font-size: 13px; margin-bottom: 6px; }
-    .login-extras a { color: var(--primary); text-decoration: none; font-weight: 500; }
-    .otp-container { text-align: center; padding-top: 10px; }
-    .otp-boxes { display: flex; gap: 10px; justify-content: center; margin: 24px 0; }
-    .otp-box { width: 48px; height: 52px; text-align: center; font-size: 20px; font-weight: 600; border: 1px solid var(--border-light); border-radius: 6px; outline: none; }
-    .otp-box:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(255, 153, 0, 0.15); }
 
-    /* Onboarding Goal Options */
-    .goal-option { display: flex; align-items: flex-start; gap: 12px; padding: 14px; border: 1px solid var(--border-light); border-radius: 6px; margin-bottom: 10px; cursor: pointer; transition: all 0.2s; }
-    .goal-option:hover { border-color: var(--primary); background: #fffaf0; }
+    .hidden { display: none !important; }
+
+    #authStatus {
+      font-size: 13px;
+      font-weight: 500;
+      margin-top: 16px;
+      text-align: center;
+    }
+
+    .otp-container { text-align: center; }
+    .otp-boxes { display: flex; gap: 8px; justify-content: center; margin: 24px 0; }
+    .otp-box {
+      width: 44px;
+      height: 48px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: 600;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .otp-box:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--focus-ring); }
+
+    .goal-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 14px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .goal-option:hover { border-color: var(--primary); background: #fdf8f5; }
     .goal-option input { accent-color: var(--primary); margin-top: 3px; }
-    .logout-btn { background: none; border: none; color: var(--text-muted); font-size: 13px; cursor: pointer; text-decoration: underline; margin-top: 12px; }
+
+    .footer-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 16px;
+    }
+
+    .logout-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+    .logout-btn:hover { color: var(--text-main); }
   </style>
 </head>
 <body>
-  <div class="auth-container">
-    <div class="logo-area"><a href="#" class="logo-text">🐝 be<span>Bee</span></a></div>
-
-    <!-- LOGIN SCREEN -->
-    <div id="loginScreen" class="hidden">
-      <h1>Log in</h1>
-      <div class="subtext">Don't have an account? <a onclick="switchView('register')">Create account</a></div>
-      <form onsubmit="handleLoginSubmit(event)">
-        <div class="form-group">
-          <label>Email</label>
-          <div class="input-wrapper"><span class="icon">✉️</span><input type="email" id="loginEmail" placeholder="email@example.com" required /></div>
-        </div>
-        <div class="form-group">
-          <div class="login-extras"><label style="margin-bottom:0;">Password</label></div>
-          <div class="input-wrapper" style="margin-top:6px;"><span class="icon">🔒</span><input type="password" id="loginPassword" required /></div>
-        </div>
-        <button type="submit" class="btn-primary">Log in</button>
-      </form>
+  <div class="auth-wrapper">
+    <div class="logo-area">
+      <a href="#" class="logo-text">be<span>Bee</span></a>
     </div>
 
-    <!-- REGISTRATION SCREEN -->
-    <div id="registerScreen" class="hidden">
-      <h1>Create account</h1>
-      <div class="subtext">Already have an account? <a onclick="switchView('login')">Log in</a></div>
-      
-      <div class="form-group">
-        <label>Location</label>
-        <div class="input-wrapper">
-          <span class="icon">📍</span>
-          <input type="text" id="regLocation" placeholder="" oninput="filterLocations(this.value)" autocomplete="off" />
-        </div>
-        <div id="suggestionsBox" class="suggestions-box"></div>
+    <div class="auth-card">
+      <!-- LOGIN SCREEN -->
+      <div id="loginScreen" class="hidden">
+        <h1>Welcome back</h1>
+        <div class="subtext">New to beBee? <a onclick="switchView('register')">Create an account</a></div>
+        <form onsubmit="handleLoginSubmit(event)">
+          <div class="form-group">
+            <label>Email address</label>
+            <div class="input-wrapper">
+              <span class="icon">✉️</span>
+              <input type="email" id="loginEmail" placeholder="name@example.com" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <div class="input-wrapper">
+              <span class="icon">🔒</span>
+              <input type="password" id="loginPassword" placeholder="••••••••" required />
+            </div>
+          </div>
+          <button type="submit" class="btn-primary">Sign in</button>
+        </form>
       </div>
 
-      <div class="role-selector">
-        <div class="role-icon">💼</div>
-        <div class="role-title">Talent</div>
-      </div>
-      
-      <form id="createAccountForm" onsubmit="handleInitialRegister(event)">
+      <!-- REGISTRATION SCREEN -->
+      <div id="registerScreen" class="hidden">
+        <h1>Create an account</h1>
+        <div class="subtext">Already have an account? <a onclick="switchView('login')">Sign in</a></div>
+        
         <div class="form-group">
-          <label>Full Name</label>
-          <div class="input-wrapper"><span class="icon">👤</span><input type="text" id="fullName" placeholder="John Doe" required /></div>
+          <label>Location</label>
+          <div class="input-wrapper">
+            <span class="icon">📍</span>
+            <input type="text" id="regLocation" placeholder="Select your city" oninput="filterLocations(this.value)" autocomplete="off" />
+          </div>
+          <div id="suggestionsBox" class="suggestions-box"></div>
         </div>
-        <div class="form-group">
-          <label>Email</label>
-          <div class="input-wrapper"><span class="icon">✉️</span><input type="email" id="userEmail" placeholder="email@example.com" required /></div>
+
+        <div class="role-selector">
+          <div class="role-icon">💼</div>
+          <div>
+            <div class="role-title">Talent Profile</div>
+            <div style="font-size: 12px; color: var(--text-muted);">Connect with top opportunities</div>
+          </div>
         </div>
-        <div class="form-group">
-          <label>Password (min 6 chars)</label>
-          <div class="input-wrapper"><span class="icon">🔒</span><input type="password" id="userPassword" placeholder="Password" required /></div>
+        
+        <form id="createAccountForm" onsubmit="handleInitialRegister(event)">
+          <div class="form-group">
+            <label>Full Name</label>
+            <div class="input-wrapper">
+              <span class="icon">👤</span>
+              <input type="text" id="fullName" placeholder="John Doe" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Email address</label>
+            <div class="input-wrapper">
+              <span class="icon">✉️</span>
+              <input type="email" id="userEmail" placeholder="name@example.com" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <div class="input-wrapper">
+              <span class="icon">🔒</span>
+              <input type="password" id="userPassword" placeholder="At least 6 characters" required />
+            </div>
+          </div>
+          <button type="submit" id="signupBtn" class="btn-primary">Agree & Join</button>
+        </form>
+      </div>
+
+      <!-- OTP VERIFICATION SCREEN -->
+      <div id="verifyScreen" class="otp-container hidden">
+        <h1>Verify your email</h1>
+        <p class="subtext">Enter the 6-digit confirmation code sent to your email address.</p>
+        <div class="otp-boxes">
+          <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 0)" />
+          <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 1)" />
+          <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 2)" />
+          <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 3)" />
+          <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 4)" />
+          <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 5)" />
         </div>
-        <button type="submit" id="signupBtn" class="btn-primary">Sign up</button>
-      </form>
+        <button type="button" id="verifyOtpBtn" class="btn-primary" onclick="verifyRegistrationOTP()">Confirm & Continue</button>
+      </div>
+
+      <!-- ONBOARDING SCREEN -->
+      <div id="onboardScreen" class="hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <h1>Your professional goal</h1>
+          <span style="font-size: 12px; color: var(--text-muted); font-weight: 600;">Step 1 of 3</span>
+        </div>
+        <div class="subtext">Let us tailor your experience based on what you want to achieve.</div>
+        
+        <div class="goal-option">
+          <input type="radio" name="goal" id="goal1" checked />
+          <label for="goal1" style="cursor: pointer; margin-bottom: 0;">
+            <div style="font-weight: 600; font-size: 13px; color: var(--text-main);">Looking for a job</div>
+            <div style="font-size: 11px; color: var(--text-muted);">Explore new career options and apply seamlessly</div>
+          </label>
+        </div>
+
+        <div class="goal-option">
+          <input type="radio" name="goal" id="goal2" />
+          <label for="goal2" style="cursor: pointer; margin-bottom: 0;">
+            <div style="font-weight: 600; font-size: 13px; color: var(--text-main);">Offering professional services</div>
+            <div style="font-size: 11px; color: var(--text-muted);">Showcase your expertise to prospective clients</div>
+          </label>
+        </div>
+
+        <div class="goal-option">
+          <input type="radio" name="goal" id="goal3" />
+          <label for="goal3" style="cursor: pointer; margin-bottom: 0;">
+            <div style="font-weight: 600; font-size: 13px; color: var(--text-main);">Recruiting talent or posting jobs</div>
+            <div style="font-size: 11px; color: var(--text-muted);">Find qualified candidates for your openings</div>
+          </label>
+        </div>
+
+        <button type="button" class="btn-primary" onclick="alert('Profile setup complete!')">Continue</button>
+        <div class="footer-actions">
+          <a onclick="alert('Skipped setup')" style="font-size: 13px; color: var(--text-muted); text-decoration: underline; cursor: pointer;">Skip for now</a>
+          <button class="logout-btn" onclick="handleLogout()">Sign out</button>
+        </div>
+      </div>
+
+      <p id="authStatus"></p>
     </div>
-
-    <!-- OTP VERIFICATION SCREEN -->
-    <div id="verifyScreen" class="otp-container hidden">
-      <h1>Enter Verification Code</h1>
-      <p class="subtext">We sent a confirmation code to your email.</p>
-      <div class="otp-boxes">
-        <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 0)" />
-        <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 1)" />
-        <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 2)" />
-        <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 3)" />
-        <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 4)" />
-        <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 5)" />
-      </div>
-      <button type="button" id="verifyOtpBtn" class="btn-primary" onclick="verifyRegistrationOTP()">Verify Email & Log In</button>
-    </div>
-
-    <!-- ONBOARDING SCREEN (Goal Selection) -->
-    <div id="onboardScreen" class="hidden">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-        <h1>Complete your profile</h1>
-        <span style="font-size: 13px; color: var(--text-muted); font-weight: 600;">1/3</span>
-      </div>
-      <div class="subtext">Add information to your profile so other people can find you</div>
-      
-      <label style="font-weight: 700; margin-bottom: 12px;">What best describes your goal?</label>
-      
-      <div class="goal-option">
-        <input type="radio" name="goal" id="goal1" checked />
-        <label for="goal1" style="cursor: pointer; margin-bottom: 0;">
-          <div style="font-weight: 600; font-size: 14px; color: var(--text);">Looking for a job</div>
-          <div style="font-size: 12px; color: var(--text-muted);">Looking for new professional opportunities</div>
-        </label>
-      </div>
-
-      <div class="goal-option">
-        <input type="radio" name="goal" id="goal2" />
-        <label for="goal2" style="cursor: pointer; margin-bottom: 0;">
-          <div style="font-weight: 600; font-size: 14px; color: var(--text);">Offering services</div>
-          <div style="font-size: 12px; color: var(--text-muted);">Offering my professional services</div>
-        </label>
-      </div>
-
-      <div class="goal-option">
-        <input type="radio" name="goal" id="goal3" />
-        <label for="goal3" style="cursor: pointer; margin-bottom: 0;">
-          <div style="font-weight: 600; font-size: 14px; color: var(--text);">I need a service</div>
-          <div style="font-size: 12px; color: var(--text-muted);">I need to hire a professional service</div>
-        </label>
-      </div>
-
-      <div class="goal-option">
-        <input type="radio" name="goal" id="goal4" />
-        <label for="goal4" style="cursor: pointer; margin-bottom: 0;">
-          <div style="font-weight: 600; font-size: 14px; color: var(--text);">Recruiting / Posting jobs</div>
-          <div style="font-size: 12px; color: var(--text-muted);">Recruiting talent or posting job offers</div>
-        </label>
-      </div>
-
-      <div class="goal-option">
-        <input type="radio" name="goal" id="goal5" />
-        <label for="goal5" style="cursor: pointer; margin-bottom: 0;">
-          <div style="font-weight: 600; font-size: 14px; color: var(--text);">Writing and sharing content</div>
-          <div style="font-size: 12px; color: var(--text-muted);">I want to write articles and share knowledge</div>
-        </label>
-      </div>
-
-      <button type="button" class="btn-primary" onclick="alert('Goal saved!')">Next &gt;</button>
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px;">
-        <a onclick="alert('Skipped onboarding')" style="font-size: 13px; color: var(--text-muted); text-decoration: underline; cursor: pointer;">Complete later</a>
-        <button class="logout-btn" onclick="handleLogout()">Log out</button>
-      </div>
-    </div>
-
-    <p id="authStatus"></p>
   </div>
 
   <script>
@@ -333,7 +534,7 @@ const htmlTemplate = `<!DOCTYPE html>
         matches.forEach(match => {
           const div = document.createElement('div');
           div.className = 'suggestion-item';
-          div.innerHTML = \`🐝 <span>\${match}</span>\`;
+          div.innerHTML = \`📍 <span>\${match}</span>\`;
           div.onclick = () => {
             document.getElementById('regLocation').value = match;
             box.style.display = 'none';
@@ -383,7 +584,7 @@ const htmlTemplate = `<!DOCTYPE html>
         setStatus('Verification code sent to your email!', false);
       } catch (err) {
         setStatus(err.message, true);
-        signupBtn.innerHTML = 'Sign up';
+        signupBtn.innerHTML = 'Agree & Join';
         signupBtn.disabled = false;
       }
     }
@@ -440,7 +641,7 @@ const htmlTemplate = `<!DOCTYPE html>
     function setStatus(msg, isError) {
       const el = document.getElementById('authStatus');
       el.innerText = msg;
-      el.style.color = isError ? '#dc2626' : '#16a34a';
+      el.style.color = isError ? 'var(--error-color)' : 'var(--success-color)';
     }
   </script>
 </body>
