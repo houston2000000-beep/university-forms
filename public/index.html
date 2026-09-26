@@ -565,7 +565,6 @@
       }
     }
 
-    // Stores generated code temporarily for validation demo
     let generatedOtpCode = "";
 
     async function handleInitialRegister(e) {
@@ -595,9 +594,8 @@
       };
 
       try {
-        // Trigger live email sending via EmailJS
-        // Replace 'YOUR_SERVICE_ID' and 'YOUR_TEMPLATE_ID' with your actual IDs
-        await emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams);
+        // Trigger live email sending via EmailJS with your Service ID and Template ID
+        await emailjs.send('service_4wa9mhl', 'template_41g2uac', templateParams);
 
         document.getElementById('registerScreen').classList.add('hidden');
         document.getElementById('verifyScreen').classList.remove('hidden');
@@ -627,11 +625,14 @@
         return;
       }
 
-      // Check against the generated code (or accept any code if testing without setup)
-      setAuthStatus('Account verified successfully! Redirecting...', false);
-      setTimeout(() => { 
-        alert('Welcome to beBee! Registration complete.'); 
-      }, 800);
+      if (enteredCode === generatedOtpCode) {
+        setAuthStatus('Account verified successfully! Redirecting...', false);
+        setTimeout(() => { 
+          alert('Welcome to beBee! Registration complete.'); 
+        }, 800);
+      } else {
+        setAuthStatus('Invalid verification code. Please try again.', true);
+      }
     }
 
     function setAuthStatus(message, isError) {
