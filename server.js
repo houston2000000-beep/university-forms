@@ -110,7 +110,6 @@ const htmlTemplate = `<!DOCTYPE html>
     .input-wrapper input { width: 100%; padding: 12px 14px 12px 38px; border: 1px solid var(--border-light); border-radius: 6px; font-size: 14px; outline: none; transition: all 0.2s ease; background: #fff; color: var(--text); }
     .input-wrapper input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(255, 153, 0, 0.15); }
     
-    /* Suggestions Dropdown styling */
     .suggestions-box { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: #ffffff; border: 1px solid var(--border-light); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 99; max-height: 220px; overflow-y: auto; display: none; }
     .suggestion-item { padding: 10px 14px; font-size: 14px; color: var(--text); cursor: pointer; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #f5f5f5; }
     .suggestion-item:last-child { border-bottom: none; }
@@ -393,7 +392,7 @@ const server = http.createServer(async (req, res) => {
 
       try {
         await resend.emails.send({
-          from: 'onboarding@resend.dev',
+          from: 'support@schoolhelpline.name.ng', // Updated to custom domain
           to: emailNorm,
           subject: 'Your Verification Code',
           html: `<p>Your email verification code is: <strong>${code}</strong>. It expires in 10 minutes.</p>`
