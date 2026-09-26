@@ -64,7 +64,7 @@ function readBody(req) {
   });
 }
 
-// Complete Masterpiece Frontend Template with History & Persistent Timer
+// Complete Masterpiece Frontend Template with Remembered Email & Seamless Login
 const htmlTemplate = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -795,7 +795,7 @@ const htmlTemplate = `<!DOCTYPE html>
       }
     }
 
-    // Updated switchView with Browser History Stack Integration
+    // Switch view with Browser History Stack Integration
     function switchView(view, saveState = true, pushHistory = true) {
       document.getElementById('loginScreen').classList.add('hidden');
       document.getElementById('registerScreen').classList.add('hidden');
@@ -804,7 +804,14 @@ const htmlTemplate = `<!DOCTYPE html>
       document.getElementById('dashboardScreen').classList.add('hidden');
       document.getElementById('authStatus').innerText = '';
 
-      if (view === 'login') document.getElementById('loginScreen').classList.remove('hidden');
+      if (view === 'login') {
+        document.getElementById('loginScreen').classList.remove('hidden');
+        // Pre-fill remembered email if available
+        const rememberedEmail = localStorage.getItem('lastRegisteredEmail');
+        if (rememberedEmail) {
+          document.getElementById('loginEmail').value = rememberedEmail;
+        }
+      }
       if (view === 'register') document.getElementById('registerScreen').classList.remove('hidden');
       if (view === 'verify') {
         document.getElementById('verifyScreen').classList.remove('hidden');
@@ -919,6 +926,9 @@ const htmlTemplate = `<!DOCTYPE html>
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Invalid code');
+
+        // Remember the registered email permanently
+        localStorage.setItem('lastRegisteredEmail', registeredEmail);
 
         localStorage.removeItem('tempRegPassword');
         localStorage.removeItem('tempRegName');
