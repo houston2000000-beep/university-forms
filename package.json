@@ -9,3 +9,19 @@
     "resend": "^3.2.0"
   }
 }
+
+{
+  "name": "bebee-app",
+  "version": "1.0.0",
+  "description": "beBee Professional Network",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "resend": "^4.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
