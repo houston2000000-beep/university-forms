@@ -134,6 +134,7 @@ const htmlTemplate = `<!DOCTYPE html>
     .goal-option { display: flex; align-items: flex-start; gap: 12px; padding: 14px; border: 1px solid var(--border-light); border-radius: 6px; margin-bottom: 10px; cursor: pointer; transition: all 0.2s; }
     .goal-option:hover { border-color: var(--primary); background: #fffaf0; }
     .goal-option input { accent-color: var(--primary); margin-top: 3px; }
+    .logout-btn { background: none; border: none; color: var(--text-muted); font-size: 13px; cursor: pointer; text-decoration: underline; margin-top: 12px; }
   </style>
 </head>
 <body>
@@ -259,8 +260,9 @@ const htmlTemplate = `<!DOCTYPE html>
       </div>
 
       <button type="button" class="btn-primary" onclick="alert('Goal saved!')">Next &gt;</button>
-      <div style="text-align: center; margin-top: 14px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px;">
         <a onclick="alert('Skipped onboarding')" style="font-size: 13px; color: var(--text-muted); text-decoration: underline; cursor: pointer;">Complete later</a>
+        <button class="logout-btn" onclick="handleLogout()">Log out</button>
       </div>
     </div>
 
@@ -283,11 +285,14 @@ const htmlTemplate = `<!DOCTYPE html>
       "Yenagoa (NG)", "Yola, Yola North (NG)"
     ];
 
-    let registeredEmail = localStorage.getItem('registeredEmail') || "";
+    let registeredEmail = localStorage.getItem('lastRegisteredEmail') || "";
 
-    // On page load, restore current view from localStorage (default to 'login')
     window.addEventListener('DOMContentLoaded', () => {
       const savedView = localStorage.getItem('currentView') || 'login';
+      const lastEmail = localStorage.getItem('lastRegisteredEmail');
+      if (lastEmail) {
+        document.getElementById('loginEmail').value = lastEmail;
+      }
       switchView(savedView, false);
     });
 
@@ -298,7 +303,11 @@ const htmlTemplate = `<!DOCTYPE html>
       document.getElementById('onboardScreen').classList.add('hidden');
       document.getElementById('authStatus').innerText = '';
 
-      if (view === 'login') document.getElementById('loginScreen').classList.remove('hidden');
+      if (view === 'login') {
+        document.getElementById('loginScreen').classList.remove('hidden');
+        const lastEmail = localStorage.getItem('lastRegisteredEmail');
+        if (lastEmail) document.getElementById('loginEmail').value = lastEmail;
+      }
       if (view === 'register') document.getElementById('registerScreen').classList.remove('hidden');
       if (view === 'verify') document.getElementById('verifyScreen').classList.remove('hidden');
       if (view === 'onboard') document.getElementById('onboardScreen').classList.remove('hidden');
@@ -355,7 +364,7 @@ const htmlTemplate = `<!DOCTYPE html>
       const email = document.getElementById('userEmail').value;
       const password = document.getElementById('userPassword').value;
       registeredEmail = email;
-      localStorage.setItem('registeredEmail', email);
+      localStorage.setItem('lastRegisteredEmail', email);
 
       const signupBtn = document.getElementById('signupBtn');
       signupBtn.innerHTML = 'Sending Code...';
@@ -415,10 +424,17 @@ const htmlTemplate = `<!DOCTYPE html>
         if (!res.ok) throw new Error(data.error || 'Login failed');
 
         localStorage.setItem('token', data.token);
+        localStorage.setItem('lastRegisteredEmail', email);
         switchView('onboard');
       } catch (err) {
         setStatus(err.message, true);
       }
+    }
+
+    function handleLogout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('currentView');
+      switchView('login');
     }
 
     function setStatus(msg, isError) {
@@ -445,13 +461,11 @@ const server = http.createServer(async (req, res) => {
   const p = url.pathname;
 
   try {
-    // Serve Frontend
     if (p === '/' && req.method === 'GET') {
       res.writeHead(200, { 'Content-Type': 'text/html' });
       return res.end(htmlTemplate);
     }
 
-    // Register Request OTP
     if (p === '/api/register/request-otp' && req.method === 'POST') {
       const body = await readBody(req);
       const { email, password, name } = body;
@@ -477,7 +491,6 @@ const server = http.createServer(async (req, res) => {
       }
     }
 
-    // Register Verify OTP
     if (p === '/api/register/verify-otp' && req.method === 'POST') {
       const body = await readBody(req);
       const { email, code } = body;
@@ -497,7 +510,7 @@ const server = http.createServer(async (req, res) => {
         name: record.payload.name,
         created_at: new Date().toISOString()
       };
-      db.users.users.push ? db.users.push(user) : db.users.push(user);
+      db.users.push(user);
       save(db);
       delete otps[emailNorm];
 
@@ -505,7 +518,6 @@ const server = http.createServer(async (req, res) => {
       return json(res, 201, { token, user: { id: user.id, email: user.email, name: user.name } });
     }
 
-    // Login Endpoint
     if (p === '/api/login' && req.method === 'POST') {
       const body = await readBody(req);
       const { email, password } = body;
