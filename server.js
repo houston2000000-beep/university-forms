@@ -64,7 +64,7 @@ function readBody(req) {
   });
 }
 
-// World-Class UI Frontend Template
+// World-Class Masterpiece Frontend Template
 const htmlTemplate = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -76,25 +76,26 @@ const htmlTemplate = `<!DOCTYPE html>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #f97316;
-      --primary-hover: #ea580c;
-      --primary-light: #ffedd5;
-      --bg-gradient: radial-gradient(circle at top right, #fff7ed, #fdf4f0, #f8fafc);
-      --card-bg: rgba(255, 255, 255, 0.85);
-      --text-main: #0f172a;
-      --text-muted: #64748b;
-      --border-color: #e2e8f0;
-      --input-bg: #ffffff;
-      --focus-ring: rgba(249, 115, 22, 0.2);
-      --error-color: #ef4444;
-      --success-color: #10b981;
-      --shadow-elevation: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+      --primary: #ff6b00;
+      --primary-hover: #e05e00;
+      --primary-light: #fff2eb;
+      --bg-base: #090d16;
+      --card-bg: rgba(255, 255, 255, 0.03);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --input-bg: rgba(15, 23, 42, 0.6);
+      --border-color: rgba(255, 255, 255, 0.1);
+      --focus-ring: rgba(255, 107, 0, 0.3);
+      --error-color: #f87171;
+      --success-color: #34d399;
+      --shadow-elevation: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
     
     body {
-      background: var(--bg-gradient);
+      background-color: var(--bg-base);
       color: var(--text-main);
       display: flex;
       flex-direction: column;
@@ -102,17 +103,43 @@ const htmlTemplate = `<!DOCTYPE html>
       justify-content: center;
       min-height: 100vh;
       padding: 24px;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Dynamic Aurora Mesh Background */
+    .aurora-bg {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      overflow: hidden;
+      z-index: -1;
+      pointer-events: none;
+    }
+    .aurora-blob {
+      position: absolute;
+      filter: blur(120px);
+      border-radius: 50%;
+      opacity: 0.25;
+      animation: floatOrb 12s ease-in-out infinite alternate;
+    }
+    .blob-1 { width: 450px; height: 450px; background: #ff6b00; top: -10%; left: -10%; }
+    .blob-2 { width: 500px; height: 500px; background: #7c3aed; bottom: -15%; right: -10%; animation-delay: -4s; }
+    .blob-3 { width: 350px; height: 350px; background: #0ea5e9; top: 40%; left: 30%; animation-delay: -8s; }
+
+    @keyframes floatOrb {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(40px, 50px) scale(1.1); }
     }
 
     .auth-wrapper {
       width: 100%;
       max-width: 440px;
-      animation: fadeIn 0.4s ease-out;
+      animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+      from { opacity: 0; transform: translateY(16px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
     .logo-area {
@@ -121,11 +148,11 @@ const htmlTemplate = `<!DOCTYPE html>
     }
 
     .logo-text {
-      font-size: 36px;
+      font-size: 38px;
       font-weight: 800;
-      color: var(--text-main);
+      color: #ffffff;
       text-decoration: none;
-      letter-spacing: -1px;
+      letter-spacing: -1.5px;
     }
 
     .logo-text span {
@@ -134,16 +161,30 @@ const htmlTemplate = `<!DOCTYPE html>
 
     .auth-card {
       background: var(--card-bg);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.8);
-      border-radius: 20px;
-      padding: 40px 36px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 44px 38px;
       box-shadow: var(--shadow-elevation);
+      position: relative;
+    }
+
+    .auth-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 24px;
+      padding: 1px;
+      background: linear-gradient(to bottom right, rgba(255,255,255,0.15), rgba(255,255,255,0));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
     }
 
     h1 {
-      font-size: 24px;
+      font-size: 26px;
       font-weight: 700;
       color: var(--text-main);
       margin-bottom: 6px;
@@ -153,7 +194,8 @@ const htmlTemplate = `<!DOCTYPE html>
     .subtext {
       font-size: 14px;
       color: var(--text-muted);
-      margin-bottom: 28px;
+      margin-bottom: 30px;
+      font-weight: 500;
     }
 
     .subtext a {
@@ -161,11 +203,10 @@ const htmlTemplate = `<!DOCTYPE html>
       font-weight: 600;
       text-decoration: none;
       cursor: pointer;
+      transition: opacity 0.2s;
     }
 
-    .subtext a:hover {
-      text-decoration: underline;
-    }
+    .subtext a:hover { opacity: 0.8; text-decoration: underline; }
 
     label {
       display: block;
@@ -173,6 +214,7 @@ const htmlTemplate = `<!DOCTYPE html>
       font-weight: 600;
       color: var(--text-main);
       margin-bottom: 8px;
+      letter-spacing: -0.2px;
     }
 
     .form-group {
@@ -195,9 +237,9 @@ const htmlTemplate = `<!DOCTYPE html>
 
     .input-wrapper input {
       width: 100%;
-      padding: 13px 16px 13px 44px;
+      padding: 14px 16px 14px 44px;
       border: 1.5px solid var(--border-color);
-      border-radius: 12px;
+      border-radius: 14px;
       font-size: 14px;
       outline: none;
       transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -209,7 +251,7 @@ const htmlTemplate = `<!DOCTYPE html>
     .input-wrapper input:focus {
       border-color: var(--primary);
       box-shadow: 0 0 0 4px var(--focus-ring);
-      background: #ffffff;
+      background: rgba(15, 23, 42, 0.9);
     }
 
     .suggestions-box {
@@ -217,10 +259,10 @@ const htmlTemplate = `<!DOCTYPE html>
       top: calc(100% + 6px);
       left: 0;
       right: 0;
-      background: #ffffff;
+      background: #0f172a;
       border: 1px solid var(--border-color);
-      border-radius: 12px;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+      border-radius: 14px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
       z-index: 99;
       max-height: 220px;
       overflow-y: auto;
@@ -228,26 +270,26 @@ const htmlTemplate = `<!DOCTYPE html>
     }
 
     .suggestion-item {
-      padding: 11px 16px;
+      padding: 12px 16px;
       font-size: 13px;
       color: var(--text-main);
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 12px;
-      border-bottom: 1px solid #f8fafc;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
       font-weight: 500;
     }
 
     .suggestion-item:last-child { border-bottom: none; }
-    .suggestion-item:hover { background-color: #fff7ed; color: var(--primary); }
+    .suggestion-item:hover { background-color: rgba(255, 107, 0, 0.15); color: var(--primary); }
 
     .role-selector {
       display: flex;
       align-items: center;
-      background: #fff7ed;
-      border: 1.5px solid #fed7aa;
-      border-radius: 12px;
+      background: rgba(255, 107, 0, 0.08);
+      border: 1.5px solid rgba(255, 107, 0, 0.2);
+      border-radius: 14px;
       padding: 14px 16px;
       margin-bottom: 24px;
       gap: 14px;
@@ -258,7 +300,7 @@ const htmlTemplate = `<!DOCTYPE html>
       color: white;
       width: 32px;
       height: 32px;
-      border-radius: 8px;
+      border-radius: 9px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -276,24 +318,24 @@ const htmlTemplate = `<!DOCTYPE html>
       background: var(--primary);
       color: white;
       border: none;
-      padding: 14px;
-      border-radius: 12px;
+      padding: 15px;
+      border-radius: 14px;
       font-size: 15px;
       font-weight: 700;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
       margin-top: 8px;
-      box-shadow: 0 4px 12px rgba(249, 115, 22, 0.25);
+      box-shadow: 0 4px 20px rgba(255, 107, 0, 0.4);
     }
 
     .btn-primary:hover {
       background: var(--primary-hover);
-      transform: translateY(-1px);
-      box-shadow: 0 6px 16px rgba(249, 115, 22, 0.35);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(255, 107, 0, 0.6);
     }
 
     .btn-primary:active { transform: translateY(0); }
@@ -304,45 +346,47 @@ const htmlTemplate = `<!DOCTYPE html>
     #authStatus {
       font-size: 13px;
       font-weight: 600;
-      margin-top: 18px;
+      margin-top: 20px;
       text-align: center;
     }
 
     .otp-container { text-align: center; }
     .otp-boxes { display: flex; gap: 10px; justify-content: center; margin: 28px 0; }
     .otp-box {
-      width: 46px;
-      height: 52px;
+      width: 48px;
+      height: 54px;
       text-align: center;
-      font-size: 20px;
+      font-size: 22px;
       font-weight: 700;
       border: 1.5px solid var(--border-color);
-      border-radius: 12px;
+      border-radius: 14px;
+      background: var(--input-bg);
+      color: var(--text-main);
       outline: none;
       transition: all 0.2s;
     }
-    .otp-box:focus { border-color: var(--primary); box-shadow: 0 0 0 4px var(--focus-ring); background: #ffffff; }
+    .otp-box:focus { border-color: var(--primary); box-shadow: 0 0 0 4px var(--focus-ring); background: rgba(15, 23, 42, 0.9); }
 
     .goal-option {
       display: flex;
       align-items: flex-start;
       gap: 14px;
-      padding: 14px 16px;
+      padding: 16px;
       border: 1.5px solid var(--border-color);
-      border-radius: 12px;
+      border-radius: 14px;
       margin-bottom: 12px;
       cursor: pointer;
       transition: all 0.2s;
-      background: #ffffff;
+      background: var(--input-bg);
     }
-    .goal-option:hover { border-color: var(--primary); background: #fff7ed; }
-    .goal-option input { accent-color: var(--primary); margin-top: 4px; transform: scale(1.1); }
+    .goal-option:hover { border-color: var(--primary); background: rgba(255, 107, 0, 0.05); }
+    .goal-option input { accent-color: var(--primary); margin-top: 4px; transform: scale(1.2); }
 
     .footer-actions {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-top: 20px;
+      margin-top: 24px;
     }
 
     .logout-btn {
@@ -355,9 +399,45 @@ const htmlTemplate = `<!DOCTYPE html>
       text-decoration: underline;
     }
     .logout-btn:hover { color: var(--text-main); }
+
+    /* Dashboard View */
+    .dashboard-container {
+      width: 100%;
+      max-width: 900px;
+      animation: fadeIn 0.5s ease-out;
+    }
+    .dash-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(20px);
+      padding: 20px 30px;
+      border-radius: 20px;
+      margin-bottom: 24px;
+    }
+    .dash-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+    }
+    .dash-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(20px);
+      padding: 24px;
+      border-radius: 20px;
+    }
   </style>
 </head>
 <body>
+  <div class="aurora-bg">
+    <div class="aurora-blob blob-1"></div>
+    <div class="aurora-blob blob-2"></div>
+    <div class="aurora-blob blob-3"></div>
+  </div>
+
   <div class="auth-wrapper">
     <div class="logo-area">
       <a href="#" class="logo-text">be<span>Bee</span></a>
@@ -482,10 +562,25 @@ const htmlTemplate = `<!DOCTYPE html>
           </label>
         </div>
 
-        <button type="button" class="btn-primary" onclick="alert('Profile setup complete!')">Continue</button>
+        <button type="button" class="btn-primary" onclick="switchView('dashboard')">Continue</button>
         <div class="footer-actions">
-          <a onclick="alert('Skipped setup')" style="font-size: 13px; color: var(--text-muted); text-decoration: underline; cursor: pointer; font-weight: 600;">Skip for now</a>
+          <a onclick="switchView('dashboard')" style="font-size: 13px; color: var(--text-muted); text-decoration: underline; cursor: pointer; font-weight: 600;">Skip for now</a>
           <button class="logout-btn" onclick="handleLogout()">Sign out</button>
+        </div>
+      </div>
+
+      <!-- DASHBOARD SCREEN -->
+      <div id="dashboardScreen" class="hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+          <div>
+            <h1>Dashboard</h1>
+            <p class="subtext" style="margin-bottom: 0;">Welcome back to your command center.</p>
+          </div>
+          <button class="logout-btn" onclick="handleLogout()">Sign out</button>
+        </div>
+        <div class="dash-card">
+          <div style="font-size: 15px; font-weight: 700; margin-bottom: 8px;">🚀 Profile Status Active</div>
+          <p style="font-size: 13px; color: var(--text-muted);">You are successfully connected to the beBee network. Explore elite opportunities matching your professional profile.</p>
         </div>
       </div>
 
@@ -525,16 +620,21 @@ const htmlTemplate = `<!DOCTYPE html>
       document.getElementById('registerScreen').classList.add('hidden');
       document.getElementById('verifyScreen').classList.add('hidden');
       document.getElementById('onboardScreen').classList.add('hidden');
+      document.getElementById('dashboardScreen').classList.add('hidden');
       document.getElementById('authStatus').innerText = '';
 
-      if (view === 'login') {
-        document.getElementById('loginScreen').classList.remove('hidden');
-        const lastEmail = localStorage.getItem('lastRegisteredEmail');
-        if (lastEmail) document.getElementById('loginEmail').value = lastEmail;
+      const wrapper = document.querySelector('.auth-wrapper');
+      if (view === 'dashboard') {
+        wrapper.style.maxWidth = '700px';
+      } else {
+        wrapper.style.maxWidth = '440px';
       }
+
+      if (view === 'login') document.getElementById('loginScreen').classList.remove('hidden');
       if (view === 'register') document.getElementById('registerScreen').classList.remove('hidden');
       if (view === 'verify') document.getElementById('verifyScreen').classList.remove('hidden');
       if (view === 'onboard') document.getElementById('onboardScreen').classList.remove('hidden');
+      if (view === 'dashboard') document.getElementById('dashboardScreen').classList.remove('hidden');
 
       if (saveState) {
         localStorage.setItem('currentView', view);
@@ -649,7 +749,7 @@ const htmlTemplate = `<!DOCTYPE html>
 
         localStorage.setItem('token', data.token);
         localStorage.setItem('lastRegisteredEmail', email);
-        switchView('onboard');
+        switchView('dashboard');
       } catch (err) {
         setStatus(err.message, true);
       }
