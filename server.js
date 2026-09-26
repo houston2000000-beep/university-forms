@@ -64,7 +64,7 @@ function readBody(req) {
   });
 }
 
-// Complete Masterpiece Frontend Template with Persistent Timer
+// Complete Masterpiece Frontend Template with History & Persistent Timer
 const htmlTemplate = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -727,7 +727,7 @@ const htmlTemplate = `<!DOCTYPE html>
         registeredEmail = lastEmail;
       }
       document.getElementById('displayEmail').innerText = registeredEmail;
-      switchView(savedView, false);
+      switchView(savedView, false, false);
     });
 
     // Persistent Timer Engine using localStorage
@@ -795,7 +795,8 @@ const htmlTemplate = `<!DOCTYPE html>
       }
     }
 
-    function switchView(view, saveState = true) {
+    // Updated switchView with Browser History Stack Integration
+    function switchView(view, saveState = true, pushHistory = true) {
       document.getElementById('loginScreen').classList.add('hidden');
       document.getElementById('registerScreen').classList.add('hidden');
       document.getElementById('verifyScreen').classList.add('hidden');
@@ -816,7 +817,20 @@ const htmlTemplate = `<!DOCTYPE html>
       if (saveState) {
         localStorage.setItem('currentView', view);
       }
+
+      if (pushHistory) {
+        history.pushState({ view: view }, "", "#" + view);
+      }
     }
+
+    // Listen to browser back/forward buttons
+    window.addEventListener('popstate', (event) => {
+      if (event.state && event.state.view) {
+        switchView(event.state.view, true, false);
+      } else {
+        switchView('login', true, false);
+      }
+    });
 
     function filterLocations(query) {
       const box = document.getElementById('suggestionsBox');
