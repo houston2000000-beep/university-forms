@@ -95,7 +95,7 @@ const htmlTemplate = `<!DOCTYPE html>
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
     body { background-color: var(--bg); color: var(--text); display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 40px 20px; }
-    .auth-container { width: 100%; max-width: 420px; background: #ffffff; }
+    .auth-container { width: 100%; max-width: 440px; background: #ffffff; }
     .logo-area { text-align: center; margin-bottom: 28px; }
     .logo-text { font-size: 28px; font-weight: 800; color: var(--text); text-decoration: none; display: inline-flex; gap: 2px; }
     .logo-text span { color: var(--primary); }
@@ -129,6 +129,11 @@ const htmlTemplate = `<!DOCTYPE html>
     .otp-boxes { display: flex; gap: 10px; justify-content: center; margin: 24px 0; }
     .otp-box { width: 48px; height: 52px; text-align: center; font-size: 20px; font-weight: 600; border: 1px solid var(--border-light); border-radius: 6px; outline: none; }
     .otp-box:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(255, 153, 0, 0.15); }
+
+    /* Onboarding Goal Options */
+    .goal-option { display: flex; align-items: flex-start; gap: 12px; padding: 14px; border: 1px solid var(--border-light); border-radius: 6px; margin-bottom: 10px; cursor: pointer; transition: all 0.2s; }
+    .goal-option:hover { border-color: var(--primary); background: #fffaf0; }
+    .goal-option input { accent-color: var(--primary); margin-top: 3px; }
   </style>
 </head>
 <body>
@@ -202,6 +207,63 @@ const htmlTemplate = `<!DOCTYPE html>
       </div>
       <button type="button" id="verifyOtpBtn" class="btn-primary" onclick="verifyRegistrationOTP()">Verify Email & Log In</button>
     </div>
+
+    <!-- ONBOARDING SCREEN (Goal Selection) -->
+    <div id="onboardScreen" class="hidden">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+        <h1>Complete your profile</h1>
+        <span style="font-size: 13px; color: var(--text-muted); font-weight: 600;">1/3</span>
+      </div>
+      <div class="subtext">Add information to your profile so other people can find you</div>
+      
+      <label style="font-weight: 700; margin-bottom: 12px;">What best describes your goal?</label>
+      
+      <div class="goal-option">
+        <input type="radio" name="goal" id="goal1" checked />
+        <label for="goal1" style="cursor: pointer; margin-bottom: 0;">
+          <div style="font-weight: 600; font-size: 14px; color: var(--text);">Looking for a job</div>
+          <div style="font-size: 12px; color: var(--text-muted);">Looking for new professional opportunities</div>
+        </label>
+      </div>
+
+      <div class="goal-option">
+        <input type="radio" name="goal" id="goal2" />
+        <label for="goal2" style="cursor: pointer; margin-bottom: 0;">
+          <div style="font-weight: 600; font-size: 14px; color: var(--text);">Offering services</div>
+          <div style="font-size: 12px; color: var(--text-muted);">Offering my professional services</div>
+        </label>
+      </div>
+
+      <div class="goal-option">
+        <input type="radio" name="goal" id="goal3" />
+        <label for="goal3" style="cursor: pointer; margin-bottom: 0;">
+          <div style="font-weight: 600; font-size: 14px; color: var(--text);">I need a service</div>
+          <div style="font-size: 12px; color: var(--text-muted);">I need to hire a professional service</div>
+        </label>
+      </div>
+
+      <div class="goal-option">
+        <input type="radio" name="goal" id="goal4" />
+        <label for="goal4" style="cursor: pointer; margin-bottom: 0;">
+          <div style="font-weight: 600; font-size: 14px; color: var(--text);">Recruiting / Posting jobs</div>
+          <div style="font-size: 12px; color: var(--text-muted);">Recruiting talent or posting job offers</div>
+        </label>
+      </div>
+
+      <div class="goal-option">
+        <input type="radio" name="goal" id="goal5" />
+        <label for="goal5" style="cursor: pointer; margin-bottom: 0;">
+          <div style="font-weight: 600; font-size: 14px; color: var(--text);">Writing and sharing content</div>
+          <div style="font-size: 12px; color: var(--text-muted);">I want to write articles and share knowledge</div>
+        </label>
+      </div>
+
+      <button type="button" class="btn-primary" onclick="alert('Goal saved!')">Next &gt;</button>
+      <div style="text-align: center; margin-top: 14px;">
+        <a onclick="alert('Skipped onboarding')" style="font-size: 13px; color: var(--text-muted); text-decoration: underline; cursor: pointer;">Complete later</a>
+      </div>
+    </div>
+
     <p id="authStatus"></p>
   </div>
 
@@ -227,9 +289,12 @@ const htmlTemplate = `<!DOCTYPE html>
       document.getElementById('loginScreen').classList.add('hidden');
       document.getElementById('registerScreen').classList.add('hidden');
       document.getElementById('verifyScreen').classList.add('hidden');
+      document.getElementById('onboardScreen').classList.add('hidden');
       document.getElementById('authStatus').innerText = '';
       if (view === 'login') document.getElementById('loginScreen').classList.remove('hidden');
       if (view === 'register') document.getElementById('registerScreen').classList.remove('hidden');
+      if (view === 'verify') document.getElementById('verifyScreen').classList.remove('hidden');
+      if (view === 'onboard') document.getElementById('onboardScreen').classList.remove('hidden');
     }
 
     function filterLocations(query) {
@@ -293,8 +358,7 @@ const htmlTemplate = `<!DOCTYPE html>
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Failed to request OTP');
 
-        document.getElementById('registerScreen').classList.add('hidden');
-        document.getElementById('verifyScreen').classList.remove('hidden');
+        switchView('verify');
         setStatus('Verification code sent to your email!', false);
       } catch (err) {
         setStatus(err.message, true);
@@ -318,8 +382,8 @@ const htmlTemplate = `<!DOCTYPE html>
         if (!res.ok) throw new Error(data.error || 'Invalid code');
 
         localStorage.setItem('token', data.token);
-        setStatus('Account created successfully!', false);
-        setTimeout(() => alert('Welcome to beBee! Registration complete.'), 300);
+        // Transition straight into the profile goal selection onboarding screen
+        switchView('onboard');
       } catch (err) {
         setStatus(err.message, true);
       }
@@ -340,8 +404,7 @@ const htmlTemplate = `<!DOCTYPE html>
         if (!res.ok) throw new Error(data.error || 'Login failed');
 
         localStorage.setItem('token', data.token);
-        setStatus('Logged in successfully!', false);
-        setTimeout(() => alert('Welcome back!'), 300);
+        switchView('onboard');
       } catch (err) {
         setStatus(err.message, true);
       }
@@ -392,7 +455,7 @@ const server = http.createServer(async (req, res) => {
 
       try {
         await resend.emails.send({
-          from: 'support@schoolhelpline.name.ng', // Updated to custom domain
+          from: 'support@schoolhelpline.name.ng',
           to: emailNorm,
           subject: 'Your Verification Code',
           html: `<p>Your email verification code is: <strong>${code}</strong>. It expires in 10 minutes.</p>`
