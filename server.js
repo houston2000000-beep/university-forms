@@ -64,7 +64,7 @@ function readBody(req) {
   });
 }
 
-// Pinnacle Masterpiece Frontend Template with Fixed Resend Flow
+// Complete Masterpiece Frontend Template
 const htmlTemplate = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -103,7 +103,6 @@ const htmlTemplate = `<!DOCTYPE html>
       display: flex;
     }
 
-    /* Interactive Canvas Background */
     #bgCanvas {
       position: fixed;
       top: 0; left: 0; width: 100vw; height: 100vh;
@@ -111,7 +110,6 @@ const htmlTemplate = `<!DOCTYPE html>
       pointer-events: none;
     }
 
-    /* Split-Screen Master Layout */
     .app-container {
       display: grid;
       grid-template-columns: 1.1fr 0.9fr;
@@ -124,7 +122,6 @@ const htmlTemplate = `<!DOCTYPE html>
       .branding-side { display: none !important; }
     }
 
-    /* Left Branding Showcase Side */
     .branding-side {
       padding: 60px;
       display: flex;
@@ -187,7 +184,6 @@ const htmlTemplate = `<!DOCTYPE html>
       100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
     }
 
-    /* Right Interactive Form Side */
     .auth-side {
       display: flex;
       align-items: center;
@@ -457,11 +453,9 @@ const htmlTemplate = `<!DOCTYPE html>
 </head>
 <body>
 
-  <!-- Interactive Background Canvas -->
   <canvas id="bgCanvas"></canvas>
 
   <div class="app-container">
-    <!-- LEFT SIDE: BRANDING SHOWCASE -->
     <div class="branding-side">
       <div class="brand-top">
         <a href="#" class="logo-text">be<span>Bee</span></a>
@@ -479,7 +473,6 @@ const htmlTemplate = `<!DOCTYPE html>
       </div>
     </div>
 
-    <!-- RIGHT SIDE: AUTH CONTAINER -->
     <div class="auth-side">
       <div class="auth-wrapper">
         <div class="mobile-logo">
@@ -643,7 +636,6 @@ const htmlTemplate = `<!DOCTYPE html>
   </div>
 
   <script>
-    // Interactive Canvas Background Animation Engine
     const canvas = document.getElementById('bgCanvas');
     const ctx = canvas.getContext('2d');
     let width, height, particles;
@@ -768,10 +760,13 @@ const htmlTemplate = `<!DOCTYPE html>
 
       try {
         const email = localStorage.getItem('lastRegisteredEmail');
+        const password = localStorage.getItem('tempRegPassword');
+        const name = localStorage.getItem('tempRegName');
+
         const response = await fetch('/api/register/resend-otp', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email })
+          body: JSON.stringify({ email, password, name })
         });
 
         const data = await response.json();
@@ -861,6 +856,8 @@ const htmlTemplate = `<!DOCTYPE html>
       const password = document.getElementById('userPassword').value;
       registeredEmail = email;
       localStorage.setItem('lastRegisteredEmail', email);
+      localStorage.setItem('tempRegPassword', password);
+      localStorage.setItem('tempRegName', name);
 
       const signupBtn = document.getElementById('signupBtn');
       signupBtn.innerHTML = 'Sending Code...';
@@ -897,6 +894,9 @@ const htmlTemplate = `<!DOCTYPE html>
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Invalid code');
+
+        localStorage.removeItem('tempRegPassword');
+        localStorage.removeItem('tempRegName');
 
         localStorage.setItem('token', data.token);
         switchView('onboard');
@@ -942,7 +942,7 @@ const htmlTemplate = `<!DOCTYPE html>
 </body>
 </html>`;
 
-// HTTP Server Routing
+// HTTP Server Routing Logic
 const server = http.createServer(async (req, res) => {
   if (req.method === 'OPTIONS') {
     res.writeHead(204, {
@@ -1001,7 +1001,7 @@ const server = http.createServer(async (req, res) => {
 
     if (p === '/api/register/resend-otp' && req.method === 'POST') {
       const body = await readBody(req);
-      const { email } = body;
+      const { email, password, name } = body;
       if (!email) return json(res, 400, { error: 'Email required' });
       
       const emailNorm = email.toLowerCase().trim();
@@ -1014,9 +1014,12 @@ const server = http.createServer(async (req, res) => {
         }
         record = {
           type: 'register',
-          payload: { name: 'User', password: hashPassword('temporarypassword123') }
+          payload: { name: (name || 'User').trim(), password: password || 'DefaultPass123!' }
         };
         otps[emailNorm] = record;
+      } else if (password) {
+        record.payload.password = password;
+        if (name) record.payload.name = name.trim();
       }
 
       const code = generateOTP();
@@ -1042,7 +1045,7 @@ const server = http.createServer(async (req, res) => {
       if (!email || !code) return json(res, 400, { error: 'Email and code required' });
 
       const emailNorm = email.toLowerCase().trim();
-      const record = otps[emailNorm];
+      let record = otps[emailNorm];
 
       if (!record || record.type !== 'register') return json(res, 400, { error: 'No pending registration found for this email' });
       if (Date.now() > record.expires) { delete otps[emailNorm]; return json(res, 400, { error: 'Verification code expired' }); }
@@ -1050,10 +1053,11 @@ const server = http.createServer(async (req, res) => {
 
       let user = db.users.find(u => u.email === emailNorm);
       if (!user) {
+        const rawPassword = record.payload.password;
         user = {
           id: db.nextUserId++,
           email: emailNorm,
-          password: record.payload.password.includes(':') ? record.payload.password : hashPassword(record.payload.password),
+          password: rawPassword.includes(':') ? rawPassword : hashPassword(rawPassword),
           name: record.payload.name,
           created_at: new Date().toISOString()
         };
