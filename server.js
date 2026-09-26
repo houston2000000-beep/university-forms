@@ -757,7 +757,7 @@ const htmlTemplate = `<!DOCTYPE html>
           resendBtn.innerText = "Resend Code";
         } else {
           resendBtn.disabled = true;
-          resendBtn.innerHTML = `Resend Code (<span id="countdown">${timeLeft}</span>s)`;
+          resendBtn.innerHTML = \`Resend Code (<span id="countdown">\${timeLeft}</span>s)\`;
         }
       }, 1000);
     }
